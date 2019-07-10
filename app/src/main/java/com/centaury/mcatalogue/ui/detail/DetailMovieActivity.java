@@ -12,10 +12,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.model.Movie;
+import com.centaury.mcatalogue.data.model.TVShow;
 
 public class DetailMovieActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String EXTRA_MOVIE = "extra_movie";
+    public static final String EXTRA_TVSHOW = "extra_tvshow";
     private TextView detailName;
     private TextView detailDesc;
     private TextView detailDate;
@@ -28,15 +30,12 @@ public class DetailMovieActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_movie);
 
+        Window window = getWindow();
+        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             View view = getWindow().getDecorView();
-            view.setSystemUiVisibility(view.getSystemUiVisibility() & View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window window = getWindow();
-            window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
 
         detailName = findViewById(R.id.txt_titledetail);
@@ -49,11 +48,20 @@ public class DetailMovieActivity extends AppCompatActivity implements View.OnCli
 
         Movie movie = getIntent().getParcelableExtra(EXTRA_MOVIE);
 
-        detailName.setText(movie.getName());
-        detailDesc.setText(movie.getDesc());
-        detailDate.setText(movie.getDate());
-        Glide.with(this).load(movie.getPhoto()).into(detailPhoto);
-        Glide.with(this).load(movie.getPhoto()).into(detailCover);
+        if (movie != null) {
+            detailName.setText(movie.getName());
+            detailDesc.setText(movie.getDesc());
+            detailDate.setText(movie.getDate());
+            Glide.with(this).load(movie.getPhoto()).into(detailPhoto);
+            Glide.with(this).load(movie.getPhoto()).into(detailCover);
+        } else {
+            TVShow tvShow = getIntent().getParcelableExtra(EXTRA_TVSHOW);
+            detailName.setText(tvShow.getName());
+            detailDesc.setText(tvShow.getDesc());
+            detailDate.setText(tvShow.getDate());
+            Glide.with(this).load(tvShow.getPhoto()).into(detailPhoto);
+            Glide.with(this).load(tvShow.getPhoto()).into(detailCover);
+        }
 
     }
 

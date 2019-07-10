@@ -1,186 +1,229 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:orientation="vertical"
     android:fitsSystemWindows="true"
+    android:orientation="vertical"
     tools:context=".ui.detail.DetailMovieActivity">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/iv_coverdetail"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_220sdp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/poster_a_star"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_220sdp"
+        android:alpha="0.7"
+        android:background="@drawable/shadow_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iv_coverdetail" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginBottom="8dp"
+        android:background="@android:color/transparent"
+        app:contentInsetEnd="0dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetRight="0dp"
+        app:contentInsetStart="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/imageView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:popupTheme="@style/AppTheme.PopupOverlay">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_16sdp">
-
-            <ImageView
-                android:id="@+id/iv_coverdetail"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_220sdp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/poster_a_star" />
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_220sdp"
-                android:alpha="0.7"
-                android:background="@drawable/shadow_image" />
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                app:contentInsetEnd="0dp"
-                app:contentInsetLeft="0dp"
-                app:contentInsetRight="0dp"
-                app:contentInsetStart="0dp"
-                app:popupTheme="@style/AppTheme.PopupOverlay">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingTop="@dimen/_8sdp"
-                    android:paddingBottom="@dimen/_8sdp">
-
-                    <ImageView
-                        android:id="@+id/btn_back"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:padding="@dimen/_10sdp"
-                        android:src="@drawable/ic_arrow_back_black_24dp"
-                        android:tint="@color/white" />
-
-                </RelativeLayout>
-            </android.support.v7.widget.Toolbar>
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_160sdp"
-                android:src="@drawable/detail_background" />
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/cv_image"
-                android:layout_width="@dimen/_130sdp"
-                android:layout_height="@dimen/_170sdp"
-                android:layout_marginStart="@dimen/_16sdp"
-                android:layout_marginTop="@dimen/_80sdp"
-                app:cardBackgroundColor="@color/image_background"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="2dp"
-                app:cardPreventCornerOverlap="false"
-                app:cardUseCompatPadding="true">
-
-                <ImageView
-                    android:id="@+id/iv_imgdetail"
-                    android:layout_width="@dimen/_130sdp"
-                    android:layout_height="@dimen/_170sdp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/poster_a_star" />
-
-            </android.support.v7.widget.CardView>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_10sdp"
-                android:layout_marginTop="@dimen/_60sdp"
-                android:layout_toEndOf="@id/cv_image"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/txt_titledetail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_5sdp"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_18ssp"
-                    android:textStyle="bold"
-                    tools:text="@string/contoh_judul" />
-
-                <TextView
-                    android:id="@+id/txt_genredetail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/genre_background"
-                    android:paddingStart="@dimen/_10sdp"
-                    android:paddingTop="@dimen/_5sdp"
-                    android:paddingEnd="@dimen/_10sdp"
-                    android:paddingBottom="@dimen/_5sdp"
-                    tools:text="@string/contoh_genre"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_12ssp"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-
-                    <RatingBar
-                        android:id="@+id/rb_ratingdetail"
-                        style="@style/Widget.AppCompat.RatingBar.Small"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="@dimen/_5sdp"
-                        android:backgroundTint="@color/stars"
-                        android:numStars="5"
-                        android:progressTint="@color/stars"
-                        android:rating="3.5"
-                        android:secondaryProgressTint="@android:color/transparent" />
-
-                    <TextView
-                        android:id="@+id/txt_ratemovie"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text="@string/contoh_rate"
-                        android:textColor="@color/stars"
-                        android:textSize="@dimen/_12ssp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/txt_datedetail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="@string/contoh_tanggal"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_12ssp" />
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <TextView
+        <ImageView
+            android:id="@+id/btn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:text="@string/title_storyline"
-            android:textSize="@dimen/_20ssp"
-            android:textStyle="bold" />
+            android:layout_centerVertical="true"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:padding="@dimen/_10sdp"
+            android:src="@drawable/ic_arrow_back_black_24dp"
+            android:tint="@color/white" />
 
-        <TextView
-            android:id="@+id/txt_descdetail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:alpha="0.7"
-            tools:text="@string/contoh_desc"
-            android:textSize="@dimen/_12ssp" />
+    </android.support.v7.widget.Toolbar>
 
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_160sdp"
+        android:src="@drawable/detail_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
-</ScrollView>
+    <android.support.v7.widget.CardView
+        android:id="@+id/cv_image"
+        android:layout_width="@dimen/_130sdp"
+        android:layout_height="@dimen/_170sdp"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginTop="90dp"
+        app:cardBackgroundColor="@color/image_background"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="2dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="@+id/toolbar">
+
+        <ImageView
+            android:id="@+id/iv_imgdetail"
+            android:layout_width="@dimen/_130sdp"
+            android:layout_height="@dimen/_170sdp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/poster_a_star" />
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="213dp" />
+
+    <TextView
+        android:id="@+id/txt_titledetail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="5dp"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_18ssp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="0.20"
+        tools:text="@string/contoh_judul" />
+
+    <TextView
+        android:id="@+id/txt_genredetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/genre_background"
+        android:paddingStart="@dimen/_10sdp"
+        android:paddingTop="@dimen/_5sdp"
+        android:paddingEnd="@dimen/_10sdp"
+        android:paddingBottom="@dimen/_5sdp"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_12ssp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/txt_titledetail"
+        tools:text="@string/contoh_genre" />
+
+    <RatingBar
+        android:id="@+id/rb_ratingdetail"
+        style="@style/Widget.AppCompat.RatingBar.Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:backgroundTint="@color/stars"
+        android:numStars="5"
+        android:progressTint="@color/stars"
+        android:rating="3.5"
+        android:secondaryProgressTint="@android:color/transparent"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/txt_genredetail" />
+
+    <TextView
+        android:id="@+id/txt_ratemovie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="55dp"
+        android:layout_marginEnd="72dp"
+        android:layout_marginBottom="5dp"
+        android:textColor="@color/stars"
+        android:textSize="@dimen/_12ssp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/txt_datedetail"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintStart_toEndOf="@+id/rb_ratingdetail"
+        app:layout_constraintTop_toBottomOf="@+id/txt_titledetail"
+        tools:text="@string/contoh_rate" />
+
+    <TextView
+        android:id="@+id/txt_datedetail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/rb_ratingdetail"
+        app:layout_constraintVertical_bias="0.016"
+        tools:text="@string/contoh_tanggal" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/title_storyline"
+        android:textSize="@dimen/_20ssp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.017"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cv_image" />
+
+    <TextView
+        android:id="@+id/txt_descdetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:alpha="0.7"
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="@string/contoh_desc" />
+
+</android.support.constraint.ConstraintLayout>

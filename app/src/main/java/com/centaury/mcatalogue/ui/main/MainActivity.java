@@ -1,76 +1,94 @@
 package com.centaury.mcatalogue.ui.main;
 
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.model.Movie;
-import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
+import com.centaury.mcatalogue.ui.main.fragment.MovieFragment;
+import com.centaury.mcatalogue.ui.main.fragment.TVShowFragment;
 
-import java.util.ArrayList;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-public class MainActivity extends AppCompatActivity {
-
-    private String[] movieName;
-    private String[] movieDesc;
-    private String[] movieDate;
-    private TypedArray moviePhoto;
-    private MovieAdapter movieAdapter;
-    private ArrayList<Movie> movieArrayList;
+    private ImageView btnSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            View view = getWindow().getDecorView();
-            view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             Window window = getWindow();
             window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
         }
 
-        movieAdapter = new MovieAdapter(this);
-        ListView listView = findViewById(R.id.rv_movie);
-        listView.setAdapter(movieAdapter);
+        btnSettings = findViewById(R.id.settings);
+        btnSettings.setOnClickListener(this);
+        BottomNavigationView navigationView = findViewById(R.id.navigation);
+        navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        prepare();
-        addItem();
+        if (savedInstanceState == null) {
+            navigationView.setSelectedItemId(R.id.navigation_movie);
+        }
+    }
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+            Fragment fragment;
+
+            switch (menuItem.getItemId()) {
+                case R.id.navigation_movie:
+                    fragment = new MovieFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                            .replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName())
+                            .commit();
+                    return true;
+                case R.id.navigation_tvshow:
+                    fragment = new TVShowFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
+                            .replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName())
+                            .commit();
+                    return true;
+            }
+            return false;
+        }
+    };
+
+    private void menuSettings() {
+        PopupMenu popupMenu = new PopupMenu(MainActivity.this, btnSettings);
+        popupMenu.getMenuInflater().inflate(R.menu.menu_settings, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MainActivity.this, DetailMovieActivity.class);
-                intent.putExtra(DetailMovieActivity.EXTRA_MOVIE, movieArrayList.get(position));
-                startActivity(intent);
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.change_language:
+                        Intent intent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
+                        startActivity(intent);
+                        return true;
+                    default:
+                        return false;
+                }
             }
         });
+        popupMenu.show();
     }
 
-    private void addItem() {
-        movieArrayList = new ArrayList<>();
-
-        for (int i = 0; i < movieName.length; i++) {
-            Movie movie = new Movie();
-            movie.setName(movieName[i]);
-            movie.setDesc(movieDesc[i]);
-            movie.setDate(movieDate[i]);
-            movie.setPhoto(moviePhoto.getResourceId(i, -1));
-            movieArrayList.add(movie);
-        }
-        movieAdapter.setMovieArrayList(movieArrayList);
-    }
-
-    private void prepare() {
-        movieName = getResources().getStringArray(R.array.movie_name);
-        movieDesc = getResources().getStringArray(R.array.movie_desc);
-        movieDate = getResources().getStringArray(R.array.movie_date);
-        moviePhoto = getResources().obtainTypedArray(R.array.movie_photo);
+    @Override
+    public void onClick(View v) {
+        menuSettings();
     }
 }
