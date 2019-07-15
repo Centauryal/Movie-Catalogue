@@ -12,20 +12,33 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.model.Movie;
 import com.centaury.mcatalogue.ui.main.adapter.MovieAdapter;
 import com.centaury.mcatalogue.utils.Helper;
+import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MovieFragment extends Fragment {
 
-    private RecyclerView rvMovies;
+    @BindView(R.id.rv_movie)
+    RecyclerView mRvMovie;
+    @BindView(R.id.shimmer_view_container)
+    ShimmerFrameLayout mShimmerViewContainer;
+    @BindView(R.id.btn_try_again)
+    TextView mBtnTryAgain;
+    private View view;
+    private Unbinder unbinder;
 
     private String[] movieName;
     private String[] movieDesc;
@@ -43,14 +56,15 @@ public class MovieFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movie, container, false);
+        View view = inflater.inflate(R.layout.fragment_movie, container, false);
+
+        unbinder = ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        rvMovies = view.findViewById(R.id.rv_movie);
 
         prepare();
         addItem();
@@ -81,10 +95,15 @@ public class MovieFragment extends Fragment {
     private void showRecyclerList() {
         MovieAdapter movieAdapter = new MovieAdapter(getContext());
         movieAdapter.setMovieArrayList(movieArrayList);
-        rvMovies.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvMovies.setAdapter(movieAdapter);
-        rvMovies.setItemAnimator(new DefaultItemAnimator());
-        rvMovies.addItemDecoration(new Helper.TopItemDecoration(55));
+        mRvMovie.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRvMovie.setAdapter(movieAdapter);
+        mRvMovie.setItemAnimator(new DefaultItemAnimator());
+        mRvMovie.addItemDecoration(new Helper.TopItemDecoration(55));
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
 }

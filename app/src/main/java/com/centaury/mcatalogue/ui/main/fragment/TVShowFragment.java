@@ -12,20 +12,33 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.model.TVShow;
 import com.centaury.mcatalogue.ui.main.adapter.TVShowAdapter;
 import com.centaury.mcatalogue.utils.Helper;
+import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class TVShowFragment extends Fragment {
 
-    private RecyclerView rvTVShows;
+    @BindView(R.id.rv_tvshow)
+    RecyclerView mRvTvshow;
+    @BindView(R.id.shimmer_view_container)
+    ShimmerFrameLayout mShimmerViewContainer;
+    @BindView(R.id.btn_try_again)
+    TextView mBtnTryAgain;
+    private View view;
+    private Unbinder unbinder;
 
     private String[] tvshowName;
     private String[] tvshowDesc;
@@ -44,14 +57,15 @@ public class TVShowFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tvshow, container, false);
+        View view = inflater.inflate(R.layout.fragment_tvshow, container, false);
+
+        unbinder = ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        rvTVShows = view.findViewById(R.id.rv_tvshow);
 
         prepare();
         addItem();
@@ -82,9 +96,15 @@ public class TVShowFragment extends Fragment {
     private void showRecyclerList() {
         TVShowAdapter tvShowAdapter = new TVShowAdapter(getContext());
         tvShowAdapter.setTvShowArrayList(tvShowArrayList);
-        rvTVShows.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvTVShows.setAdapter(tvShowAdapter);
-        rvTVShows.setItemAnimator(new DefaultItemAnimator());
-        rvTVShows.addItemDecoration(new Helper.TopItemDecoration(55));
+        mRvTvshow.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRvTvshow.setAdapter(tvShowAdapter);
+        mRvTvshow.setItemAnimator(new DefaultItemAnimator());
+        mRvTvshow.addItemDecoration(new Helper.TopItemDecoration(55));
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }

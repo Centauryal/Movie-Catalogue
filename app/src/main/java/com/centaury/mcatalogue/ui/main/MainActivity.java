@@ -18,26 +18,31 @@ import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.ui.main.fragment.MovieFragment;
 import com.centaury.mcatalogue.ui.main.fragment.TVShowFragment;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-    private ImageView btnSettings;
+public class MainActivity extends AppCompatActivity {
+
+    @BindView(R.id.settings)
+    ImageView mSettings;
+    @BindView(R.id.navigation)
+    BottomNavigationView mNavigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Window window = getWindow();
             window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
         }
 
-        btnSettings = findViewById(R.id.settings);
-        btnSettings.setOnClickListener(this);
-        BottomNavigationView navigationView = findViewById(R.id.navigation);
-        navigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         if (savedInstanceState == null) {
-            navigationView.setSelectedItemId(R.id.navigation_movie);
+            mNavigation.setSelectedItemId(R.id.navigation_movie);
         }
     }
 
@@ -69,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     private void menuSettings() {
-        PopupMenu popupMenu = new PopupMenu(MainActivity.this, btnSettings);
+        PopupMenu popupMenu = new PopupMenu(MainActivity.this, mSettings);
         popupMenu.getMenuInflater().inflate(R.menu.menu_settings, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -87,8 +92,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         popupMenu.show();
     }
 
-    @Override
+    @OnClick(R.id.settings)
     public void onClick(View v) {
-        menuSettings();
+        switch (v.getId()) {
+            default:
+                break;
+            case R.id.settings:
+                menuSettings();
+                break;
+        }
     }
 }

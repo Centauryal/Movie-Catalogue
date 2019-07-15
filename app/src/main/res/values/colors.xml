@@ -26,5 +26,6 @@
     <color name="line_edittext">#C2C2C2</color>
     <color name="button_background">#4F80FF</color>
     <color name="image_background">#dedede</color>
+    <color name="placeholder_bg">#dddddd</color>
     <color name="stars">#FDDE5C</color>
 </resources>

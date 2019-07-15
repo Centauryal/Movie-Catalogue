@@ -16,6 +16,9 @@ import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Centaury on 7/5/2019.
  */
@@ -63,28 +66,30 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
 
     public class viewHolder extends RecyclerView.ViewHolder {
 
-        private TextView txtName;
-        private TextView txtNamebg;
-        private TextView txtDescription;
-        private TextView txtDate;
-        private ImageView imgPhoto;
+        @BindView(R.id.txt_titlebackground)
+        TextView mTxtTitlebackground;
+        @BindView(R.id.iv_movielist)
+        ImageView mIvMovielist;
+        @BindView(R.id.txt_genremovielist)
+        TextView mTxtGenremovielist;
+        @BindView(R.id.txt_titlemovielist)
+        TextView mTxtTitlemovielist;
+        @BindView(R.id.txt_descmovielist)
+        TextView mTxtDescmovielist;
+        @BindView(R.id.txt_datemovielist)
+        TextView mTxtDatemovielist;
 
         public viewHolder(@NonNull View itemView) {
             super(itemView);
-
-            txtName = itemView.findViewById(R.id.txt_titlemovielist);
-            txtNamebg = itemView.findViewById(R.id.txt_titlebackground);
-            txtDescription = itemView.findViewById(R.id.txt_descmovielist);
-            txtDate = itemView.findViewById(R.id.txt_datemovielist);
-            imgPhoto = itemView.findViewById(R.id.iv_movielist);
+            ButterKnife.bind(this, itemView);
         }
 
         public void bind(Movie movie) {
-            txtName.setText(movie.getName());
-            txtNamebg.setText(movie.getName());
-            txtDescription.setText(movie.getDesc());
-            txtDate.setText(movie.getDate());
-            imgPhoto.setImageResource(movie.getPhoto());
+            mTxtTitlemovielist.setText(movie.getName());
+            mTxtTitlebackground.setText(movie.getName());
+            mTxtDescmovielist.setText(movie.getDesc());
+            mTxtDatemovielist.setText(movie.getDate());
+            mIvMovielist.setImageResource(movie.getPhoto());
         }
     }
 }
