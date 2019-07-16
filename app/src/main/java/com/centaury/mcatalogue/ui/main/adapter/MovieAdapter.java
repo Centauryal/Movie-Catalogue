@@ -10,11 +10,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.model.Movie;
+import com.centaury.mcatalogue.data.model.MovieResultsItem;
 import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
+import com.centaury.mcatalogue.utils.AppConstants;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,15 +29,11 @@ import butterknife.ButterKnife;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> {
 
     private Context context;
-    private ArrayList<Movie> movieArrayList;
+    private List<MovieResultsItem> movieResultsList;
 
-    public void setMovieArrayList(ArrayList<Movie> movieArrayList) {
-        this.movieArrayList = movieArrayList;
-    }
-
-    public MovieAdapter(Context context) {
+    public MovieAdapter(Context context, List<MovieResultsItem> movieResultsList) {
         this.context = context;
-        movieArrayList = new ArrayList<>();
+        this.movieResultsList = movieResultsList;
     }
 
     @NonNull
@@ -47,13 +47,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
     @Override
     public void onBindViewHolder(@NonNull viewHolder viewHolder, int i) {
 
-        Movie movie = movieArrayList.get(i);
+        MovieResultsItem movie = movieResultsList.get(i);
         viewHolder.bind(movie);
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailMovieActivity.class);
-                intent.putExtra(DetailMovieActivity.EXTRA_MOVIE, movieArrayList.get(viewHolder.getAdapterPosition()));
+                intent.putExtra(DetailMovieActivity.EXTRA_MOVIE, movieResultsList.get(viewHolder.getAdapterPosition()));
                 context.startActivity(intent);
             }
         });
@@ -61,7 +61,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
 
     @Override
     public int getItemCount() {
-        return movieArrayList.size();
+        return movieResultsList.size();
     }
 
     public class viewHolder extends RecyclerView.ViewHolder {
@@ -84,12 +84,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
             ButterKnife.bind(this, itemView);
         }
 
-        public void bind(Movie movie) {
-            mTxtTitlemovielist.setText(movie.getName());
-            mTxtTitlebackground.setText(movie.getName());
-            mTxtDescmovielist.setText(movie.getDesc());
-            mTxtDatemovielist.setText(movie.getDate());
-            mIvMovielist.setImageResource(movie.getPhoto());
+        public void bind(MovieResultsItem movie) {
+            mTxtTitlemovielist.setText(movie.getTitle());
+            mTxtTitlebackground.setText(movie.getOriginalTitle());
+            mTxtDescmovielist.setText(movie.getOverview());
+            mTxtDatemovielist.setText(movie.getReleaseDate());
+            Glide.with(context).load(AppConstants.IMAGE_URL + movie.getPosterPath()).into(mIvMovielist);
         }
     }
 }

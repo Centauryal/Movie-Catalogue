@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +20,9 @@ import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.ui.main.fragment.MovieFragment;
 import com.centaury.mcatalogue.ui.main.fragment.TVShowFragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -26,8 +31,10 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.settings)
     ImageView mSettings;
-    @BindView(R.id.navigation)
-    BottomNavigationView mNavigation;
+    @BindView(R.id.tabs)
+    TabLayout mTabs;
+    @BindView(R.id.view_pager)
+    ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,39 +46,52 @@ public class MainActivity extends AppCompatActivity {
             window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
         }
 
-        mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        if (savedInstanceState == null) {
-            mNavigation.setSelectedItemId(R.id.navigation_movie);
-        }
+        setupViewPager(mViewPager);
+        mTabs.setupWithViewPager(mViewPager);
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPagerAdapter.addFragment(new MovieFragment(), getString(R.string.title_movie));
+        viewPagerAdapter.addFragment(new TVShowFragment(), getString(R.string.title_tv_show));
+        viewPager.setAdapter(viewPagerAdapter);
+    }
 
-            Fragment fragment;
+    public static class ViewPagerAdapter extends FragmentPagerAdapter {
 
-            switch (menuItem.getItemId()) {
-                case R.id.navigation_movie:
-                    fragment = new MovieFragment();
-                    getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                            .replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName())
-                            .commit();
-                    return true;
-                case R.id.navigation_tvshow:
-                    fragment = new TVShowFragment();
-                    getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
-                            .replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName())
-                            .commit();
-                    return true;
-            }
-            return false;
+        private final List<Fragment> fragmentList = new ArrayList<>();
+        private final List<String> fragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager fm) {
+            super(fm);
         }
-    };
+
+        @Override
+        public Fragment getItem(int i) {
+            return fragmentList.get(i);
+        }
+
+        @Override
+        public int getCount() {
+            return fragmentList.size();
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            // POSITION_NONE makes it possible to reload the PagerAdapter
+            return POSITION_NONE;
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            fragmentList.add(fragment);
+            fragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return fragmentTitleList.get(position);
+        }
+    }
 
     private void menuSettings() {
         PopupMenu popupMenu = new PopupMenu(MainActivity.this, mSettings);

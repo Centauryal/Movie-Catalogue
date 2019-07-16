@@ -37,7 +37,6 @@ public class TVShowFragment extends Fragment {
     ShimmerFrameLayout mShimmerViewContainer;
     @BindView(R.id.btn_try_again)
     TextView mBtnTryAgain;
-    private View view;
     private Unbinder unbinder;
 
     private String[] tvshowName;

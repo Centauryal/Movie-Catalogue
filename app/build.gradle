@@ -34,6 +34,9 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
     implementation "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
 
+    implementation "android.arch.lifecycle:extensions:$rootProject.lifecycleVersion"
+    annotationProcessor "android.arch.lifecycle:compiler:$rootProject.lifecycleVersion"
+
     implementation "com.jakewharton:butterknife:$rootProject.butterKnifeVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterKnifeVersion"
 

@@ -1,6 +1,8 @@
 package com.centaury.mcatalogue.ui.main.fragment;
 
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,11 +18,14 @@ import android.widget.TextView;
 
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.model.Movie;
+import com.centaury.mcatalogue.data.model.MovieResultsItem;
 import com.centaury.mcatalogue.ui.main.adapter.MovieAdapter;
+import com.centaury.mcatalogue.ui.main.viewmodel.MovieViewModel;
 import com.centaury.mcatalogue.utils.Helper;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,15 +42,10 @@ public class MovieFragment extends Fragment {
     ShimmerFrameLayout mShimmerViewContainer;
     @BindView(R.id.btn_try_again)
     TextView mBtnTryAgain;
-    private View view;
     private Unbinder unbinder;
 
-    private String[] movieName;
-    private String[] movieDesc;
-    private String[] movieDate;
-    private TypedArray moviePhoto;
-
-    private ArrayList<Movie> movieArrayList = new ArrayList<>();
+    private MovieAdapter movieAdapter;
+    private MovieViewModel movieViewModel;
 
     public MovieFragment() {
         // Required empty public constructor
@@ -66,12 +66,33 @@ public class MovieFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        prepare();
-        addItem();
+        movieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
+        movieViewModel.getMovies().observe(this, getMovie);
 
     }
 
-    private void addItem() {
+    private Observer<List<MovieResultsItem>> getMovie = new Observer<List<MovieResultsItem>>() {
+        @Override
+        public void onChanged(@Nullable List<MovieResultsItem> movieResultsItems) {
+            if (movieResultsItems != null) {
+                movieAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mShimmerViewContainer.startShimmer();
+    }
+
+    @Override
+    public void onPause() {
+        mShimmerViewContainer.stopShimmer();
+        super.onPause();
+    }
+
+    /*private void addItem() {
 
         for (int i = 0; i < movieName.length; i++) {
             Movie movie = new Movie();
@@ -83,14 +104,14 @@ public class MovieFragment extends Fragment {
         }
 
         showRecyclerList();
-    }
+    }*/
 
-    private void prepare() {
+    /*private void prepare() {
         movieName = getResources().getStringArray(R.array.movie_name);
         movieDesc = getResources().getStringArray(R.array.movie_desc);
         movieDate = getResources().getStringArray(R.array.movie_date);
         moviePhoto = getResources().obtainTypedArray(R.array.movie_photo);
-    }
+    }*/
 
     private void showRecyclerList() {
         MovieAdapter movieAdapter = new MovieAdapter(getContext());
