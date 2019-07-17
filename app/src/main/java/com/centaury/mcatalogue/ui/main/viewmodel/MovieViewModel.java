@@ -8,19 +8,16 @@ import android.util.Log;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
-import com.centaury.mcatalogue.data.model.Movie;
-import com.centaury.mcatalogue.data.model.MovieResultsItem;
-import com.centaury.mcatalogue.data.model.MoviesResponse;
+import com.centaury.mcatalogue.data.model.genre.GenreResponse;
+import com.centaury.mcatalogue.data.model.genre.GenresItem;
+import com.centaury.mcatalogue.data.model.movie.MovieResponse;
+import com.centaury.mcatalogue.data.model.movie.MovieResultsItem;
 import com.centaury.mcatalogue.utils.AppConstants;
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,33 +26,60 @@ import java.util.List;
 public class MovieViewModel extends ViewModel {
 
     public static final String TAG = MovieViewModel.class.getSimpleName();
+
     private MutableLiveData<List<MovieResultsItem>> listMovieLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<GenresItem>> listGenreLiveData = new MutableLiveData<>();
 
     public LiveData<List<MovieResultsItem>> getMovies() {
         return listMovieLiveData;
     }
 
+    public LiveData<List<GenresItem>> getGenres() {
+        return listGenreLiveData;
+    }
+
     public void setMovie() {
-        List<MovieResultsItem> movieResultsItems = new ArrayList<>();
-        AndroidNetworking.get(AppConstants.MOVIE_URL)
-                .addPathParameter("api_key", AppConstants.API_KEY)
-                .addPathParameter("language", "en-US")
+        AndroidNetworking.get(AppConstants.BASE_URL + "discover/movie")
+                .addQueryParameter("api_key", AppConstants.API_KEY)
+                .addQueryParameter("language", "en-US")
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "onResponse: " + response);
-                        MoviesResponse moviesResponse = new Gson().fromJson(response + "", MoviesResponse.class);
-                        List<MovieResultsItem> resultsItems = moviesResponse.getResults();
+                        Log.d(TAG, "onResponseMovie: " + response);
+                        MovieResponse movieResponse = new Gson().fromJson(response + "", MovieResponse.class);
+                        List<MovieResultsItem> resultsItems = movieResponse.getResults();
 
-                        movieResultsItems.addAll(resultsItems);
-                        listMovieLiveData.postValue(movieResultsItems);
+                        listMovieLiveData.setValue(resultsItems);
                     }
 
                     @Override
                     public void onError(ANError anError) {
-                        Log.e(TAG, "onError: " + anError.getMessage());
+                        Log.e(TAG, "onError: " + anError.getErrorBody());
+                    }
+                });
+    }
+
+    public void setGenre() {
+        AndroidNetworking.get(AppConstants.BASE_URL + "genre/movie/list")
+                .addQueryParameter("api_key", AppConstants.API_KEY)
+                .addQueryParameter("language", "en-US")
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, "onResponseGenre: " + response);
+                        GenreResponse genreResponse = new Gson().fromJson(response + "", GenreResponse.class);
+                        List<GenresItem> genresItems = genreResponse.getGenres();
+
+                        listGenreLiveData.setValue(genresItems);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Log.e(TAG, "onError: " + anError.getErrorBody());
                     }
                 });
     }

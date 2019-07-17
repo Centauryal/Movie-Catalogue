@@ -1,9 +1,9 @@
 package com.centaury.mcatalogue.ui.main.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +12,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.model.Movie;
-import com.centaury.mcatalogue.data.model.MovieResultsItem;
-import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
+import com.centaury.mcatalogue.data.model.genre.GenresItem;
+import com.centaury.mcatalogue.data.model.movie.MovieResultsItem;
 import com.centaury.mcatalogue.utils.AppConstants;
 
 import java.util.ArrayList;
@@ -29,11 +28,23 @@ import butterknife.ButterKnife;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> {
 
     private Context context;
-    private List<MovieResultsItem> movieResultsList;
+    private List<MovieResultsItem> movieResultsList = new ArrayList<>();
+    private List<GenresItem> genresItemsList = new ArrayList<>();
 
-    public MovieAdapter(Context context, List<MovieResultsItem> movieResultsList) {
+    public MovieAdapter(Context context) {
         this.context = context;
-        this.movieResultsList = movieResultsList;
+    }
+
+    public void setMovieData(List<MovieResultsItem> movieData) {
+        movieResultsList.clear();
+        movieResultsList.addAll(movieData);
+        notifyDataSetChanged();
+    }
+
+    public void setGenreData(List<GenresItem> genreData) {
+        genresItemsList.clear();
+        genresItemsList.addAll(genreData);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -52,9 +63,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, DetailMovieActivity.class);
+                /*Intent intent = new Intent(context, DetailMovieActivity.class);
                 intent.putExtra(DetailMovieActivity.EXTRA_MOVIE, movieResultsList.get(viewHolder.getAdapterPosition()));
-                context.startActivity(intent);
+                context.startActivity(intent);*/
             }
         });
     }
@@ -89,7 +100,21 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
             mTxtTitlebackground.setText(movie.getOriginalTitle());
             mTxtDescmovielist.setText(movie.getOverview());
             mTxtDatemovielist.setText(movie.getReleaseDate());
+            mTxtGenremovielist.setText(getGenres(movie.getGenreIds()));
             Glide.with(context).load(AppConstants.IMAGE_URL + movie.getPosterPath()).into(mIvMovielist);
+        }
+
+        private String getGenres(List<Integer> genreList) {
+            List<String> genreMovies = new ArrayList<>();
+            for (Integer genreId : genreList) {
+                for (GenresItem genresItem : genresItemsList) {
+                    if (genresItem.getId() == genreId) {
+                        genreMovies.add(genresItem.getName());
+                        return String.valueOf(Math.min(genreMovies.size(), 2));
+                    }
+                }
+            }
+            return TextUtils.join(", ", genreMovies);
         }
     }
 }

@@ -3,7 +3,6 @@ package com.centaury.mcatalogue.ui.main.fragment;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,17 +13,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.model.Movie;
-import com.centaury.mcatalogue.data.model.MovieResultsItem;
+import com.centaury.mcatalogue.data.model.genre.GenresItem;
+import com.centaury.mcatalogue.data.model.movie.MovieResultsItem;
 import com.centaury.mcatalogue.ui.main.adapter.MovieAdapter;
 import com.centaury.mcatalogue.ui.main.viewmodel.MovieViewModel;
 import com.centaury.mcatalogue.utils.Helper;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -36,16 +35,21 @@ import butterknife.Unbinder;
  */
 public class MovieFragment extends Fragment {
 
+    public static final String TAG = MovieFragment.class.getSimpleName();
+
     @BindView(R.id.rv_movie)
     RecyclerView mRvMovie;
     @BindView(R.id.shimmer_view_container)
     ShimmerFrameLayout mShimmerViewContainer;
     @BindView(R.id.btn_try_again)
     TextView mBtnTryAgain;
+    @BindView(R.id.empty_state)
+    LinearLayout mEmptyState;
     private Unbinder unbinder;
 
     private MovieAdapter movieAdapter;
     private MovieViewModel movieViewModel;
+    private View view;
 
     public MovieFragment() {
         // Required empty public constructor
@@ -68,17 +72,39 @@ public class MovieFragment extends Fragment {
 
         movieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
         movieViewModel.getMovies().observe(this, getMovie);
+        movieViewModel.getGenres().observe(this, getGenre);
 
+        showRecyclerList();
+
+        mShimmerViewContainer.startShimmer();
+        movieViewModel.setMovie();
+        movieViewModel.setGenre();
+        mShimmerViewContainer.stopShimmer();
     }
 
     private Observer<List<MovieResultsItem>> getMovie = new Observer<List<MovieResultsItem>>() {
         @Override
         public void onChanged(@Nullable List<MovieResultsItem> movieResultsItems) {
             if (movieResultsItems != null) {
-                movieAdapter.notifyDataSetChanged();
+                movieAdapter.setMovieData(movieResultsItems);
+                mShimmerViewContainer.stopShimmer();
+                mShimmerViewContainer.setVisibility(View.GONE);
+            } else {
+                mEmptyState.setVisibility(View.VISIBLE);
+                mShimmerViewContainer.stopShimmer();
+                mShimmerViewContainer.setVisibility(View.GONE);
             }
         }
-    }
+    };
+
+    private Observer<List<GenresItem>> getGenre = new Observer<List<GenresItem>>() {
+        @Override
+        public void onChanged(@Nullable List<GenresItem> genresItems) {
+            if (genresItems != null) {
+                movieAdapter.setGenreData(genresItems);
+            }
+        }
+    };
 
     @Override
     public void onResume() {
@@ -92,35 +118,17 @@ public class MovieFragment extends Fragment {
         super.onPause();
     }
 
-    /*private void addItem() {
-
-        for (int i = 0; i < movieName.length; i++) {
-            Movie movie = new Movie();
-            movie.setName(movieName[i]);
-            movie.setDesc(movieDesc[i]);
-            movie.setDate(movieDate[i]);
-            movie.setPhoto(moviePhoto.getResourceId(i, -1));
-            movieArrayList.add(movie);
-        }
-
-        showRecyclerList();
-    }*/
-
-    /*private void prepare() {
-        movieName = getResources().getStringArray(R.array.movie_name);
-        movieDesc = getResources().getStringArray(R.array.movie_desc);
-        movieDate = getResources().getStringArray(R.array.movie_date);
-        moviePhoto = getResources().obtainTypedArray(R.array.movie_photo);
-    }*/
-
     private void showRecyclerList() {
-        MovieAdapter movieAdapter = new MovieAdapter(getContext());
-        movieAdapter.setMovieArrayList(movieArrayList);
-        mRvMovie.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        movieAdapter = new MovieAdapter(getContext());
+        movieAdapter.notifyDataSetChanged();
+
+        mRvMovie.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvMovie.setAdapter(movieAdapter);
         mRvMovie.setItemAnimator(new DefaultItemAnimator());
         mRvMovie.addItemDecoration(new Helper.TopItemDecoration(55));
     }
+
 
     @Override
     public void onDestroyView() {
