@@ -4,17 +4,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.model.TVShow;
+import com.centaury.mcatalogue.data.model.genre.GenresItem;
+import com.centaury.mcatalogue.data.model.tvshow.TVShowResultsItem;
 import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
+import com.centaury.mcatalogue.utils.AppConstants;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,15 +36,23 @@ import butterknife.ButterKnife;
 public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder> {
 
     private Context context;
-    private ArrayList<TVShow> tvShowArrayList;
-
-    public void setTvShowArrayList(ArrayList<TVShow> tvShowArrayList) {
-        this.tvShowArrayList = tvShowArrayList;
-    }
+    private List<TVShowResultsItem> tvShowResultsList = new ArrayList<>();
+    private List<GenresItem> genresItemsList = new ArrayList<>();
 
     public TVShowAdapter(Context context) {
         this.context = context;
-        tvShowArrayList = new ArrayList<>();
+    }
+
+    public void setTVShowData(List<TVShowResultsItem> tvShowData) {
+        tvShowResultsList.clear();
+        tvShowResultsList.addAll(tvShowData);
+        notifyDataSetChanged();
+    }
+
+    public void setGenreTVShow(List<GenresItem> genreData) {
+        genresItemsList.clear();
+        genresItemsList.addAll(genreData);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -47,13 +66,13 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
     @Override
     public void onBindViewHolder(@NonNull viewHolder viewHolder, int i) {
 
-        TVShow tvShow = tvShowArrayList.get(i);
+        TVShowResultsItem tvShow = tvShowResultsList.get(i);
         viewHolder.bind(tvShow);
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailMovieActivity.class);
-                intent.putExtra(DetailMovieActivity.EXTRA_TVSHOW, tvShowArrayList.get(viewHolder.getAdapterPosition()));
+                intent.putExtra(DetailMovieActivity.EXTRA_TVSHOW, tvShowResultsList.get(viewHolder.getAdapterPosition()));
                 context.startActivity(intent);
             }
         });
@@ -61,7 +80,7 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
 
     @Override
     public int getItemCount() {
-        return tvShowArrayList.size();
+        return tvShowResultsList.size();
     }
 
     public class viewHolder extends RecyclerView.ViewHolder {
@@ -84,12 +103,58 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
             ButterKnife.bind(this, itemView);
         }
 
-        public void bind(TVShow tvShow) {
+        public void bind(TVShowResultsItem tvShow) {
             mTxtTitlemovielist.setText(tvShow.getName());
-            mTxtTitlebackground.setText(tvShow.getName());
-            mTxtDescmovielist.setText(tvShow.getDesc());
-            mTxtDatemovielist.setText(tvShow.getDate());
-            mIvMovielist.setImageResource(tvShow.getPhoto());
+            mTxtTitlebackground.setText(tvShow.getOriginalName());
+            mTxtGenremovielist.setText(getGenres(tvShow.getGenreIds()));
+            Glide.with(context).load(AppConstants.IMAGE_URL + tvShow.getPosterPath()).into(mIvMovielist);
+
+            if (tvShow.getOverview() != null) {
+                mTxtDescmovielist.setText(tvShow.getOverview());
+            } else {
+                mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));
+            }
+
+            DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+            try {
+                Date date = inputDate.parse(tvShow.getFirstAirDate());
+                String releaseDate = outputDate.format(date);
+                mTxtDatemovielist.setText(releaseDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private String getGenres(List<Integer> genreList) {
+            List<String> genreMovies = new ArrayList<>();
+            try {
+                if (genreList.size() > 2) {
+                    List<Integer> integers = genreList.subList(0, 2);
+                    for (Integer genreId : integers) {
+                        for (GenresItem genresItem : genresItemsList) {
+                            if (genresItem.getId() == genreId) {
+                                genreMovies.add(genresItem.getName());
+                            }
+                        }
+                    }
+                } else {
+                    for (Integer genreId : genreList) {
+                        for (GenresItem genresItem : genresItemsList) {
+                            if (genresItem.getId() == genreId) {
+                                genreMovies.add(genresItem.getName());
+                            }
+                        }
+                    }
+                }
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Exception thrown : " + e);
+            }
+
+            catch (IllegalArgumentException e) {
+                System.out.println("Exception thrown : " + e);
+            }
+            return TextUtils.join(", ", genreMovies);
         }
     }
 }

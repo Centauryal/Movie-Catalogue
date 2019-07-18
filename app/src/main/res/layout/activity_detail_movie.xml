@@ -105,7 +105,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="213dp" />
+            app:layout_constraintGuide_begin="190dp" />
 
         <TextView
             android:id="@+id/txt_titledetail"
@@ -115,7 +115,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="5dp"
             android:textColor="@color/white"
-            android:textSize="@dimen/_18ssp"
+            android:textSize="@dimen/_16ssp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/imageView2"
             app:layout_constraintEnd_toEndOf="@+id/imageView"
@@ -128,7 +128,7 @@
             android:id="@+id/txt_genredetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="16dp"
             android:background="@drawable/genre_background"
             android:paddingStart="@dimen/_10sdp"
@@ -136,9 +136,8 @@
             android:paddingEnd="@dimen/_10sdp"
             android:paddingBottom="@dimen/_5sdp"
             android:textColor="@color/white"
-            android:textSize="@dimen/_12ssp"
+            android:textSize="@dimen/_10ssp"
             android:textStyle="bold"
-            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/imageView"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline"
@@ -152,15 +151,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
             android:backgroundTint="@color/stars"
             android:numStars="5"
             android:progressTint="@color/stars"
             android:rating="3.5"
             android:secondaryProgressTint="@android:color/transparent"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="@+id/imageView"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/txt_genredetail" />
 
@@ -169,17 +164,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="55dp"
-            android:layout_marginEnd="72dp"
             android:layout_marginBottom="5dp"
             android:textColor="@color/stars"
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
-            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/txt_datedetail"
-            app:layout_constraintEnd_toEndOf="@+id/imageView"
             app:layout_constraintStart_toEndOf="@+id/rb_ratingdetail"
-            app:layout_constraintTop_toBottomOf="@+id/txt_titledetail"
             tools:text="@string/contoh_rate" />
 
         <TextView
@@ -205,7 +195,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="@string/title_storyline"
-            android:textSize="@dimen/_20ssp"
+            android:textSize="@dimen/_18ssp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.017"

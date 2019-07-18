@@ -11,8 +11,8 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.centaury.mcatalogue.data.model.genre.GenreResponse;
 import com.centaury.mcatalogue.data.model.genre.GenresItem;
-import com.centaury.mcatalogue.data.model.movie.MovieResponse;
-import com.centaury.mcatalogue.data.model.movie.MovieResultsItem;
+import com.centaury.mcatalogue.data.model.tvshow.TVShowResponse;
+import com.centaury.mcatalogue.data.model.tvshow.TVShowResultsItem;
 import com.centaury.mcatalogue.utils.AppConstants;
 import com.google.gson.Gson;
 
@@ -21,25 +21,25 @@ import org.json.JSONObject;
 import java.util.List;
 
 /**
- * Created by Centaury on 7/16/2019.
+ * Created by Centaury on 7/18/2019.
  */
-public class MovieViewModel extends ViewModel {
+public class TVShowViewModel extends ViewModel {
 
-    private static final String TAG = MovieViewModel.class.getSimpleName();
+    private static final String TAG = TVShowViewModel.class.getSimpleName();
 
-    private MutableLiveData<List<MovieResultsItem>> listMovieLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<TVShowResultsItem>> listTVShowLiveData = new MutableLiveData<>();
     private MutableLiveData<List<GenresItem>> listGenreLiveData = new MutableLiveData<>();
 
-    public LiveData<List<MovieResultsItem>> getMovies() {
-        return listMovieLiveData;
+    public LiveData<List<TVShowResultsItem>> getTVShows() {
+        return listTVShowLiveData;
     }
 
     public LiveData<List<GenresItem>> getGenres() {
         return listGenreLiveData;
     }
 
-    public void setMovie() {
-        AndroidNetworking.get(AppConstants.BASE_URL + "discover/movie")
+    public void setTVShow() {
+        AndroidNetworking.get(AppConstants.BASE_URL + "discover/tv")
                 .addQueryParameter("api_key", AppConstants.API_KEY)
                 .addQueryParameter("language", "en-US")
                 .setPriority(Priority.MEDIUM)
@@ -48,10 +48,10 @@ public class MovieViewModel extends ViewModel {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "onResponseMovie: " + response);
-                        MovieResponse movieResponse = new Gson().fromJson(response + "", MovieResponse.class);
-                        List<MovieResultsItem> resultsItems = movieResponse.getResults();
+                        TVShowResponse tvShowResponse = new Gson().fromJson(response + "", TVShowResponse.class);
+                        List<TVShowResultsItem> resultsItems = tvShowResponse.getResults();
 
-                        listMovieLiveData.setValue(resultsItems);
+                        listTVShowLiveData.setValue(resultsItems);
                     }
 
                     @Override
@@ -61,8 +61,8 @@ public class MovieViewModel extends ViewModel {
                 });
     }
 
-    public void setGenre() {
-        AndroidNetworking.get(AppConstants.BASE_URL + "genre/movie/list")
+    public void setGenreTVShow() {
+        AndroidNetworking.get(AppConstants.BASE_URL + "genre/tv/list")
                 .addQueryParameter("api_key", AppConstants.API_KEY)
                 .addQueryParameter("language", "en-US")
                 .setPriority(Priority.MEDIUM)

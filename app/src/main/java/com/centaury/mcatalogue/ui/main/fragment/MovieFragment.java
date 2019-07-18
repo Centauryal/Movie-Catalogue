@@ -28,14 +28,13 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MovieFragment extends Fragment {
-
-    public static final String TAG = MovieFragment.class.getSimpleName();
 
     @BindView(R.id.rv_movie)
     RecyclerView mRvMovie;
@@ -49,7 +48,6 @@ public class MovieFragment extends Fragment {
 
     private MovieAdapter movieAdapter;
     private MovieViewModel movieViewModel;
-    private View view;
 
     public MovieFragment() {
         // Required empty public constructor
@@ -134,5 +132,19 @@ public class MovieFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    @OnClick(R.id.btn_try_again)
+    public void onClick(View v) {
+        switch (v.getId()) {
+            default:
+                break;
+            case R.id.btn_try_again:
+                mShimmerViewContainer.startShimmer();
+                movieViewModel.setMovie();
+                movieViewModel.setGenre();
+                mShimmerViewContainer.stopShimmer();
+                break;
+        }
     }
 }
