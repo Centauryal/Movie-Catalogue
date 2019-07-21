@@ -2,9 +2,11 @@ package com.centaury.mcatalogue.ui.detail;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -16,13 +18,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.model.TVShow;
 import com.centaury.mcatalogue.data.model.genre.GenresItem;
 import com.centaury.mcatalogue.data.model.movie.MovieResultsItem;
 import com.centaury.mcatalogue.data.model.tvshow.TVShowResultsItem;
-import com.centaury.mcatalogue.ui.main.adapter.MovieAdapter;
-import com.centaury.mcatalogue.ui.main.viewmodel.MovieViewModel;
 import com.centaury.mcatalogue.utils.AppConstants;
+import com.centaury.mcatalogue.utils.Helper;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -59,7 +59,10 @@ public class DetailMovieActivity extends AppCompatActivity {
     @BindView(R.id.txt_descdetail)
     TextView mTxtDescdetail;
 
-    private List<GenresItem> genresItemList = new ArrayList<>();
+    private List<Integer> genreData = new ArrayList<>();
+    DetailViewModel detailViewModel;
+    private AlertDialog alertDialog;
+    private String language;
     DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
     DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
 
@@ -77,11 +80,13 @@ public class DetailMovieActivity extends AppCompatActivity {
             view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         }
 
-        DetailViewModel detailViewModel = ViewModelProviders.of(this).get(DetailViewModel.class);
+        language = String.valueOf(Locale.getDefault());
+        detailViewModel = ViewModelProviders.of(this).get(DetailViewModel.class);
         detailViewModel.getGenresDetail().observe(this, getGenre);
 
-        MovieResultsItem movie = getIntent().getParcelableExtra(EXTRA_MOVIE);
+        checkConnection(this);
 
+        MovieResultsItem movie = getIntent().getParcelableExtra(EXTRA_MOVIE);
         if (movie != null) {
             itemMovie(movie);
         } else {
@@ -93,15 +98,26 @@ public class DetailMovieActivity extends AppCompatActivity {
 
     private void itemMovie(MovieResultsItem movie) {
         mTxtTitledetail.setText(movie.getTitle());
-        mTxtGenredetail.setText(getGenresData(movie.getGenreIds()));
-        mTxtRatemovie.setText(String.valueOf(movie.getVoteAverage()));
-        Glide.with(this).load(AppConstants.IMAGE_URL + movie.getPosterPath()).into(mIvImgdetail);
-        Glide.with(this).load(AppConstants.IMAGE_URL + movie.getBackdropPath()).into(mIvCoverdetail);
-
-        if (movie.getOverview() != null) {
-            mTxtDescdetail.setText(movie.getOverview());
+        if (movie.getGenreIds().size() == 0) {
+            mTxtGenredetail.setText(getResources().getString(R.string.txt_no_genre));
         } else {
+            genreData.clear();
+            genreData.addAll(movie.getGenreIds());
+        }
+        mTxtRatemovie.setText(String.valueOf(movie.getVoteAverage()));
+        float movieRating = (float) (movie.getVoteAverage() / 2);
+        mRbRatingdetail.setRating(movieRating);
+        Glide.with(this).load(AppConstants.IMAGE_URL + movie.getPosterPath()).into(mIvImgdetail);
+        if (movie.getBackdropPath() != null) {
+            Glide.with(this).load(AppConstants.IMAGE_URL + movie.getBackdropPath()).into(mIvCoverdetail);
+        } else {
+            Glide.with(this).load(AppConstants.IMAGE_URL + movie.getPosterPath()).into(mIvCoverdetail);
+        }
+
+        if (movie.getOverview() == null || movie.getOverview().equals("")) {
             mTxtDescdetail.setText(getResources().getString(R.string.txt_nodesc));
+        } else {
+            mTxtDescdetail.setText(movie.getOverview());
         }
 
         try {
@@ -115,15 +131,26 @@ public class DetailMovieActivity extends AppCompatActivity {
 
     private void itemTVShow(TVShowResultsItem tvShow) {
         mTxtTitledetail.setText(tvShow.getName());
-        mTxtGenredetail.setText(getGenresData(tvShow.getGenreIds()));
-        mTxtRatemovie.setText(String.valueOf(tvShow.getVoteAverage()));
-        Glide.with(this).load(AppConstants.IMAGE_URL + tvShow.getPosterPath()).into(mIvImgdetail);
-        Glide.with(this).load(AppConstants.IMAGE_URL + tvShow.getBackdropPath()).into(mIvCoverdetail);
-
-        if (tvShow.getOverview() != null) {
-            mTxtDescdetail.setText(tvShow.getOverview());
+        if (tvShow.getGenreIds().size() == 0) {
+            mTxtGenredetail.setText(getResources().getString(R.string.txt_no_genre));
         } else {
+            genreData.clear();
+            genreData.addAll(tvShow.getGenreIds());
+        }
+        mTxtRatemovie.setText(String.valueOf(tvShow.getVoteAverage()));
+        float movieRating = (float) (tvShow.getVoteAverage() / 2);
+        mRbRatingdetail.setRating(movieRating);
+        Glide.with(this).load(AppConstants.IMAGE_URL + tvShow.getPosterPath()).into(mIvImgdetail);
+        if (tvShow.getBackdropPath() != null) {
+            Glide.with(this).load(AppConstants.IMAGE_URL + tvShow.getBackdropPath()).into(mIvCoverdetail);
+        } else {
+            Glide.with(this).load(AppConstants.IMAGE_URL + tvShow.getPosterPath()).into(mIvCoverdetail);
+        }
+
+        if (tvShow.getOverview() == null || tvShow.getOverview().equals("")) {
             mTxtDescdetail.setText(getResources().getString(R.string.txt_nodesc));
+        } else {
+            mTxtDescdetail.setText(tvShow.getOverview());
         }
 
         try {
@@ -139,45 +166,69 @@ public class DetailMovieActivity extends AppCompatActivity {
         @Override
         public void onChanged(@Nullable List<GenresItem> genresItems) {
             if (genresItems != null) {
-                setGenreData(genresItems);
+                showDialogLoading();
+                getGenresString(genresItems);
             }
         }
     };
 
-    private void setGenreData(List<GenresItem> genreData) {
-        genresItemList.clear();
-        genresItemList.addAll(genreData);
+    public void checkConnection(Context context) {
+        if (Helper.isNetworkConnected(context)) {
+            detailViewModel.setGenreMovieDetail(language);
+            detailViewModel.setGenreTVShowDetail(language);
+        } else {
+            showNoInternet();
+        }
     }
 
-    private String getGenresData(List<Integer> genreList) {
+    private void getGenresString(List<GenresItem> itemList) {
         List<String> genreMovies = new ArrayList<>();
         try {
-            if (genreList.size() > 2) {
-                List<Integer> integers = genreList.subList(0, 2);
-                for (Integer genreId : integers) {
-                    for (GenresItem genresItem : genresItemList) {
+            if (genreData.size() == 1) {
+                for (Integer genreId : genreData) {
+                    for (GenresItem genresItem : itemList) {
                         if (genresItem.getId() == genreId) {
                             genreMovies.add(genresItem.getName());
                         }
                     }
+                    mTxtGenredetail.setText(TextUtils.join(", ", genreMovies));
                 }
             } else {
-                for (Integer genreId : genreList) {
-                    for (GenresItem genresItem : genresItemList) {
+                List<Integer> integers = genreData.subList(0, 2);
+                for (Integer genreId : integers) {
+                    for (GenresItem genresItem : itemList) {
                         if (genresItem.getId() == genreId) {
                             genreMovies.add(genresItem.getName());
                         }
                     }
+                    mTxtGenredetail.setText(TextUtils.join(", ", genreMovies));
                 }
             }
         } catch (IndexOutOfBoundsException e) {
             System.out.println("Exception thrown : " + e);
-        }
-
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             System.out.println("Exception thrown : " + e);
         }
-        return TextUtils.join(", ", genreMovies);
+        alertDialog.dismiss();
+    }
+
+    private void showDialogLoading() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setView(R.layout.item_loading_dialog);
+        alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void showNoInternet() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(R.layout.item_alert_dialog);
+        builder.setPositiveButton(getString(R.string.btn_ok), (dialog, which) -> {
+            dialog.dismiss();
+            checkConnection(this);
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     @OnClick(R.id.btn_back)

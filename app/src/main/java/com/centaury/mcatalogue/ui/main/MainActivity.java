@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         setupViewPager(mViewPager);
         mTabs.setupWithViewPager(mViewPager);
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -110,6 +111,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         popupMenu.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 
     @OnClick(R.id.settings)

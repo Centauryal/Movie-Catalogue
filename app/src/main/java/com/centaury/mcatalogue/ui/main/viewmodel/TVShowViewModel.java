@@ -38,16 +38,16 @@ public class TVShowViewModel extends ViewModel {
         return listGenreLiveData;
     }
 
-    public void setTVShow() {
+    public void setTVShow(String language) {
         AndroidNetworking.get(AppConstants.BASE_URL + "discover/tv")
                 .addQueryParameter("api_key", AppConstants.API_KEY)
-                .addQueryParameter("language", "en-US")
+                .addQueryParameter("language", language)
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "onResponseMovie: " + response);
+                        Log.d(TAG, "onResponseTVShow: " + response);
                         TVShowResponse tvShowResponse = new Gson().fromJson(response + "", TVShowResponse.class);
                         List<TVShowResultsItem> resultsItems = tvShowResponse.getResults();
 
@@ -61,10 +61,10 @@ public class TVShowViewModel extends ViewModel {
                 });
     }
 
-    public void setGenreTVShow() {
+    public void setGenreTVShow(String language) {
         AndroidNetworking.get(AppConstants.BASE_URL + "genre/tv/list")
                 .addQueryParameter("api_key", AppConstants.API_KEY)
-                .addQueryParameter("language", "en-US")
+                .addQueryParameter("language", language)
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {

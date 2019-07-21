@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.model.TVShow;
 import com.centaury.mcatalogue.data.model.genre.GenresItem;
 import com.centaury.mcatalogue.data.model.tvshow.TVShowResultsItem;
 import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
@@ -106,13 +105,17 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
         public void bind(TVShowResultsItem tvShow) {
             mTxtTitlemovielist.setText(tvShow.getName());
             mTxtTitlebackground.setText(tvShow.getOriginalName());
-            mTxtGenremovielist.setText(getGenres(tvShow.getGenreIds()));
+            if (tvShow.getGenreIds().size() == 0) {
+                mTxtGenremovielist.setText(context.getString(R.string.txt_no_genre));
+            } else {
+                mTxtGenremovielist.setText(getGenres(tvShow.getGenreIds()));
+            }
             Glide.with(context).load(AppConstants.IMAGE_URL + tvShow.getPosterPath()).into(mIvMovielist);
 
-            if (tvShow.getOverview() != null) {
-                mTxtDescmovielist.setText(tvShow.getOverview());
-            } else {
+            if (tvShow.getOverview() == null || tvShow.getOverview().equals("")) {
                 mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));
+            } else {
+                mTxtDescmovielist.setText(tvShow.getOverview());
             }
 
             DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -129,9 +132,8 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
         private String getGenres(List<Integer> genreList) {
             List<String> genreMovies = new ArrayList<>();
             try {
-                if (genreList.size() > 2) {
-                    List<Integer> integers = genreList.subList(0, 2);
-                    for (Integer genreId : integers) {
+                if (genreList.size() == 1) {
+                    for (Integer genreId : genreList) {
                         for (GenresItem genresItem : genresItemsList) {
                             if (genresItem.getId() == genreId) {
                                 genreMovies.add(genresItem.getName());
@@ -139,7 +141,8 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
                         }
                     }
                 } else {
-                    for (Integer genreId : genreList) {
+                    List<Integer> integers = genreList.subList(0, 2);
+                    for (Integer genreId : integers) {
                         for (GenresItem genresItem : genresItemsList) {
                             if (genresItem.getId() == genreId) {
                                 genreMovies.add(genresItem.getName());
@@ -149,9 +152,7 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
                 }
             } catch (IndexOutOfBoundsException e) {
                 System.out.println("Exception thrown : " + e);
-            }
-
-            catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("Exception thrown : " + e);
             }
             return TextUtils.join(", ", genreMovies);

@@ -48,6 +48,7 @@ ext {
     javaxVersion = '10.0-b28'
     gsonVersion = '2.8.5'
     shimmerVersion = '0.4.0'
+    lottieVersion = '2.2.5'
     intuitVersion = '1.0.6'
 
     // Test dependencies

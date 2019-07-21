@@ -31,10 +31,10 @@ public class DetailViewModel extends ViewModel {
         return listGenreLiveData;
     }
 
-    public void setGenreDetail() {
+    public void setGenreMovieDetail(String language) {
         AndroidNetworking.get(AppConstants.BASE_URL + "genre/movie/list")
                 .addQueryParameter("api_key", AppConstants.API_KEY)
-                .addQueryParameter("language", "en-US")
+                .addQueryParameter("language", language)
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
@@ -43,7 +43,28 @@ public class DetailViewModel extends ViewModel {
                         Log.d(TAG, "onResponseGenre: " + response);
                         GenreResponse genreResponse = new Gson().fromJson(response + "", GenreResponse.class);
                         List<GenresItem> genresItems = genreResponse.getGenres();
+                        listGenreLiveData.setValue(genresItems);
+                    }
 
+                    @Override
+                    public void onError(ANError anError) {
+                        Log.e(TAG, "onError: " + anError.getErrorBody());
+                    }
+                });
+    }
+
+    public void setGenreTVShowDetail(String language) {
+        AndroidNetworking.get(AppConstants.BASE_URL + "genre/tv/list")
+                .addQueryParameter("api_key", AppConstants.API_KEY)
+                .addQueryParameter("language", language)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, "onResponseGenre: " + response);
+                        GenreResponse genreResponse = new Gson().fromJson(response + "", GenreResponse.class);
+                        List<GenresItem> genresItems = genreResponse.getGenres();
                         listGenreLiveData.setValue(genresItems);
                     }
 

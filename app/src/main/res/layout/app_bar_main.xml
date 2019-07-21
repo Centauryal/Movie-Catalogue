@@ -64,7 +64,8 @@
             app:tabIndicatorColor="@color/colorAccent"
             app:tabIndicatorHeight="3dp"
             app:tabMode="fixed"
-            app:tabSelectedTextColor="@color/white" />
+            app:tabSelectedTextColor="@color/white"
+            app:tabTextAppearance="@style/TabLayoutText" />
 
     </android.support.design.widget.AppBarLayout>
 

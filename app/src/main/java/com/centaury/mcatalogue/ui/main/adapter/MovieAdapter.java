@@ -22,8 +22,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -107,13 +105,17 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
         public void bind(MovieResultsItem movie) {
             mTxtTitlemovielist.setText(movie.getTitle());
             mTxtTitlebackground.setText(movie.getOriginalTitle());
-            mTxtGenremovielist.setText(getGenres(movie.getGenreIds()));
+            if (movie.getGenreIds().size() == 0) {
+                mTxtGenremovielist.setText(context.getString(R.string.txt_no_genre));
+            } else {
+                mTxtGenremovielist.setText(getGenres(movie.getGenreIds()));
+            }
             Glide.with(context).load(AppConstants.IMAGE_URL + movie.getPosterPath()).into(mIvMovielist);
 
-            if (movie.getOverview() != null) {
-                mTxtDescmovielist.setText(movie.getOverview());
-            } else {
+            if (movie.getOverview() == null || movie.getOverview().equals("")) {
                 mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));
+            } else {
+                mTxtDescmovielist.setText(movie.getOverview());
             }
 
             DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -130,9 +132,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
         private String getGenres(List<Integer> genreList) {
             List<String> genreMovies = new ArrayList<>();
             try {
-                if (genreList.size() > 2) {
-                    List<Integer> integers = genreList.subList(0, 2);
-                    for (Integer genreId : integers) {
+                if (genreList.size() == 1) {
+                    for (Integer genreId : genreList) {
                         for (GenresItem genresItem : genresItemsList) {
                             if (genresItem.getId() == genreId) {
                                 genreMovies.add(genresItem.getName());
@@ -140,7 +141,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
                         }
                     }
                 } else {
-                    for (Integer genreId : genreList) {
+                    List<Integer> integers = genreList.subList(0, 2);
+                    for (Integer genreId : integers) {
                         for (GenresItem genresItem : genresItemsList) {
                             if (genresItem.getId() == genreId) {
                                 genreMovies.add(genresItem.getName());
@@ -150,9 +152,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
                 }
             } catch (IndexOutOfBoundsException e) {
                 System.out.println("Exception thrown : " + e);
-            }
-
-            catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("Exception thrown : " + e);
             }
             return TextUtils.join(", ", genreMovies);

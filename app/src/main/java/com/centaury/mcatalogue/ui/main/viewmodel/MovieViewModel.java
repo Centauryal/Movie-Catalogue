@@ -38,10 +38,10 @@ public class MovieViewModel extends ViewModel {
         return listGenreLiveData;
     }
 
-    public void setMovie() {
+    public void setMovie(String language) {
         AndroidNetworking.get(AppConstants.BASE_URL + "discover/movie")
                 .addQueryParameter("api_key", AppConstants.API_KEY)
-                .addQueryParameter("language", "en-US")
+                .addQueryParameter("language", language)
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
@@ -61,10 +61,10 @@ public class MovieViewModel extends ViewModel {
                 });
     }
 
-    public void setGenre() {
+    public void setGenre(String language) {
         AndroidNetworking.get(AppConstants.BASE_URL + "genre/movie/list")
                 .addQueryParameter("api_key", AppConstants.API_KEY)
-                .addQueryParameter("language", "en-US")
+                .addQueryParameter("language", language)
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {

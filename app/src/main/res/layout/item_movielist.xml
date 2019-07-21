@@ -46,7 +46,7 @@
             android:layout_width="@dimen/_100sdp"
             android:layout_height="@dimen/_150sdp"
             android:scaleType="centerCrop"
-            tools:src="@drawable/poster_a_star" />
+            tools:src="@tools:sample/backgrounds/scenic" />
 
     </android.support.v7.widget.CardView>
 

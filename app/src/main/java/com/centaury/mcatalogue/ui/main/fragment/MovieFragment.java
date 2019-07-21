@@ -3,10 +3,12 @@ package com.centaury.mcatalogue.ui.main.fragment;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +27,7 @@ import com.centaury.mcatalogue.utils.Helper;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,6 +51,7 @@ public class MovieFragment extends Fragment {
 
     private MovieAdapter movieAdapter;
     private MovieViewModel movieViewModel;
+    private String language;
 
     public MovieFragment() {
         // Required empty public constructor
@@ -71,13 +75,11 @@ public class MovieFragment extends Fragment {
         movieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
         movieViewModel.getMovies().observe(this, getMovie);
         movieViewModel.getGenres().observe(this, getGenre);
+        language = String.valueOf(Locale.getDefault());
 
         showRecyclerList();
+        checkConnection(getContext());
 
-        mShimmerViewContainer.startShimmer();
-        movieViewModel.setMovie();
-        movieViewModel.setGenre();
-        mShimmerViewContainer.stopShimmer();
     }
 
     private Observer<List<MovieResultsItem>> getMovie = new Observer<List<MovieResultsItem>>() {
@@ -88,6 +90,7 @@ public class MovieFragment extends Fragment {
                 mShimmerViewContainer.stopShimmer();
                 mShimmerViewContainer.setVisibility(View.GONE);
             } else {
+                mRvMovie.setVisibility(View.GONE);
                 mEmptyState.setVisibility(View.VISIBLE);
                 mShimmerViewContainer.stopShimmer();
                 mShimmerViewContainer.setVisibility(View.GONE);
@@ -103,6 +106,16 @@ public class MovieFragment extends Fragment {
             }
         }
     };
+
+    public void checkConnection(Context context) {
+        if (Helper.isNetworkConnected(context)) {
+            mShimmerViewContainer.startShimmer();
+            movieViewModel.setMovie(language);
+            movieViewModel.setGenre(language);
+        } else {
+            showNoInternet();
+        }
+    }
 
     @Override
     public void onResume() {
@@ -127,6 +140,16 @@ public class MovieFragment extends Fragment {
         mRvMovie.addItemDecoration(new Helper.TopItemDecoration(55));
     }
 
+    private void showNoInternet() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setView(R.layout.item_alert_dialog);
+        builder.setPositiveButton(getString(R.string.btn_ok), (dialog, which) -> {
+            dialog.dismiss();
+            checkConnection(getContext());
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
 
     @Override
     public void onDestroyView() {
@@ -141,9 +164,8 @@ public class MovieFragment extends Fragment {
                 break;
             case R.id.btn_try_again:
                 mShimmerViewContainer.startShimmer();
-                movieViewModel.setMovie();
-                movieViewModel.setGenre();
-                mShimmerViewContainer.stopShimmer();
+                movieViewModel.setMovie(language);
+                movieViewModel.setGenre(language);
                 break;
         }
     }

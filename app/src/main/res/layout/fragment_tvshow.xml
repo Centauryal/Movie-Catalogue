@@ -35,7 +35,6 @@
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 
-    <include
-        layout="@layout/item_emptystate_placeholder" />
+    <include layout="@layout/item_emptystate_placeholder" />
 
 </RelativeLayout>

@@ -2,5 +2,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/change_language"
-        android:title="@string/change_language_settings" />
+        android:title="@string/txt_change_language_settings" />
 </menu>
