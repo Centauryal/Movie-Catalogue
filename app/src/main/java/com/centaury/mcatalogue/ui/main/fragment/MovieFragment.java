@@ -75,7 +75,7 @@ public class MovieFragment extends Fragment {
         movieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
         movieViewModel.getMovies().observe(this, getMovie);
         movieViewModel.getGenres().observe(this, getGenre);
-        language = String.valueOf(Locale.getDefault());
+        language = String.valueOf(Locale.getDefault().toLanguageTag());
 
         showRecyclerList();
         checkConnection(getContext());
@@ -159,14 +159,10 @@ public class MovieFragment extends Fragment {
 
     @OnClick(R.id.btn_try_again)
     public void onClick(View v) {
-        switch (v.getId()) {
-            default:
-                break;
-            case R.id.btn_try_again:
-                mShimmerViewContainer.startShimmer();
-                movieViewModel.setMovie(language);
-                movieViewModel.setGenre(language);
-                break;
+        if (v.getId() == R.id.btn_try_again) {
+            mShimmerViewContainer.startShimmer();
+            movieViewModel.setMovie(language);
+            movieViewModel.setGenre(language);
         }
     }
 }

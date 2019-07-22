@@ -80,7 +80,7 @@ public class DetailMovieActivity extends AppCompatActivity {
             view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         }
 
-        language = String.valueOf(Locale.getDefault());
+        language = String.valueOf(Locale.getDefault().toLanguageTag());
         detailViewModel = ViewModelProviders.of(this).get(DetailViewModel.class);
         detailViewModel.getGenresDetail().observe(this, getGenre);
 
@@ -233,12 +233,8 @@ public class DetailMovieActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_back)
     public void onClick(View v) {
-        switch (v.getId()) {
-            default:
-                break;
-            case R.id.btn_back:
-                onBackPressed();
-                break;
+        if (v.getId() == R.id.btn_back) {
+            onBackPressed();
         }
     }
 }

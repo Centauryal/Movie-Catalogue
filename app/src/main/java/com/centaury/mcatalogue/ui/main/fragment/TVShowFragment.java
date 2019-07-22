@@ -75,7 +75,7 @@ public class TVShowFragment extends Fragment {
         tvShowViewModel = ViewModelProviders.of(this).get(TVShowViewModel.class);
         tvShowViewModel.getTVShows().observe(this, getTVShow);
         tvShowViewModel.getGenres().observe(this, getGenre);
-        language = String.valueOf(Locale.getDefault());
+        language = String.valueOf(Locale.getDefault().toLanguageTag());
 
         showRecyclerList();
         checkConnection(getContext());
@@ -158,14 +158,10 @@ public class TVShowFragment extends Fragment {
 
     @OnClick(R.id.btn_try_again)
     public void onClick(View v) {
-        switch (v.getId()) {
-            default:
-                break;
-            case R.id.btn_try_again:
-                mShimmerViewContainer.startShimmer();
-                tvShowViewModel.setTVShow(language);
-                tvShowViewModel.setGenreTVShow(language);
-                break;
+        if (v.getId() == R.id.btn_try_again) {
+            mShimmerViewContainer.startShimmer();
+            tvShowViewModel.setTVShow(language);
+            tvShowViewModel.setGenreTVShow(language);
         }
     }
 }

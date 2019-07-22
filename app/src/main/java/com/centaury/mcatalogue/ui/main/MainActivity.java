@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -63,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         private final List<Fragment> fragmentList = new ArrayList<>();
         private final List<String> fragmentTitleList = new ArrayList<>();
 
-        public ViewPagerAdapter(FragmentManager fm) {
+        ViewPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -97,18 +96,13 @@ public class MainActivity extends AppCompatActivity {
     private void menuSettings() {
         PopupMenu popupMenu = new PopupMenu(MainActivity.this, mSettings);
         popupMenu.getMenuInflater().inflate(R.menu.menu_settings, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.change_language:
-                        Intent intent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
-                        startActivity(intent);
-                        return true;
-                    default:
-                        return false;
-                }
+        popupMenu.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.change_language) {
+                Intent intent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
+                startActivity(intent);
+                return true;
             }
+            return false;
         });
         popupMenu.show();
     }
@@ -120,12 +114,8 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.settings)
     public void onClick(View v) {
-        switch (v.getId()) {
-            default:
-                break;
-            case R.id.settings:
-                menuSettings();
-                break;
+        if (v.getId() == R.id.settings) {
+            menuSettings();
         }
     }
 }
