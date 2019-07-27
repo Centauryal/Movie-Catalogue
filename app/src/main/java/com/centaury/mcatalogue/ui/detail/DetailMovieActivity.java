@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.model.genre.GenresItem;
@@ -58,13 +59,16 @@ public class DetailMovieActivity extends AppCompatActivity {
     TextView mTxtDatedetail;
     @BindView(R.id.txt_descdetail)
     TextView mTxtDescdetail;
+    @BindView(R.id.btn_favorite)
+    LottieAnimationView mBtnFavorite;
 
+    DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
+    DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
     private List<Integer> genreData = new ArrayList<>();
     DetailViewModel detailViewModel;
     private AlertDialog alertDialog;
     private String language;
-    DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
-    DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+    private Boolean isFavorite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +97,8 @@ public class DetailMovieActivity extends AppCompatActivity {
             TVShowResultsItem tvShow = getIntent().getParcelableExtra(EXTRA_TVSHOW);
             itemTVShow(tvShow);
         }
+
+        mBtnFavorite.setScale(2.481f);
 
     }
 
@@ -231,10 +237,26 @@ public class DetailMovieActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    @OnClick(R.id.btn_back)
+    @OnClick({R.id.btn_back, R.id.btn_favorite})
     public void onClick(View v) {
-        if (v.getId() == R.id.btn_back) {
-            onBackPressed();
+        switch (v.getId()) {
+            default:
+                break;
+            case R.id.btn_back:
+                onBackPressed();
+                break;
+            case R.id.btn_favorite:
+                if (isFavorite) {
+                    mBtnFavorite.setSpeed(-2f);
+                } else {
+                    mBtnFavorite.setSpeed(1f);
+                }
+
+                isFavorite = !isFavorite;
+
+                mBtnFavorite.setProgress(0f);
+                mBtnFavorite.playAnimation();
+                break;
         }
     }
 }

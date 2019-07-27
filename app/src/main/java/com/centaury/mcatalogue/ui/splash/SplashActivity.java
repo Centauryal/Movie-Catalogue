@@ -25,6 +25,7 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
 
+        mLottieLoad.setScale(1.2f);
         mLottieLoad.playAnimation();
 
         Timer timer = new Timer();

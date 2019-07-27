@@ -9,6 +9,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -33,10 +34,13 @@ dependencies {
     implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
     implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
     implementation "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
+    implementation "com.android.support:multidex:$rootProject.multiDexVersion"
 
     implementation "android.arch.lifecycle:extensions:$rootProject.lifecycleVersion"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     annotationProcessor "android.arch.lifecycle:compiler:$rootProject.lifecycleVersion"
+
+    implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
+    annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
 
     implementation "com.jakewharton:butterknife:$rootProject.butterKnifeVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterKnifeVersion"

@@ -18,6 +18,7 @@ import android.widget.PopupMenu;
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.ui.main.fragment.MovieFragment;
 import com.centaury.mcatalogue.ui.main.fragment.TVShowFragment;
+import com.centaury.mcatalogue.utils.ViewPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     TabLayout mTabs;
     @BindView(R.id.view_pager)
     ViewPager mViewPager;
+    @BindView(R.id.favorite)
+    ImageView mFavorite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,42 +60,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(viewPagerAdapter);
     }
 
-    public static class ViewPagerAdapter extends FragmentPagerAdapter {
-
-        private final List<Fragment> fragmentList = new ArrayList<>();
-        private final List<String> fragmentTitleList = new ArrayList<>();
-
-        ViewPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            return fragmentList.get(i);
-        }
-
-        @Override
-        public int getCount() {
-            return fragmentList.size();
-        }
-
-        @Override
-        public int getItemPosition(Object object) {
-            // POSITION_NONE makes it possible to reload the PagerAdapter
-            return POSITION_NONE;
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            fragmentList.add(fragment);
-            fragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return fragmentTitleList.get(position);
-        }
-    }
-
     private void menuSettings() {
         PopupMenu popupMenu = new PopupMenu(MainActivity.this, mSettings);
         popupMenu.getMenuInflater().inflate(R.menu.menu_settings, popupMenu.getMenu());
@@ -112,10 +79,16 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    @OnClick(R.id.settings)
+    @OnClick({R.id.settings, R.id.favorite})
     public void onClick(View v) {
-        if (v.getId() == R.id.settings) {
-            menuSettings();
+        switch (v.getId()) {
+            default:
+                break;
+            case R.id.settings:
+                menuSettings();
+                break;
+            case R.id.favorite:
+                break;
         }
     }
 }
