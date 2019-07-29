@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide;
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.model.genre.GenresItem;
 import com.centaury.mcatalogue.data.model.tvshow.TVShowResultsItem;
-import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
+import com.centaury.mcatalogue.ui.detail.DetailTVShowActivity;
 import com.centaury.mcatalogue.utils.AppConstants;
 
 import java.text.DateFormat;
@@ -70,8 +70,8 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, DetailMovieActivity.class);
-                intent.putExtra(DetailMovieActivity.EXTRA_TVSHOW, tvShowResultsList.get(viewHolder.getAdapterPosition()));
+                Intent intent = new Intent(context, DetailTVShowActivity.class);
+                intent.putExtra(DetailTVShowActivity.EXTRA_TVSHOW, tvShowResultsList.get(viewHolder.getAdapterPosition()));
                 context.startActivity(intent);
             }
         });

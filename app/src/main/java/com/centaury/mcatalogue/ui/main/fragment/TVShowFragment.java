@@ -87,11 +87,7 @@ public class TVShowFragment extends Fragment {
         public void onChanged(@Nullable List<TVShowResultsItem> tvshowResultsItems) {
             if (tvshowResultsItems != null) {
                 tvShowAdapter.setTVShowData(tvshowResultsItems);
-                mShimmerViewContainer.stopShimmer();
-                mShimmerViewContainer.setVisibility(View.GONE);
-            } else {
-                mRvTvshow.setVisibility(View.GONE);
-                mEmptyState.setVisibility(View.VISIBLE);
+                toggleEmptyTVShows(tvshowResultsItems.size());
                 mShimmerViewContainer.stopShimmer();
                 mShimmerViewContainer.setVisibility(View.GONE);
             }
@@ -106,6 +102,15 @@ public class TVShowFragment extends Fragment {
             }
         }
     };
+
+    private void toggleEmptyTVShows(int size) {
+        if (size > 0) {
+            mEmptyState.setVisibility(View.GONE);
+        } else {
+            mRvTvshow.setVisibility(View.GONE);
+            mEmptyState.setVisibility(View.VISIBLE);
+        }
+    }
 
     public void checkConnection(Context context) {
         if (Helper.isNetworkConnected(context)) {

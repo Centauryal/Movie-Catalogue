@@ -5,9 +5,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -16,12 +13,10 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 
 import com.centaury.mcatalogue.R;
+import com.centaury.mcatalogue.ui.favorite.FavoriteActivity;
 import com.centaury.mcatalogue.ui.main.fragment.MovieFragment;
 import com.centaury.mcatalogue.ui.main.fragment.TVShowFragment;
 import com.centaury.mcatalogue.utils.ViewPagerAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -88,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 menuSettings();
                 break;
             case R.id.favorite:
+                startActivity(new Intent(this, FavoriteActivity.class));
                 break;
         }
     }

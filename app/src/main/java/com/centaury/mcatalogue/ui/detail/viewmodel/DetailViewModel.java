@@ -1,4 +1,4 @@
-package com.centaury.mcatalogue.ui.detail;
+package com.centaury.mcatalogue.ui.detail.viewmodel;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;

@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.ui.favorite.fragment.FavoriteMovieFragment;

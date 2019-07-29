@@ -87,11 +87,7 @@ public class MovieFragment extends Fragment {
         public void onChanged(@Nullable List<MovieResultsItem> movieResultsItems) {
             if (movieResultsItems != null) {
                 movieAdapter.setMovieData(movieResultsItems);
-                mShimmerViewContainer.stopShimmer();
-                mShimmerViewContainer.setVisibility(View.GONE);
-            } else {
-                mRvMovie.setVisibility(View.GONE);
-                mEmptyState.setVisibility(View.VISIBLE);
+                toggleEmptyMovies(movieResultsItems.size());
                 mShimmerViewContainer.stopShimmer();
                 mShimmerViewContainer.setVisibility(View.GONE);
             }
@@ -106,6 +102,15 @@ public class MovieFragment extends Fragment {
             }
         }
     };
+
+    private void toggleEmptyMovies(int size) {
+        if (size > 0) {
+            mEmptyState.setVisibility(View.GONE);
+        } else {
+            mRvMovie.setVisibility(View.GONE);
+            mEmptyState.setVisibility(View.VISIBLE);
+        }
+    }
 
     public void checkConnection(Context context) {
         if (Helper.isNetworkConnected(context)) {
