@@ -6,6 +6,7 @@
     android:padding="@dimen/_10sdp">
 
     <TextView
+        android:id="@+id/alerttitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/txt_no_internet"

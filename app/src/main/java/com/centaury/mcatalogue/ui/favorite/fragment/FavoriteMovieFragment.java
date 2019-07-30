@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.db.entity.MovieEntity;
@@ -24,6 +26,7 @@ import com.centaury.mcatalogue.utils.Helper;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +37,6 @@ import butterknife.Unbinder;
  * A simple {@link Fragment} subclass.
  */
 public class FavoriteMovieFragment extends Fragment {
-
 
     @BindView(R.id.rv_favmovie)
     RecyclerView mRvFavmovie;
@@ -109,13 +111,54 @@ public class FavoriteMovieFragment extends Fragment {
     }
 
     private void showRecyclerList() {
-
         favoriteMovieAdapter = new FavoriteMovieAdapter(getContext());
 
         mRvFavmovie.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvFavmovie.setAdapter(favoriteMovieAdapter);
         mRvFavmovie.setItemAnimator(new DefaultItemAnimator());
         mRvFavmovie.addItemDecoration(new Helper.TopItemDecoration(55));
+
+        favoriteMovieAdapter.setOnDeleteItemClickCallback(new FavoriteMovieAdapter.OnDeleteItemClickCallback() {
+            @Override
+            public void onDeleteClicked(int movieId) {
+                showDialogDeleteFavorite(movieId);
+            }
+        });
+    }
+
+    private void showDialogDeleteFavorite(int movieId) {
+        MovieEntity movieEntity;
+        try {
+            movieEntity = favoriteMovieViewModel.getMovie(movieId);
+
+            LayoutInflater inflater = LayoutInflater.from(getContext());
+            View view = inflater.inflate(R.layout.item_alert_dialog, null);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setView(view);
+
+            TextView title = view.findViewById(R.id.alerttitle);
+            title.setText(getString(R.string.txt_title_delete_dialog));
+
+            builder.setCancelable(false)
+                    .setPositiveButton(getString(R.string.btn_delete), (dialog, which) -> {
+                        favoriteMovieViewModel.deleteMovie(movieEntity);
+                        dialog.dismiss();
+                        Toast.makeText(getContext(), getString(R.string.txt_remove_movie), Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> {
+                        dialog.dismiss();
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+
+        } catch (ExecutionException e) {
+            // TODO - handle error
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            // TODO - handle error
+            e.printStackTrace();
+        }
     }
 
     @Override

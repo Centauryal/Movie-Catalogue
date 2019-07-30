@@ -17,7 +17,10 @@
     <string name="txt_remove_movie">Film favorit dihapus</string>
     <string name="txt_add_tvshow">Serial TV favorit ditambahkan</string>
     <string name="txt_remove_tvshow">Serial TV favoorit dihapus</string>
+    <string name="txt_title_delete_dialog">Apakah Anda yakin menghapus favorit ini?</string>
 
     <string name="btn_try_again">Coba lagi</string>
     <string name="btn_ok">OK</string>
+    <string name="btn_delete">Hapus</string>
+    <string name="btn_cancel">Batal</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.centaury.mcatalogue.ui.favorite.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.db.entity.TVShowEntity;
+import com.centaury.mcatalogue.ui.detail.DetailTVShowActivity;
 import com.centaury.mcatalogue.utils.AppConstants;
 
 import java.text.DateFormat;
@@ -31,6 +33,15 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
 
     private Context context;
     private List<TVShowEntity> tvShowEntityList;
+    private OnDeleteItemClickCallback onDeleteItemClickCallback;
+
+    public interface OnDeleteItemClickCallback {
+        void onDeleteClicked(int tvshowId);
+    }
+
+    public void setOnDeleteItemClickCallback(OnDeleteItemClickCallback onDeleteItemClickCallback) {
+        this.onDeleteItemClickCallback = onDeleteItemClickCallback;
+    }
 
     public FavoriteTVShowAdapter(Context context) {
         this.context = context;
@@ -44,7 +55,7 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
     @NonNull
     @Override
     public viewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_movielist, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_favorite_movielist, viewGroup, false);
 
         return new viewHolder(view);
     }
@@ -55,6 +66,21 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
         if (tvShowEntityList != null) {
             TVShowEntity tvShow = tvShowEntityList.get(i);
             viewHolder.bind(tvShow);
+
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, DetailTVShowActivity.class);
+                    intent.putExtra(DetailTVShowActivity.EXTRA_FAV_TVSHOW, tvShowEntityList.get(viewHolder.getAdapterPosition()));
+                    context.startActivity(intent);
+                }
+            });
+            viewHolder.mBtnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onDeleteItemClickCallback.onDeleteClicked(tvShowEntityList.get(viewHolder.getAdapterPosition()).getId());
+                }
+            });
         }
     }
 
@@ -69,18 +95,20 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
 
     public class viewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.txt_titlebackground)
+        @BindView(R.id.txt_titlefavbackground)
         TextView mTxtTitlebackground;
-        @BindView(R.id.iv_movielist)
+        @BindView(R.id.iv_moviefavlist)
         ImageView mIvMovielist;
-        @BindView(R.id.txt_genremovielist)
+        @BindView(R.id.txt_genremoviefavlist)
         TextView mTxtGenremovielist;
-        @BindView(R.id.txt_titlemovielist)
+        @BindView(R.id.txt_titlemoviefavlist)
         TextView mTxtTitlemovielist;
-        @BindView(R.id.txt_descmovielist)
+        @BindView(R.id.txt_descmoviefavlist)
         TextView mTxtDescmovielist;
-        @BindView(R.id.txt_datemovielist)
+        @BindView(R.id.txt_datemoviefavlist)
         TextView mTxtDatemovielist;
+        @BindView(R.id.btn_delete)
+        ImageView mBtnDelete;
 
         public viewHolder(@NonNull View itemView) {
             super(itemView);
@@ -90,7 +118,11 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
         public void bind(TVShowEntity tvShow) {
             mTxtTitlemovielist.setText(tvShow.getName());
             mTxtTitlebackground.setText(tvShow.getOriginalName());
-            mTxtGenremovielist.setText(tvShow.getGenreIds());
+            if (tvShow.getGenreIds() == null || tvShow.getGenreIds().equals("")) {
+                mTxtGenremovielist.setText(context.getResources().getString(R.string.txt_no_genre));
+            } else {
+                mTxtGenremovielist.setText(tvShow.getGenreIds());
+            }
             Glide.with(context).load(AppConstants.IMAGE_URL + tvShow.getPosterPath()).into(mIvMovielist);
 
             if (tvShow.getOverview() == null || tvShow.getOverview().equals("")) {

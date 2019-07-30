@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -45,6 +44,7 @@ import butterknife.OnClick;
 public class DetailMovieActivity extends AppCompatActivity {
 
     public static final String EXTRA_MOVIE = "extra_movie";
+    public static final String EXTRA_FAV_MOVIE = "extra_favmovie";
     @BindView(R.id.iv_coverdetail)
     ImageView mIvCoverdetail;
     @BindView(R.id.btn_back)
@@ -71,6 +71,7 @@ public class DetailMovieActivity extends AppCompatActivity {
 
     private List<Integer> genreData = new ArrayList<>();
     private MovieResultsItem movie;
+    private MovieEntity entity;
     private DetailViewModel detailViewModel;
     private FavoriteMovieViewModel favoriteMovieViewModel;
     private AlertDialog alertDialog;
@@ -99,8 +100,14 @@ public class DetailMovieActivity extends AppCompatActivity {
         checkConnection(this);
 
         movie = getIntent().getParcelableExtra(EXTRA_MOVIE);
-        itemMovie(movie);
-        stateFavoriteDB(movie.getId());
+        if (movie != null) {
+            itemMovie(movie);
+            stateFavoriteDB(movie.getId());
+        } else {
+            entity = getIntent().getParcelableExtra(EXTRA_FAV_MOVIE);
+            itemMovieDB(entity);
+            stateFavoriteDB(entity.getId());
+        }
 
         setFavorite();
         mBtnFavorite.setScale(2.481f);
@@ -133,6 +140,39 @@ public class DetailMovieActivity extends AppCompatActivity {
 
         try {
             Date date = inputDate.parse(movie.getReleaseDate());
+            String releaseDate = outputDate.format(date);
+            mTxtDatedetail.setText(releaseDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void itemMovieDB(MovieEntity entity) {
+        mTxtTitledetail.setText(entity.getTitle());
+        if (entity.getGenreIds() == null || entity.getGenreIds().equals("")) {
+            mTxtGenredetail.setText(getResources().getString(R.string.txt_no_genre));
+        } else {
+            mTxtGenredetail.setText(entity.getGenreIds());
+        }
+        mTxtRatemovie.setText(entity.getVoteAverage());
+        int rate = (int) Double.parseDouble(entity.getVoteAverage());
+        float movieRating = (float) (rate / 2);
+        mRbRatingdetail.setRating(movieRating);
+        Glide.with(this).load(AppConstants.IMAGE_URL + entity.getPosterPath()).into(mIvImgdetail);
+        if (entity.getBackdropPath() != null) {
+            Glide.with(this).load(AppConstants.IMAGE_URL + entity.getBackdropPath()).into(mIvCoverdetail);
+        } else {
+            Glide.with(this).load(AppConstants.IMAGE_URL + entity.getPosterPath()).into(mIvCoverdetail);
+        }
+
+        if (entity.getOverview() == null || entity.getOverview().equals("")) {
+            mTxtDescdetail.setText(getResources().getString(R.string.txt_nodesc));
+        } else {
+            mTxtDescdetail.setText(entity.getOverview());
+        }
+
+        try {
+            Date date = inputDate.parse(entity.getReleaseDate());
             String releaseDate = outputDate.format(date);
             mTxtDatedetail.setText(releaseDate);
         } catch (ParseException e) {
@@ -218,10 +258,8 @@ public class DetailMovieActivity extends AppCompatActivity {
             }
             setFavorite();
         } catch (ExecutionException e) {
-            // TODO - handle error
             e.printStackTrace();
         } catch (InterruptedException e) {
-            // TODO - handle error
             e.printStackTrace();
         }
     }
@@ -229,18 +267,26 @@ public class DetailMovieActivity extends AppCompatActivity {
     private void setFavorite() {
         if (isFavorite) {
             mBtnFavorite.setSpeed(1f);
+            mBtnFavorite.setProgress(1f);
         } else {
+            mBtnFavorite.setProgress(0f);
             mBtnFavorite.setSpeed(-2f);
         }
     }
 
     private void addFavorite() {
-        MovieEntity entity = new MovieEntity(movie.getId(), mTxtTitledetail.getText().toString(), movie.getOriginalTitle(),
-                mTxtDescdetail.getText().toString(), movie.getPosterPath(), movie.getBackdropPath(),
-                mTxtRatemovie.getText().toString(), movie.getReleaseDate(), mTxtGenredetail.getText().toString());
-        Log.e("addFavorite: ", entity + "");
+        if (movie != null) {
+            MovieEntity movieEntity = new MovieEntity(movie.getId(), mTxtTitledetail.getText().toString(), movie.getOriginalTitle(),
+                    mTxtDescdetail.getText().toString(), movie.getPosterPath(), movie.getBackdropPath(),
+                    mTxtRatemovie.getText().toString(), movie.getReleaseDate(), mTxtGenredetail.getText().toString());
+            favoriteMovieViewModel.insertMovie(movieEntity);
+        } else {
+            MovieEntity movieEntity = new MovieEntity(entity.getId(), mTxtTitledetail.getText().toString(), entity.getOriginalTitle(),
+                    mTxtDescdetail.getText().toString(), entity.getPosterPath(), entity.getBackdropPath(),
+                    mTxtRatemovie.getText().toString(), entity.getReleaseDate(), mTxtGenredetail.getText().toString());
+            favoriteMovieViewModel.insertMovie(movieEntity);
+        }
 
-        favoriteMovieViewModel.insertMovie(entity);
         Toast.makeText(this, getString(R.string.txt_add_movie), Toast.LENGTH_SHORT).show();
     }
 
@@ -251,10 +297,8 @@ public class DetailMovieActivity extends AppCompatActivity {
             favoriteMovieViewModel.deleteMovie(movieEntity);
             Toast.makeText(this, getString(R.string.txt_remove_movie), Toast.LENGTH_SHORT).show();
         } catch (ExecutionException e) {
-            // TODO - handle error
             e.printStackTrace();
         } catch (InterruptedException e) {
-            // TODO - handle error
             e.printStackTrace();
         }
     }
@@ -269,7 +313,11 @@ public class DetailMovieActivity extends AppCompatActivity {
                 break;
             case R.id.btn_favorite:
                 if (isFavorite) {
-                    removeFavorite(movie.getId());
+                    if (movie != null) {
+                        removeFavorite(movie.getId());
+                    } else {
+                        removeFavorite(entity.getId());
+                    }
                 } else {
                     addFavorite();
                 }
@@ -277,7 +325,6 @@ public class DetailMovieActivity extends AppCompatActivity {
                 isFavorite = !isFavorite;
 
                 setFavorite();
-                mBtnFavorite.setProgress(0f);
                 mBtnFavorite.playAnimation();
                 break;
         }

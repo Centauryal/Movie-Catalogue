@@ -22,9 +22,12 @@
     <string name="txt_remove_movie">Favorite movie deleted</string>
     <string name="txt_add_tvshow">Favorite TVshow added</string>
     <string name="txt_remove_tvshow">Favorite TVshow deleted</string>
+    <string name="txt_title_delete_dialog">Are you sure to delete this favorite?</string>
 
     <string name="btn_try_again">try again</string>
     <string name="btn_ok">OK</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_cancel">Cancel</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
