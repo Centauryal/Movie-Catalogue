@@ -1,10 +1,12 @@
 package com.centaury.mcatalogue.ui.main;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -17,6 +19,7 @@ import com.centaury.mcatalogue.ui.favorite.FavoriteActivity;
 import com.centaury.mcatalogue.ui.main.fragment.MovieFragment;
 import com.centaury.mcatalogue.ui.main.fragment.TVShowFragment;
 import com.centaury.mcatalogue.utils.ViewPagerAdapter;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,6 +27,7 @@ import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String EXTRA_FIRST_RUN = "first_run";
     @BindView(R.id.settings)
     ImageView mSettings;
     @BindView(R.id.tabs)
@@ -45,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         setupViewPager(mViewPager);
         mTabs.setupWithViewPager(mViewPager);
+        showcaseGuide();
 
     }
 
@@ -67,6 +72,18 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
         popupMenu.show();
+    }
+
+    private void showcaseGuide() {
+        BubbleShowCaseBuilder builder = new BubbleShowCaseBuilder(this)
+                .title(getString(R.string.title_favorite))
+                .description(getString(R.string.txt_showcase_one))
+                .backgroundColor(Color.WHITE)
+                .textColor(Color.BLACK)
+                .closeActionImage(ContextCompat.getDrawable(this, R.drawable.ic_close_black_24dp))
+                .targetView(mFavorite)
+                .showOnce(EXTRA_FIRST_RUN);
+        builder.show();
     }
 
     @Override

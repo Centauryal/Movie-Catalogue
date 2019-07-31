@@ -55,6 +55,7 @@ dependencies {
 
     implementation "com.facebook.shimmer:shimmer:$rootProject.shimmerVersion"
     implementation "com.airbnb.android:lottie:$rootProject.lottieVersion"
+    implementation "com.elconfidencial.bubbleshowcase:bubbleshowcase:$rootProject.showCaseViewVersion"
 
     implementation "com.intuit.sdp:sdp-android:$rootProject.intuitVersion"
     implementation "com.intuit.ssp:ssp-android:$rootProject.intuitVersion"
