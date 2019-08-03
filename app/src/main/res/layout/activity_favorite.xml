@@ -34,6 +34,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/_5sdp"
+                    android:contentDescription="@string/contentdesc_btn_back"
                     android:padding="@dimen/_5sdp"
                     android:src="@drawable/ic_arrow_back_black_24dp"
                     android:tint="@color/white" />
@@ -42,8 +43,8 @@
                     android:id="@+id/txt_toolbar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
                     android:text="@string/title_favorite"
                     android:textColor="@color/white"
                     android:textSize="@dimen/_20ssp"

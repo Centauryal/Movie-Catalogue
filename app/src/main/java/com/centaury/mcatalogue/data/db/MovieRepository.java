@@ -78,8 +78,7 @@ public class MovieRepository {
 
         @Override
         protected Long doInBackground(MovieEntity... movieEntities) {
-            long id = mMovieDaoAsync.insert(movieEntities[0]);
-            return id;
+            return mMovieDaoAsync.insert(movieEntities[0]);
         }
     }
 

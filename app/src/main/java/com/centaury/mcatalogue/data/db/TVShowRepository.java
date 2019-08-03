@@ -77,8 +77,7 @@ public class TVShowRepository {
 
         @Override
         protected Long doInBackground(TVShowEntity... tvShowEntities) {
-            long id = mTVShowDaoAsync.insert(tvShowEntities[0]);
-            return id;
+            return mTVShowDaoAsync.insert(tvShowEntities[0]);
         }
     }
 

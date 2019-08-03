@@ -46,7 +46,6 @@ public class FavoriteTVShowFragment extends Fragment {
     TextView mBtnTryAgain;
     @BindView(R.id.empty_state)
     LinearLayout mEmptyState;
-    private View view;
     private Unbinder unbinder;
 
     private FavoriteTVShowAdapter favoriteTVShowAdapter;
@@ -118,12 +117,7 @@ public class FavoriteTVShowFragment extends Fragment {
         mRvFavtvshow.setItemAnimator(new DefaultItemAnimator());
         mRvFavtvshow.addItemDecoration(new Helper.TopItemDecoration(55));
 
-        favoriteTVShowAdapter.setOnDeleteItemClickCallback(new FavoriteTVShowAdapter.OnDeleteItemClickCallback() {
-            @Override
-            public void onDeleteClicked(int tvshowId) {
-                showDialogDeleteFavorite(tvshowId);
-            }
-        });
+        favoriteTVShowAdapter.setOnDeleteItemClickCallback(this::showDialogDeleteFavorite);
     }
 
     private void showDialogDeleteFavorite(int tvshowId) {
@@ -152,11 +146,7 @@ public class FavoriteTVShowFragment extends Fragment {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
 
-        } catch (ExecutionException e) {
-            // TODO - handle error
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            // TODO - handle error
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
     }

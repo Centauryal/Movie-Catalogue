@@ -67,13 +67,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
 
         MovieResultsItem movie = movieResultsList.get(i);
         viewHolder.bind(movie);
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, DetailMovieActivity.class);
-                intent.putExtra(DetailMovieActivity.EXTRA_MOVIE, movieResultsList.get(viewHolder.getAdapterPosition()));
-                context.startActivity(intent);
-            }
+        viewHolder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DetailMovieActivity.class);
+            intent.putExtra(DetailMovieActivity.EXTRA_MOVIE, movieResultsList.get(viewHolder.getAdapterPosition()));
+            context.startActivity(intent);
         });
     }
 
@@ -150,9 +147,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
                         }
                     }
                 }
-            } catch (IndexOutOfBoundsException e) {
-                System.out.println("Exception thrown : " + e);
-            } catch (IllegalArgumentException e) {
+            } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
                 System.out.println("Exception thrown : " + e);
             }
             return TextUtils.join(", ", genreMovies);

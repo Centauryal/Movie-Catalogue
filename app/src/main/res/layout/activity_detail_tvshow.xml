@@ -17,6 +17,7 @@
             android:id="@+id/iv_covertvdetail"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_220sdp"
+            android:contentDescription="@string/contentdesc_coverimage_detail"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -57,6 +58,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:layout_marginBottom="@dimen/_8sdp"
+                android:contentDescription="@string/contentdesc_btn_back"
                 android:padding="@dimen/_10sdp"
                 android:src="@drawable/ic_arrow_back_black_24dp"
                 android:tint="@color/white" />
@@ -80,6 +82,7 @@
             android:id="@+id/imageView3"
             android:layout_width="@dimen/_55sdp"
             android:layout_height="@dimen/_55sdp"
+            android:contentDescription="@string/contentdesc_btn_favorite"
             android:src="@drawable/favorite_background"
             app:layout_constraintBottom_toBottomOf="@+id/imageView2"
             app:layout_constraintEnd_toEndOf="@id/imageView2"
@@ -119,6 +122,7 @@
                 android:id="@+id/iv_imgtvdetail"
                 android:layout_width="@dimen/_130sdp"
                 android:layout_height="@dimen/_170sdp"
+                android:contentDescription="@string/contentdesc_image_detail"
                 android:scaleType="centerCrop"
                 tools:src="@tools:sample/backgrounds/scenic" />
 

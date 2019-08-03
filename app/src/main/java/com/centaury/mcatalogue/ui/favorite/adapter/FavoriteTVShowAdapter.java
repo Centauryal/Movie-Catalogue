@@ -67,20 +67,13 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
             TVShowEntity tvShow = tvShowEntityList.get(i);
             viewHolder.bind(tvShow);
 
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, DetailTVShowActivity.class);
-                    intent.putExtra(DetailTVShowActivity.EXTRA_FAV_TVSHOW, tvShowEntityList.get(viewHolder.getAdapterPosition()));
-                    context.startActivity(intent);
-                }
+            viewHolder.itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(context, DetailTVShowActivity.class);
+                intent.putExtra(DetailTVShowActivity.EXTRA_FAV_TVSHOW, tvShowEntityList.get(viewHolder.getAdapterPosition()));
+                context.startActivity(intent);
             });
-            viewHolder.mBtnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onDeleteItemClickCallback.onDeleteClicked(tvShowEntityList.get(viewHolder.getAdapterPosition()).getId());
-                }
-            });
+            viewHolder.mBtnDelete.setOnClickListener(v ->
+                    onDeleteItemClickCallback.onDeleteClicked(tvShowEntityList.get(viewHolder.getAdapterPosition()).getId()));
         }
     }
 

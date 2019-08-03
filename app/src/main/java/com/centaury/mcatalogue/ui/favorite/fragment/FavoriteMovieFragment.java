@@ -118,12 +118,7 @@ public class FavoriteMovieFragment extends Fragment {
         mRvFavmovie.setItemAnimator(new DefaultItemAnimator());
         mRvFavmovie.addItemDecoration(new Helper.TopItemDecoration(55));
 
-        favoriteMovieAdapter.setOnDeleteItemClickCallback(new FavoriteMovieAdapter.OnDeleteItemClickCallback() {
-            @Override
-            public void onDeleteClicked(int movieId) {
-                showDialogDeleteFavorite(movieId);
-            }
-        });
+        favoriteMovieAdapter.setOnDeleteItemClickCallback(this::showDialogDeleteFavorite);
     }
 
     private void showDialogDeleteFavorite(int movieId) {
@@ -152,11 +147,7 @@ public class FavoriteMovieFragment extends Fragment {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
 
-        } catch (ExecutionException e) {
-            // TODO - handle error
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            // TODO - handle error
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
     }

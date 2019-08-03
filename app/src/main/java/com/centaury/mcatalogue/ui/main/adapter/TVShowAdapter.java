@@ -67,13 +67,10 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
 
         TVShowResultsItem tvShow = tvShowResultsList.get(i);
         viewHolder.bind(tvShow);
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, DetailTVShowActivity.class);
-                intent.putExtra(DetailTVShowActivity.EXTRA_TVSHOW, tvShowResultsList.get(viewHolder.getAdapterPosition()));
-                context.startActivity(intent);
-            }
+        viewHolder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, DetailTVShowActivity.class);
+            intent.putExtra(DetailTVShowActivity.EXTRA_TVSHOW, tvShowResultsList.get(viewHolder.getAdapterPosition()));
+            context.startActivity(intent);
         });
     }
 
@@ -150,9 +147,7 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
                         }
                     }
                 }
-            } catch (IndexOutOfBoundsException e) {
-                System.out.println("Exception thrown : " + e);
-            } catch (IllegalArgumentException e) {
+            } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
                 System.out.println("Exception thrown : " + e);
             }
             return TextUtils.join(", ", genreMovies);

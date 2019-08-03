@@ -82,24 +82,18 @@ public class MovieFragment extends Fragment {
 
     }
 
-    private Observer<List<MovieResultsItem>> getMovie = new Observer<List<MovieResultsItem>>() {
-        @Override
-        public void onChanged(@Nullable List<MovieResultsItem> movieResultsItems) {
-            if (movieResultsItems != null) {
-                movieAdapter.setMovieData(movieResultsItems);
-                toggleEmptyMovies(movieResultsItems.size());
-                mShimmerViewContainer.stopShimmer();
-                mShimmerViewContainer.setVisibility(View.GONE);
-            }
+    private Observer<List<MovieResultsItem>> getMovie = movieResultsItems -> {
+        if (movieResultsItems != null) {
+            movieAdapter.setMovieData(movieResultsItems);
+            toggleEmptyMovies(movieResultsItems.size());
+            mShimmerViewContainer.stopShimmer();
+            mShimmerViewContainer.setVisibility(View.GONE);
         }
     };
 
-    private Observer<List<GenresItem>> getGenre = new Observer<List<GenresItem>>() {
-        @Override
-        public void onChanged(@Nullable List<GenresItem> genresItems) {
-            if (genresItems != null) {
-                movieAdapter.setGenreData(genresItems);
-            }
+    private Observer<List<GenresItem>> getGenre = genresItems -> {
+        if (genresItems != null) {
+            movieAdapter.setGenreData(genresItems);
         }
     };
 

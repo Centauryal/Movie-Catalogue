@@ -37,6 +37,7 @@
             android:layout_alignParentBottom="true"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
+            android:contentDescription="@string/contentdesc_btn_delete"
             android:focusable="true"
             android:padding="@dimen/_10sdp"
             android:src="@drawable/ic_delete_black_24dp" />
@@ -57,6 +58,7 @@
             android:id="@+id/iv_moviefavlist"
             android:layout_width="@dimen/_100sdp"
             android:layout_height="@dimen/_150sdp"
+            android:contentDescription="@string/contentdesc_image_favorite"
             android:scaleType="centerCrop"
             tools:src="@tools:sample/backgrounds/scenic" />
 
@@ -76,7 +78,7 @@
             android:id="@+id/txt_genremoviefavlist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_3sdp"
             android:background="@drawable/genre_background"
             android:paddingStart="@dimen/_10sdp"
             android:paddingTop="@dimen/_5sdp"
@@ -91,6 +93,8 @@
             android:id="@+id/txt_titlemoviefavlist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="3"
             android:textSize="@dimen/_14ssp"
             android:textStyle="bold"
             tools:text="@string/contoh_judul" />

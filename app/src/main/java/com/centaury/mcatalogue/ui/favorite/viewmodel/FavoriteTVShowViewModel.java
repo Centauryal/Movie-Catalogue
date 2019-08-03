@@ -40,15 +40,7 @@ public class FavoriteTVShowViewModel extends AndroidViewModel {
         tvShowRepository.insertTVShow(tvshow);
     }
 
-    public void updateMovie(TVShowEntity tvshow) {
-        tvShowRepository.updateTVShow(tvshow);
-    }
-
     public void deleteMovie(TVShowEntity tvshow) {
         tvShowRepository.deleteTVShow(tvshow);
-    }
-
-    public void deleteAllMovies() {
-        tvShowRepository.deleteAllTVShows();
     }
 }

@@ -5,7 +5,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -66,8 +65,8 @@ public class DetailMovieActivity extends AppCompatActivity {
     @BindView(R.id.btn_favorite)
     LottieAnimationView mBtnFavorite;
 
-    DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
-    DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+    private DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
+    private DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
 
     private List<Integer> genreData = new ArrayList<>();
     private MovieResultsItem movie;
@@ -180,13 +179,10 @@ public class DetailMovieActivity extends AppCompatActivity {
         }
     }
 
-    private Observer<List<GenresItem>> getGenre = new Observer<List<GenresItem>>() {
-        @Override
-        public void onChanged(@Nullable List<GenresItem> genresItems) {
-            if (genresItems != null) {
-                showDialogLoading();
-                getGenresString(genresItems);
-            }
+    private Observer<List<GenresItem>> getGenre = genresItems -> {
+        if (genresItems != null) {
+            showDialogLoading();
+            getGenresString(genresItems);
         }
     };
 
@@ -222,9 +218,7 @@ public class DetailMovieActivity extends AppCompatActivity {
                     mTxtGenredetail.setText(TextUtils.join(", ", genreMovies));
                 }
             }
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Exception thrown : " + e);
-        } catch (IllegalArgumentException e) {
+        } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
             System.out.println("Exception thrown : " + e);
         }
         alertDialog.dismiss();

@@ -82,24 +82,18 @@ public class TVShowFragment extends Fragment {
 
     }
 
-    private Observer<List<TVShowResultsItem>> getTVShow = new Observer<List<TVShowResultsItem>>() {
-        @Override
-        public void onChanged(@Nullable List<TVShowResultsItem> tvshowResultsItems) {
-            if (tvshowResultsItems != null) {
-                tvShowAdapter.setTVShowData(tvshowResultsItems);
-                toggleEmptyTVShows(tvshowResultsItems.size());
-                mShimmerViewContainer.stopShimmer();
-                mShimmerViewContainer.setVisibility(View.GONE);
-            }
+    private Observer<List<TVShowResultsItem>> getTVShow = tvshowResultsItems -> {
+        if (tvshowResultsItems != null) {
+            tvShowAdapter.setTVShowData(tvshowResultsItems);
+            toggleEmptyTVShows(tvshowResultsItems.size());
+            mShimmerViewContainer.stopShimmer();
+            mShimmerViewContainer.setVisibility(View.GONE);
         }
     };
 
-    private Observer<List<GenresItem>> getGenre = new Observer<List<GenresItem>>() {
-        @Override
-        public void onChanged(@Nullable List<GenresItem> genresItems) {
-            if (genresItems != null) {
-                tvShowAdapter.setGenreTVShow(genresItems);
-            }
+    private Observer<List<GenresItem>> getGenre = genresItems -> {
+        if (genresItems != null) {
+            tvShowAdapter.setGenreTVShow(genresItems);
         }
     };
 

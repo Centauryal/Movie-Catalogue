@@ -22,12 +22,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_60sdp"
             android:layout_marginTop="@dimen/_10sdp"
-            android:maxLength="6"
             android:ellipsize="end"
-            tools:text="@string/contoh_judul"
+            android:maxLength="6"
             android:textColor="@color/grey_10"
             android:textSize="@dimen/_40ssp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="@string/contoh_judul" />
 
     </LinearLayout>
 
@@ -45,6 +45,7 @@
             android:id="@+id/iv_movielist"
             android:layout_width="@dimen/_100sdp"
             android:layout_height="@dimen/_150sdp"
+            android:contentDescription="@string/contentdesc_image"
             android:scaleType="centerCrop"
             tools:src="@tools:sample/backgrounds/scenic" />
 
@@ -54,8 +55,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginEnd="@dimen/_10sdp"
         android:layout_marginTop="@dimen/_30sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
         android:layout_toEndOf="@id/cv_image"
         android:background="@android:color/transparent"
         android:orientation="vertical">
@@ -64,24 +65,26 @@
             android:id="@+id/txt_genremovielist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_3sdp"
             android:background="@drawable/genre_background"
             android:paddingStart="@dimen/_10sdp"
             android:paddingTop="@dimen/_5sdp"
             android:paddingEnd="@dimen/_10sdp"
             android:paddingBottom="@dimen/_5sdp"
-            tools:text="@string/contoh_genre"
             android:textColor="@color/white"
             android:textSize="@dimen/_10ssp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="@string/contoh_genre" />
 
         <TextView
             android:id="@+id/txt_titlemovielist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="@string/contoh_judul"
+            android:ellipsize="end"
+            android:maxLines="3"
             android:textSize="@dimen/_14ssp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="@string/contoh_judul" />
 
         <TextView
             android:id="@+id/txt_descmovielist"
@@ -90,16 +93,16 @@
             android:layout_marginBottom="@dimen/_5sdp"
             android:ellipsize="end"
             android:maxLines="2"
-            tools:text="@string/contoh_desc"
             android:textColor="@color/grey_60"
-            android:textSize="@dimen/_12ssp" />
+            android:textSize="@dimen/_12ssp"
+            tools:text="@string/contoh_desc" />
 
         <TextView
             android:id="@+id/txt_datemovielist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="@string/contoh_tanggal"
-            android:textSize="@dimen/_12ssp" />
+            android:textSize="@dimen/_12ssp"
+            tools:text="@string/contoh_tanggal" />
 
     </LinearLayout>
 
