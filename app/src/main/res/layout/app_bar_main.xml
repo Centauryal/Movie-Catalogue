@@ -39,33 +39,6 @@
                     android:textSize="@dimen/_20ssp"
                     android:textStyle="bold" />
 
-                <ImageView
-                    android:id="@+id/favorite"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/_10sdp"
-                    android:layout_toStartOf="@id/settings"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:contentDescription="@string/contentdesc_btn_favorite"
-                    android:focusable="true"
-                    android:src="@drawable/ic_favorite_white_24dp" />
-
-                <ImageView
-                    android:id="@+id/settings"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/_16sdp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:contentDescription="@string/contentdesc_btn_settings"
-                    android:focusable="true"
-                    android:src="@drawable/ic_settings_black_24dp"
-                    android:tint="@color/white" />
-
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 

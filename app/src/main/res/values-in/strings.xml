@@ -7,7 +7,7 @@
     <string name="title_tv_show">Serial TV</string>
     <string name="title_favorite">Favorit</string>
 
-    <string name="txt_change_language_settings">Ubah Pengaturan Bahasa</string>
+    <string name="txt_change_language_settings">Ubah Bahasa</string>
     <string name="txt_error_state">Tidak ada film yang ditemukan</string>
     <string name="txt_nodesc">Tidak ada deskripsi</string>
     <string name="txt_loading">Tunggu sebentar! Ini mungkin memerlukan waktu.</string>
