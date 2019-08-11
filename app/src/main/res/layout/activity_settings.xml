@@ -42,7 +42,7 @@
                 android:layout_centerVertical="true"
                 android:text="@string/title_settings"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_20ssp"
+                android:textSize="@dimen/_18ssp"
                 android:textStyle="bold" />
 
         </RelativeLayout>
@@ -52,7 +52,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/toolbar"
-        android:layout_marginTop="@dimen/_16sdp"
         android:orientation="vertical">
 
         <LinearLayout

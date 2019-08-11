@@ -107,7 +107,7 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
             } else {
                 mTxtGenremovielist.setText(getGenres(tvShow.getGenreIds()));
             }
-            Glide.with(context).load(AppConstants.IMAGE_URL + tvShow.getPosterPath()).into(mIvMovielist);
+            Glide.with(context).load(AppConstants.IMAGE_URL + tvShow.getPosterPath()).placeholder(R.drawable.ic_no_photo).into(mIvMovielist);
 
             if (tvShow.getOverview() == null || tvShow.getOverview().equals("")) {
                 mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));

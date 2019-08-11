@@ -28,10 +28,15 @@ public class TVShowViewModel extends ViewModel {
     private static final String TAG = TVShowViewModel.class.getSimpleName();
 
     private MutableLiveData<List<TVShowResultsItem>> listTVShowLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<TVShowResultsItem>> listSearchTVShowData = new MutableLiveData<>();
     private MutableLiveData<List<GenresItem>> listGenreLiveData = new MutableLiveData<>();
 
     public LiveData<List<TVShowResultsItem>> getTVShows() {
         return listTVShowLiveData;
+    }
+
+    public LiveData<List<TVShowResultsItem>> getSearchTVShow() {
+        return listSearchTVShowData;
     }
 
     public LiveData<List<GenresItem>> getGenres() {
@@ -52,6 +57,29 @@ public class TVShowViewModel extends ViewModel {
                         List<TVShowResultsItem> resultsItems = tvShowResponse.getResults();
 
                         listTVShowLiveData.setValue(resultsItems);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Log.e(TAG, "onError: " + anError.getErrorBody());
+                    }
+                });
+    }
+
+    public void setSearchTVShow(String query, String language) {
+        AndroidNetworking.get(AppConstants.BASE_URL + "search/tv")
+                .addQueryParameter("api_key", AppConstants.API_KEY)
+                .addQueryParameter("language", language)
+                .addQueryParameter("query", query)
+                .setPriority(Priority.MEDIUM)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        TVShowResponse tvShowResponse = new Gson().fromJson(response + "", TVShowResponse.class);
+                        List<TVShowResultsItem> resultsSearch = tvShowResponse.getResults();
+
+                        listSearchTVShowData.setValue(resultsSearch);
                     }
 
                     @Override

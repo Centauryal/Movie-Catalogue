@@ -81,8 +81,8 @@ public class FavoriteMovieFragment extends Fragment {
         @Override
         public void onChanged(@Nullable List<MovieEntity> movieEntities) {
             if (movieEntities != null) {
-                favoriteMovieAdapter.setMovies(movieEntities);
                 toggleEmptyMovies(movieEntities.size());
+                favoriteMovieAdapter.setMovies(movieEntities);
                 mShimmerViewContainer.stopShimmer();
                 mShimmerViewContainer.setVisibility(View.GONE);
             }
@@ -92,6 +92,7 @@ public class FavoriteMovieFragment extends Fragment {
     private void toggleEmptyMovies(int size) {
         if (size > 0) {
             mEmptyState.setVisibility(View.GONE);
+            mRvFavmovie.setVisibility(View.VISIBLE);
         } else {
             mRvFavmovie.setVisibility(View.GONE);
             mEmptyState.setVisibility(View.VISIBLE);

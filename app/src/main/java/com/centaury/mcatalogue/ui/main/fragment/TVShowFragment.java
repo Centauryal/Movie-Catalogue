@@ -84,8 +84,8 @@ public class TVShowFragment extends Fragment {
 
     private Observer<List<TVShowResultsItem>> getTVShow = tvshowResultsItems -> {
         if (tvshowResultsItems != null) {
-            tvShowAdapter.setTVShowData(tvshowResultsItems);
             toggleEmptyTVShows(tvshowResultsItems.size());
+            tvShowAdapter.setTVShowData(tvshowResultsItems);
             mShimmerViewContainer.stopShimmer();
             mShimmerViewContainer.setVisibility(View.GONE);
         }
@@ -100,6 +100,7 @@ public class TVShowFragment extends Fragment {
     private void toggleEmptyTVShows(int size) {
         if (size > 0) {
             mEmptyState.setVisibility(View.GONE);
+            mRvTvshow.setVisibility(View.VISIBLE);
         } else {
             mRvTvshow.setVisibility(View.GONE);
             mEmptyState.setVisibility(View.VISIBLE);

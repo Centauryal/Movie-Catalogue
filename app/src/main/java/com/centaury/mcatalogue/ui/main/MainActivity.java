@@ -1,26 +1,28 @@
 package com.centaury.mcatalogue.ui.main;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.ui.favorite.FavoriteActivity;
 import com.centaury.mcatalogue.ui.main.fragment.MovieFragment;
 import com.centaury.mcatalogue.ui.main.fragment.TVShowFragment;
+import com.centaury.mcatalogue.ui.search.SearchMovieActivity;
+import com.centaury.mcatalogue.ui.search.SearchTVShowActivity;
+import com.centaury.mcatalogue.ui.settings.SettingsActivity;
 import com.centaury.mcatalogue.utils.ViewPagerAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,8 +31,14 @@ public class MainActivity extends AppCompatActivity {
     TabLayout mTabs;
     @BindView(R.id.view_pager)
     ViewPager mViewPager;
-
-    private SearchView searchView;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.search)
+    ImageView mSearch;
+    @BindView(R.id.favorite)
+    ImageView mFavorite;
+    @BindView(R.id.settings)
+    ImageView mSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,51 +63,6 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(viewPagerAdapter);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        if (searchManager != null) {
-            searchView = (SearchView) (menu.findItem(R.id.action_search)).getActionView();
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setMaxWidth(Integer.MAX_VALUE);
-            searchView.setQueryHint(getString(R.string.txt_hint_movie));
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String s) {
-                    return false;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String s) {
-                    return false;
-                }
-            });
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                return true;
-            case R.id.action_favorite:
-                startActivity(new Intent(this, FavoriteActivity.class));
-                return true;
-            case R.id.action_settings:
-                return true;
-            default:
-                return true;
-        }
-    }
-
-    private void searchItem() {
-
-    }
-
     /*private void showcaseGuide() {
         BubbleShowCaseBuilder builder = new BubbleShowCaseBuilder(this)
                 .title(getString(R.string.title_favorite))
@@ -114,23 +77,30 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!searchView.isIconified()) {
-            searchView.setIconified(true);
-        } else {
-            finish();
-        }
+        finish();
     }
 
-    /*@OnClick({R.id.settings, R.id.favorite})
+    @OnClick({R.id.search, R.id.favorite, R.id.settings})
     public void onClick(View v) {
         switch (v.getId()) {
             default:
                 break;
-            case R.id.settings:
+            case R.id.search:
+                switch (mTabs.getSelectedTabPosition()) {
+                    case 0:
+                        startActivity(new Intent(this, SearchMovieActivity.class));
+                        break;
+                    case 1:
+                        startActivity(new Intent(this, SearchTVShowActivity.class));
+                        break;
+                }
                 break;
             case R.id.favorite:
-
+                startActivity(new Intent(this, FavoriteActivity.class));
+                break;
+            case R.id.settings:
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
         }
-    }*/
+    }
 }

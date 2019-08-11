@@ -5,12 +5,15 @@
     <string name="title_movie">Movie</string>
     <string name="title_tv_show">TV Show</string>
     <string name="title_favorite">Favorite</string>
+    <string name="title_search">Search</string>
+    <string name="title_settings">Settings</string>
 
     <string name="contoh_desc">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
     <string name="contoh_judul">COBA AJAA</string>
     <string name="contoh_genre">Comedy</string>
     <string name="contoh_tanggal">friday, Jun 29, 2017</string>
     <string name="contoh_rate">7.5</string>
+    <string name="contoh_bahasa">English</string>
 
     <string name="txt_change_language_settings">Change Language</string>
     <string name="txt_error_state">No movies were found</string>
@@ -24,6 +27,12 @@
     <string name="txt_remove_tvshow">Favorite TVshow deleted</string>
     <string name="txt_title_delete_dialog">Are you sure to delete this favorite?</string>
     <string name="txt_showcase_one">New! special page to see your favorite contents</string>
+    <string name="txt_release_reminder">Release Reminder</string>
+    <string name="txt_desc_release">Reminder showing the movie that released today</string>
+    <string name="txt_daily_reminder">Daily Reminder</string>
+    <string name="txt_desc_daily">Reminder for return to app</string>
+    <string name="txt_hint_movie">Type movie…</string>
+    <string name="txt_hint_tvshow">Type TVShow…</string>
 
     <string name="contentdesc_coverimage_detail">cover image on detail</string>
     <string name="contentdesc_image_detail">image on detail</string>
@@ -35,6 +44,7 @@
     <string name="contentdesc_btn_favorite">favorite button</string>
     <string name="contentdesc_btn_delete">delete button</string>
     <string name="contentdesc_btn_settings">settings button</string>
+    <string name="contentdesc_btn_search">search button</string>
 
     <string name="btn_try_again">try again</string>
     <string name="btn_ok">OK</string>
@@ -43,14 +53,5 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_search">Search</string>
-    <string name="title_settings">Settings</string>
-    <string name="contoh_bahasa">English</string>
-    <string name="txt_release_reminder">Release Reminder</string>
-    <string name="txt_desc_release">Reminder showing the movie that released today</string>
-    <string name="txt_daily_reminder">Daily Reminder</string>
-    <string name="txt_desc_daily">Reminder for return to app</string>
-    <string name="txt_hint_movie">Type movie…</string>
-    <string name="txt_hint_tvshow">Type tvShow…</string>
 
 </resources>

@@ -124,11 +124,11 @@ public class DetailMovieActivity extends AppCompatActivity {
         mTxtRatemovie.setText(String.valueOf(movie.getVoteAverage()));
         float movieRating = (float) (movie.getVoteAverage() / 2);
         mRbRatingdetail.setRating(movieRating);
-        Glide.with(this).load(AppConstants.IMAGE_URL + movie.getPosterPath()).into(mIvImgdetail);
+        Glide.with(this).load(AppConstants.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.ic_no_photo).into(mIvImgdetail);
         if (movie.getBackdropPath() != null) {
-            Glide.with(this).load(AppConstants.IMAGE_URL + movie.getBackdropPath()).into(mIvCoverdetail);
+            Glide.with(this).load(AppConstants.IMAGE_URL + movie.getBackdropPath()).placeholder(R.drawable.ic_no_photo).into(mIvCoverdetail);
         } else {
-            Glide.with(this).load(AppConstants.IMAGE_URL + movie.getPosterPath()).into(mIvCoverdetail);
+            Glide.with(this).load(AppConstants.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.ic_no_photo).into(mIvCoverdetail);
         }
 
         if (movie.getOverview() == null || movie.getOverview().equals("")) {
@@ -157,11 +157,11 @@ public class DetailMovieActivity extends AppCompatActivity {
         int rate = (int) Double.parseDouble(entity.getVoteAverage());
         float movieRating = (float) (rate / 2);
         mRbRatingdetail.setRating(movieRating);
-        Glide.with(this).load(AppConstants.IMAGE_URL + entity.getPosterPath()).into(mIvImgdetail);
+        Glide.with(this).load(AppConstants.IMAGE_URL + entity.getPosterPath()).placeholder(R.drawable.ic_no_photo).into(mIvImgdetail);
         if (entity.getBackdropPath() != null) {
-            Glide.with(this).load(AppConstants.IMAGE_URL + entity.getBackdropPath()).into(mIvCoverdetail);
+            Glide.with(this).load(AppConstants.IMAGE_URL + entity.getBackdropPath()).placeholder(R.drawable.ic_no_photo).into(mIvCoverdetail);
         } else {
-            Glide.with(this).load(AppConstants.IMAGE_URL + entity.getPosterPath()).into(mIvCoverdetail);
+            Glide.with(this).load(AppConstants.IMAGE_URL + entity.getPosterPath()).placeholder(R.drawable.ic_no_photo).into(mIvCoverdetail);
         }
 
         if (entity.getOverview() == null || entity.getOverview().equals("")) {

@@ -84,8 +84,8 @@ public class MovieFragment extends Fragment {
 
     private Observer<List<MovieResultsItem>> getMovie = movieResultsItems -> {
         if (movieResultsItems != null) {
-            movieAdapter.setMovieData(movieResultsItems);
             toggleEmptyMovies(movieResultsItems.size());
+            movieAdapter.setMovieData(movieResultsItems);
             mShimmerViewContainer.stopShimmer();
             mShimmerViewContainer.setVisibility(View.GONE);
         }
@@ -100,6 +100,7 @@ public class MovieFragment extends Fragment {
     private void toggleEmptyMovies(int size) {
         if (size > 0) {
             mEmptyState.setVisibility(View.GONE);
+            mRvMovie.setVisibility(View.VISIBLE);
         } else {
             mRvMovie.setVisibility(View.GONE);
             mEmptyState.setVisibility(View.VISIBLE);

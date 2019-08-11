@@ -80,8 +80,8 @@ public class FavoriteTVShowFragment extends Fragment {
         @Override
         public void onChanged(@Nullable List<TVShowEntity> tvShowEntities) {
             if (tvShowEntities != null) {
-                favoriteTVShowAdapter.setTVShows(tvShowEntities);
                 toggleEmptyTVShows(tvShowEntities.size());
+                favoriteTVShowAdapter.setTVShows(tvShowEntities);
                 mShimmerViewContainer.stopShimmer();
                 mShimmerViewContainer.setVisibility(View.GONE);
             }
@@ -91,6 +91,7 @@ public class FavoriteTVShowFragment extends Fragment {
     private void toggleEmptyTVShows(int size) {
         if (size > 0) {
             mEmptyState.setVisibility(View.GONE);
+            mRvFavtvshow.setVisibility(View.VISIBLE);
         } else {
             mRvFavtvshow.setVisibility(View.GONE);
             mEmptyState.setVisibility(View.VISIBLE);

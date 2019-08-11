@@ -8,8 +8,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,11 +32,10 @@ import butterknife.ButterKnife;
 /**
  * Created by Centaury on 7/5/2019.
  */
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> implements Filterable {
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> {
 
     private Context context;
     private List<MovieResultsItem> movieResultsList = new ArrayList<>();
-    private List<MovieResultsItem> movieResultsFiltered = new ArrayList<>();
     private List<GenresItem> genresItemsList = new ArrayList<>();
 
     public MovieAdapter(Context context) {
@@ -46,8 +43,8 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
     }
 
     public void setMovieData(List<MovieResultsItem> movieData) {
-        movieResultsFiltered.clear();
-        movieResultsFiltered.addAll(movieData);
+        movieResultsList.clear();
+        movieResultsList.addAll(movieData);
         notifyDataSetChanged();
     }
 
@@ -68,49 +65,18 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
     @Override
     public void onBindViewHolder(@NonNull viewHolder viewHolder, int i) {
 
-        MovieResultsItem movie = movieResultsFiltered.get(i);
+        MovieResultsItem movie = movieResultsList.get(i);
         viewHolder.bind(movie);
         viewHolder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetailMovieActivity.class);
-            intent.putExtra(DetailMovieActivity.EXTRA_MOVIE, movieResultsFiltered.get(viewHolder.getAdapterPosition()));
+            intent.putExtra(DetailMovieActivity.EXTRA_MOVIE, movieResultsList.get(viewHolder.getAdapterPosition()));
             context.startActivity(intent);
         });
     }
 
     @Override
     public int getItemCount() {
-        return movieResultsFiltered.size();
-    }
-
-    @Override
-    public Filter getFilter() {
-        return new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                String charMovie = constraint.toString();
-                if (charMovie.isEmpty()) {
-                    movieResultsFiltered = movieResultsList;
-                } else {
-                    List<MovieResultsItem> filteredList = new ArrayList<>();
-                    for (MovieResultsItem item : movieResultsList) {
-                        if (item.getTitle().toLowerCase().contains(charMovie.toLowerCase())) {
-                            filteredList.add(item);
-                        }
-                    }
-                    movieResultsFiltered = filteredList;
-                }
-
-                FilterResults filterResults = new FilterResults();
-                filterResults.values = movieResultsFiltered;
-                return filterResults;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-                movieResultsFiltered = (ArrayList<MovieResultsItem>) results.values;
-                notifyDataSetChanged();
-            }
-        };
+        return movieResultsList.size();
     }
 
     public class viewHolder extends RecyclerView.ViewHolder {
@@ -141,7 +107,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
             } else {
                 mTxtGenremovielist.setText(getGenres(movie.getGenreIds()));
             }
-            Glide.with(context).load(AppConstants.IMAGE_URL + movie.getPosterPath()).into(mIvMovielist);
+            Glide.with(context).load(AppConstants.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.ic_no_photo).into(mIvMovielist);
 
             if (movie.getOverview() == null || movie.getOverview().equals("")) {
                 mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));

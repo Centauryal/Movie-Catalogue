@@ -1,10 +1,12 @@
 package com.centaury.mcatalogue.ui.settings;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -36,8 +38,12 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Window window = getWindow();
+            window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
+        }
 
-        mSettingsLanguage.setText(Locale.getDefault().getDisplayCountry());
+        mSettingsLanguage.setText(Locale.getDefault().getDisplayLanguage());
     }
 
     @OnClick({R.id.btn_back, R.id.setting_change_language, R.id.sw_release_reminder, R.id.sw_daily_reminder})

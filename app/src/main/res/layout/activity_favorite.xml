@@ -47,7 +47,7 @@
                     android:layout_centerVertical="true"
                     android:text="@string/title_favorite"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/_20ssp"
+                    android:textSize="@dimen/_18ssp"
                     android:textStyle="bold" />
 
             </RelativeLayout>

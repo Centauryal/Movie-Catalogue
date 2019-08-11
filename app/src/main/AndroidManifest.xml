@@ -21,9 +21,8 @@
         android:theme="@style/AppTheme.NoToolbar"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:icon">
-        <activity android:name=".ui.settings.SettingsActivity"></activity>
-        <activity android:name=".ui.detail.DetailTVShowActivity" />
-        <activity android:name=".ui.favorite.FavoriteActivity" />
+        <activity android:name=".ui.search.SearchTVShowActivity"></activity>
+        <activity android:name=".ui.search.SearchMovieActivity" />
         <activity android:name=".ui.splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,6 +32,9 @@
         </activity>
         <activity android:name=".ui.main.MainActivity" />
         <activity android:name=".ui.detail.DetailMovieActivity" />
+        <activity android:name=".ui.settings.SettingsActivity" />
+        <activity android:name=".ui.detail.DetailTVShowActivity" />
+        <activity android:name=".ui.favorite.FavoriteActivity" />
 
         <uses-library
             android:name="org.apache.http.legacy"
