@@ -107,7 +107,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
             } else {
                 mTxtGenremovielist.setText(getGenres(movie.getGenreIds()));
             }
-            Glide.with(context).load(AppConstants.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.ic_no_photo).into(mIvMovielist);
+            Glide.with(context).load(AppConstants.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvMovielist);
 
             if (movie.getOverview() == null || movie.getOverview().equals("")) {
                 mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));

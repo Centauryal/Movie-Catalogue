@@ -28,9 +28,15 @@
     <string name="txt_title_delete_dialog">Are you sure to delete this favorite?</string>
     <string name="txt_showcase_one">New! special page to see your favorite contents</string>
     <string name="txt_release_reminder">Release Reminder</string>
+    <string name="txt_nomovie_release">There are no movies released today</string>
+    <string name="txt_movie_release">Today is the release of the new movie</string>
     <string name="txt_desc_release">Reminder showing the movie that released today</string>
+    <string name="txt_toast_release">Set release reminders</string>
+    <string name="txt_cancel_release">Release reminders canceled</string>
     <string name="txt_daily_reminder">Daily Reminder</string>
     <string name="txt_desc_daily">Reminder for return to app</string>
+    <string name="txt_toast_daily">Set daily reminders</string>
+    <string name="txt_cancel_daily">Daily reminders canceled</string>
     <string name="txt_hint_movie">Type movie…</string>
     <string name="txt_hint_tvshow">Type TVShow…</string>
 

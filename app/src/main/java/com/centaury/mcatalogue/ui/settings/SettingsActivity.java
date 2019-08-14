@@ -13,6 +13,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.centaury.mcatalogue.R;
+import com.centaury.mcatalogue.data.prefs.ReminderPreference;
+import com.centaury.mcatalogue.services.reminder.DailyReminder;
+import com.centaury.mcatalogue.services.reminder.ReleaseReminder;
 
 import java.util.Locale;
 
@@ -44,9 +47,35 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         mSettingsLanguage.setText(Locale.getDefault().getDisplayLanguage());
+
+        ReminderPreference preference = new ReminderPreference(this);
+        DailyReminder dailyReminder = new DailyReminder();
+        mSwDailyReminder.setChecked(preference.getDailyReminder());
+        mSwDailyReminder.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                preference.setDailyReminder(true);
+                dailyReminder.setDailyReminder(this);
+            } else {
+                preference.setDailyReminder(false);
+                dailyReminder.cancelDailyReminder(this);
+            }
+        });
+
+        ReleaseReminder releaseReminder = new ReleaseReminder();
+        mSwReleaseReminder.setChecked(preference.getReleaseReminder());
+        mSwReleaseReminder.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                preference.setReleaseReminder(true);
+                releaseReminder.setReleaseReminder(this);
+            } else {
+                preference.setReleaseReminder(false);
+                releaseReminder.cancelReleaseReminder(this);
+            }
+        });
+
     }
 
-    @OnClick({R.id.btn_back, R.id.setting_change_language, R.id.sw_release_reminder, R.id.sw_daily_reminder})
+    @OnClick({R.id.btn_back, R.id.setting_change_language})
     public void onClick(View v) {
         switch (v.getId()) {
             default:
@@ -57,10 +86,6 @@ public class SettingsActivity extends AppCompatActivity {
             case R.id.setting_change_language:
                 Intent intent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
                 startActivity(intent);
-                break;
-            case R.id.sw_release_reminder:
-                break;
-            case R.id.sw_daily_reminder:
                 break;
         }
     }

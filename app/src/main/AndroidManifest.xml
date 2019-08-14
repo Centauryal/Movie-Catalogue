@@ -9,19 +9,21 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".MovieCatalogueApp"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_logo"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoToolbar"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:icon">
-        <activity android:name=".ui.search.SearchTVShowActivity"></activity>
+        <activity android:name=".ui.search.SearchTVShowActivity" />
         <activity android:name=".ui.search.SearchMovieActivity" />
         <activity android:name=".ui.splash.SplashActivity">
             <intent-filter>
@@ -39,6 +41,30 @@
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
+
+        <receiver
+            android:name=".services.reminder.DailyReminder"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver
+            android:name=".services.reminder.ReleaseReminder"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver android:name=".ui.widget.FavoriteWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/favorite_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".ui.widget.StackWidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 
 </manifest>

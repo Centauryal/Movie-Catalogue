@@ -48,7 +48,6 @@
         android:id="@+id/cv_image"
         android:layout_width="@dimen/_100sdp"
         android:layout_height="@dimen/_150sdp"
-        app:cardBackgroundColor="@color/image_background"
         app:cardCornerRadius="10dp"
         app:cardElevation="2dp"
         app:cardPreventCornerOverlap="false"

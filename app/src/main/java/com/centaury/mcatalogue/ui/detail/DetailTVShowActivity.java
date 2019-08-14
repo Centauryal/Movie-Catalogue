@@ -123,11 +123,11 @@ public class DetailTVShowActivity extends AppCompatActivity {
         mTxtRatetvmovie.setText(String.valueOf(tvShow.getVoteAverage()));
         float movieRating = (float) (tvShow.getVoteAverage() / 2);
         mRbRatingtvdetail.setRating(movieRating);
-        Glide.with(this).load(AppConstants.IMAGE_URL + tvShow.getPosterPath()).placeholder(R.drawable.ic_no_photo).into(mIvImgtvdetail);
+        Glide.with(this).load(AppConstants.IMAGE_URL + tvShow.getPosterPath()).placeholder(R.drawable.noimage).into(mIvImgtvdetail);
         if (tvShow.getBackdropPath() != null) {
-            Glide.with(this).load(AppConstants.IMAGE_URL + tvShow.getBackdropPath()).placeholder(R.drawable.ic_no_photo).into(mIvCovertvdetail);
+            Glide.with(this).load(AppConstants.IMAGE_URL + tvShow.getBackdropPath()).placeholder(R.drawable.noimage).into(mIvCovertvdetail);
         } else {
-            Glide.with(this).load(AppConstants.IMAGE_URL + tvShow.getPosterPath()).placeholder(R.drawable.ic_no_photo).into(mIvCovertvdetail);
+            Glide.with(this).load(AppConstants.IMAGE_URL + tvShow.getPosterPath()).placeholder(R.drawable.noimage).into(mIvCovertvdetail);
         }
 
         if (tvShow.getOverview() == null || tvShow.getOverview().equals("")) {
@@ -156,11 +156,11 @@ public class DetailTVShowActivity extends AppCompatActivity {
         int rate = (int) Double.parseDouble(entity.getVoteAverage());
         float movieRating = (float) (rate / 2);
         mRbRatingtvdetail.setRating(movieRating);
-        Glide.with(this).load(AppConstants.IMAGE_URL + entity.getPosterPath()).placeholder(R.drawable.ic_no_photo).into(mIvImgtvdetail);
+        Glide.with(this).load(AppConstants.IMAGE_URL + entity.getPosterPath()).placeholder(R.drawable.noimage).into(mIvImgtvdetail);
         if (entity.getBackdropPath() != null) {
-            Glide.with(this).load(AppConstants.IMAGE_URL + entity.getBackdropPath()).placeholder(R.drawable.ic_no_photo).into(mIvCovertvdetail);
+            Glide.with(this).load(AppConstants.IMAGE_URL + entity.getBackdropPath()).placeholder(R.drawable.noimage).into(mIvCovertvdetail);
         } else {
-            Glide.with(this).load(AppConstants.IMAGE_URL + entity.getPosterPath()).placeholder(R.drawable.ic_no_photo).into(mIvCovertvdetail);
+            Glide.with(this).load(AppConstants.IMAGE_URL + entity.getPosterPath()).placeholder(R.drawable.noimage).into(mIvCovertvdetail);
         }
 
         if (entity.getOverview() == null || entity.getOverview().equals("")) {
@@ -250,9 +250,7 @@ public class DetailTVShowActivity extends AppCompatActivity {
                 isFavorite = true;
             }
             setFavorite();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
     }

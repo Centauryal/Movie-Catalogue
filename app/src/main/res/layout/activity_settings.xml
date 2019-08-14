@@ -94,7 +94,6 @@
             android:clickable="true"
             android:focusable="true"
             android:orientation="horizontal"
-            android:layout_marginEnd="@dimen/_10sdp"
             android:padding="@dimen/_16sdp">
 
             <LinearLayout
@@ -134,7 +133,6 @@
             android:clickable="true"
             android:focusable="true"
             android:orientation="horizontal"
-            android:layout_marginEnd="@dimen/_10sdp"
             android:padding="@dimen/_16sdp">
 
             <LinearLayout

@@ -19,6 +19,9 @@ public interface MovieDao {
     @Query("SELECT * FROM movies ORDER BY id ASC")
     LiveData<List<MovieEntity>> getAllMovies();
 
+    @Query("SELECT * FROM movies ORDER BY id ASC")
+    List<MovieEntity> getAllWidgetMovies();
+
     @Query("SELECT * FROM movies WHERE id=:id")
     MovieEntity getMovieById(int id);
 
