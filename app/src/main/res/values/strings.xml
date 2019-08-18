@@ -34,6 +34,7 @@
     <string name="txt_toast_release">Set release reminders</string>
     <string name="txt_cancel_release">Release reminders canceled</string>
     <string name="txt_daily_reminder">Daily Reminder</string>
+    <string name="txt_movie_daily">Don\'t miss it, there\'s the latest movie!</string>
     <string name="txt_desc_daily">Reminder for return to app</string>
     <string name="txt_toast_daily">Set daily reminders</string>
     <string name="txt_cancel_daily">Daily reminders canceled</string>

@@ -69,7 +69,7 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
 
             viewHolder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(context, DetailMovieActivity.class);
-                intent.putExtra(DetailMovieActivity.EXTRA_FAV_MOVIE, movieEntityList.get(viewHolder.getAdapterPosition()));
+                intent.putExtra(DetailMovieActivity.EXTRA_FAV_MOVIE, movieEntityList.get(viewHolder.getAdapterPosition()).getId());
                 context.startActivity(intent);
             });
             viewHolder.mBtnDelete.setOnClickListener(v ->

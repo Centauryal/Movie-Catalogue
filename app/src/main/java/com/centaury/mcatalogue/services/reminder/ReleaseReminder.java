@@ -8,6 +8,7 @@ import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -72,15 +73,18 @@ public class ReleaseReminder extends BroadcastReceiver {
             jmlmovie = 0;
         }
 
+        String title = context.getString(R.string.txt_release_reminder);
 
         if (jmlmovie == 0) {
             intent = new Intent(context, MainActivity.class);
             pendingIntent = TaskStackBuilder.create(context).addNextIntent(intent)
                     .getPendingIntent(REQUEST_RELEASE, PendingIntent.FLAG_UPDATE_CURRENT);
 
+            String message = context.getString(R.string.txt_nomovie_release);
             builder.setSmallIcon(R.drawable.ic_notif_logo)
-                    .setContentTitle(context.getString(R.string.txt_release_reminder))
-                    .setContentText(context.getString(R.string.txt_nomovie_release))
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                     .setContentIntent(pendingIntent)
                     .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                     .setSound(soundAlarm)
@@ -90,9 +94,11 @@ public class ReleaseReminder extends BroadcastReceiver {
             pendingIntent = TaskStackBuilder.create(context).addNextIntent(intent)
                     .getPendingIntent(REQUEST_RELEASE, PendingIntent.FLAG_UPDATE_CURRENT);
 
+            String message = context.getString(R.string.txt_movie_release) + " " + TextUtils.join(", ", releaseMovieList);
             builder.setSmallIcon(R.drawable.ic_notif_logo)
-                    .setContentTitle(context.getString(R.string.txt_release_reminder))
-                    .setContentText(context.getString(R.string.txt_movie_release) + " " + TextUtils.join(", ", releaseMovieList))
+                    .setContentTitle(title)
+                    .setContentText(message)
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                     .setContentIntent(pendingIntent)
                     .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                     .setSound(soundAlarm)
@@ -104,7 +110,13 @@ public class ReleaseReminder extends BroadcastReceiver {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME,
                     NotificationManager.IMPORTANCE_DEFAULT);
 
+            AudioAttributes attributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build();
+
             channel.enableVibration(true);
+            channel.enableLights(true);
+            channel.setSound(soundAlarm, attributes);
             channel.setVibrationPattern(new long[]{1000, 1000, 1000, 1000, 1000});
 
             builder.setChannelId(CHANNEL_ID);

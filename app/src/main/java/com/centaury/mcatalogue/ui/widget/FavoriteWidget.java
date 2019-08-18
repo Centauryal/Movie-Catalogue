@@ -11,6 +11,8 @@ import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.centaury.mcatalogue.R;
+import com.centaury.mcatalogue.data.db.entity.MovieEntity;
+import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
 
 /**
  * Implementation of App Widget functionality.
@@ -19,6 +21,7 @@ public class FavoriteWidget extends AppWidgetProvider {
 
     private static final String TOAST_ACTION = "com.centaury.mcatalogue.TOAST_ACTION";
     public static final String EXTRA_ITEM = "com.centaury.mcatalogue.EXTRA_ITEM";
+    public static final String UPDATE_WIDGET = "Update Widget";
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
@@ -33,8 +36,8 @@ public class FavoriteWidget extends AppWidgetProvider {
         Intent toastIntent = new Intent(context, FavoriteWidget.class);
         toastIntent.setAction(FavoriteWidget.TOAST_ACTION);
         toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        toastIntent.setData(Uri.parse(toastIntent.toUri(Intent.URI_INTENT_SCHEME)));
 
-        intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
         PendingIntent toastPendingIntent = PendingIntent.getBroadcast(context, 0, toastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setPendingIntentTemplate(R.id.stack_view, toastPendingIntent);
 
@@ -61,18 +64,28 @@ public class FavoriteWidget extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        super.onReceive(context, intent);
+
         if (intent.getAction() != null) {
             if (intent.getAction().equals(TOAST_ACTION)) {
                 int viewIndex = intent.getIntExtra(EXTRA_ITEM, 0);
-                Toast.makeText(context, "Touched view " + viewIndex, Toast.LENGTH_SHORT).show();
+
+                Intent intentDetail = new Intent(context, DetailMovieActivity.class);
+                intentDetail.putExtra(DetailMovieActivity.EXTRA_FAV_MOVIE, viewIndex);
+                intentDetail.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intentDetail);
+            }
+
+            if (intent.getAction().equals(UPDATE_WIDGET)) {
+                AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);
+                ComponentName name = new ComponentName(context, FavoriteWidget.class);
+                int[] ints = widgetManager.getAppWidgetIds(name);
+                for (int id : ints) {
+                    widgetManager.notifyAppWidgetViewDataChanged(id, R.id.stack_view);
+                }
             }
         }
 
-        AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);
-        ComponentName name = new ComponentName(context, FavoriteWidget.class);
-        int[] ints = widgetManager.getAppWidgetIds(name);
-        widgetManager.notifyAppWidgetViewDataChanged(ints, R.id.stack_view);
+        super.onReceive(context, intent);
     }
 }
 

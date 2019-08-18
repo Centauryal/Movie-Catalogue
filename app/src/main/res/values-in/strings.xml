@@ -28,6 +28,7 @@
     <string name="txt_toast_release">Atur pengingat rilis</string>
     <string name="txt_cancel_release">Pengingat rilis dibatalkan</string>
     <string name="txt_daily_reminder">Pengingat Harian</string>
+    <string name="txt_movie_daily">Jangan sampai ketinggalan, ada movie terbaru!</string>
     <string name="txt_desc_daily">Pengingat untuk kembali ke aplikasi</string>
     <string name="txt_toast_daily">Atur pengingat harian</string>
     <string name="txt_cancel_daily">Pengingat harian dibatalkan</string>

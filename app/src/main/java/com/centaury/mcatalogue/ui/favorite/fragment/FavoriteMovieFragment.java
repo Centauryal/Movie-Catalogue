@@ -3,6 +3,7 @@ package com.centaury.mcatalogue.ui.favorite.fragment;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,8 +21,10 @@ import android.widget.Toast;
 
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.db.entity.MovieEntity;
+import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
 import com.centaury.mcatalogue.ui.favorite.adapter.FavoriteMovieAdapter;
 import com.centaury.mcatalogue.ui.favorite.viewmodel.FavoriteMovieViewModel;
+import com.centaury.mcatalogue.ui.widget.FavoriteWidget;
 import com.centaury.mcatalogue.utils.Helper;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
@@ -122,6 +125,12 @@ public class FavoriteMovieFragment extends Fragment {
         favoriteMovieAdapter.setOnDeleteItemClickCallback(this::showDialogDeleteFavorite);
     }
 
+    private void updateWidget() {
+        Intent intent = new Intent(getContext(), FavoriteWidget.class);
+        intent.setAction(FavoriteWidget.UPDATE_WIDGET);
+        getContext().sendBroadcast(intent);
+    }
+
     private void showDialogDeleteFavorite(int movieId) {
         MovieEntity movieEntity;
         try {
@@ -140,6 +149,7 @@ public class FavoriteMovieFragment extends Fragment {
                     .setPositiveButton(getString(R.string.btn_delete), (dialog, which) -> {
                         favoriteMovieViewModel.deleteMovie(movieEntity);
                         dialog.dismiss();
+                        updateWidget();
                         Toast.makeText(getContext(), getString(R.string.txt_remove_movie), Toast.LENGTH_SHORT).show();
                     })
                     .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> {

@@ -35,6 +35,12 @@ public class SettingsActivity extends AppCompatActivity {
     Switch mSwDailyReminder;
     @BindView(R.id.settings_language)
     TextView mSettingsLanguage;
+    @BindView(R.id.ln_release)
+    LinearLayout mLnRelease;
+    @BindView(R.id.ln_daily)
+    LinearLayout mLnDaily;
+
+    private ReminderPreference preference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +54,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         mSettingsLanguage.setText(Locale.getDefault().getDisplayLanguage());
 
-        ReminderPreference preference = new ReminderPreference(this);
+        preference = new ReminderPreference(this);
         DailyReminder dailyReminder = new DailyReminder();
         mSwDailyReminder.setChecked(preference.getDailyReminder());
         mSwDailyReminder.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -75,7 +81,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    @OnClick({R.id.btn_back, R.id.setting_change_language})
+    @OnClick({R.id.btn_back, R.id.setting_change_language, R.id.ln_release, R.id.ln_daily})
     public void onClick(View v) {
         switch (v.getId()) {
             default:
@@ -86,6 +92,20 @@ public class SettingsActivity extends AppCompatActivity {
             case R.id.setting_change_language:
                 Intent intent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
                 startActivity(intent);
+                break;
+            case R.id.ln_release:
+                if (mSwReleaseReminder.isChecked()) {
+                    mSwReleaseReminder.setChecked(false);
+                } else {
+                    mSwReleaseReminder.setChecked(true);
+                }
+                break;
+            case R.id.ln_daily:
+                if (mSwDailyReminder.isChecked()) {
+                    mSwDailyReminder.setChecked(false);
+                } else {
+                    mSwDailyReminder.setChecked(true);
+                }
                 break;
         }
     }

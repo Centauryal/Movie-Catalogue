@@ -9,6 +9,7 @@ import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -44,12 +45,16 @@ public class DailyReminder extends BroadcastReceiver {
         PendingIntent pendingIntent = TaskStackBuilder.create(context).addNextIntent(intent)
                 .getPendingIntent(REQUEST_CODE, PendingIntent.FLAG_UPDATE_CURRENT);
 
+        String title = context.getString(R.string.txt_daily_reminder);
+        String message = context.getString(R.string.txt_movie_daily);
+
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Uri soundAlarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notif_logo)
-                .setContentTitle(context.getString(R.string.txt_daily_reminder))
-                .setContentText(context.getString(R.string.txt_desc_daily))
+                .setContentTitle(title)
+                .setContentText(message)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setContentIntent(pendingIntent)
                 .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                 .setSound(soundAlarm)
@@ -60,7 +65,13 @@ public class DailyReminder extends BroadcastReceiver {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME,
                     NotificationManager.IMPORTANCE_DEFAULT);
 
+            AudioAttributes attributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build();
+
             channel.enableVibration(true);
+            channel.enableLights(true);
+            channel.setSound(soundAlarm, attributes);
             channel.setVibrationPattern(new long[]{1000, 1000, 1000, 1000, 1000});
 
             builder.setChannelId(CHANNEL_ID);
