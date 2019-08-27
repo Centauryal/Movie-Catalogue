@@ -19,6 +19,7 @@ import com.centaury.mcatalogue.utils.AppConstants;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +33,7 @@ import butterknife.ButterKnife;
 public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdapter.viewHolder> {
 
     private Context context;
-    private List<MovieEntity> movieEntityList;
+    private List<MovieEntity> movieEntityList = new ArrayList<>();
     private OnDeleteItemClickCallback onDeleteItemClickCallback;
 
     public interface OnDeleteItemClickCallback {
@@ -48,8 +49,13 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
     }
 
     public void setMovies(List<MovieEntity> movies) {
-        movieEntityList = movies;
+        this.movieEntityList.clear();
+        this.movieEntityList.addAll(movies);
         notifyDataSetChanged();
+    }
+
+    public ArrayList<MovieEntity> getListMovies() {
+        return (ArrayList<MovieEntity>) movieEntityList;
     }
 
     @NonNull
@@ -126,6 +132,7 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
 
             DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
             DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+
             try {
                 Date date = inputDate.parse(movie.getReleaseDate());
                 String releaseDate = outputDate.format(date);
@@ -133,7 +140,6 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-
         }
 
     }

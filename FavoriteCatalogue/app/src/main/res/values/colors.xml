@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="grey_3">#f7f7f7</color>
+    <color name="grey_5">#f2f2f2</color>
+    <color name="grey_10">#e6e6e6</color>
+    <color name="grey_20">#cccccc</color>
+    <color name="grey_40">#999999</color>
+    <color name="grey_60">#666666</color>
+    <color name="grey_80">#37474F</color>
+    <color name="grey_90">#263238</color>
+
+    <color name="red">#F25757</color>
+    <color name="orange">#f36a21</color>
+    <color name="green">#0ecf48</color>
+    <color name="blue">#21bff3</color>
+
+    <color name="hint">#767676</color>
+    <color name="shimmer_color_custom">#c7c7c7</color>
+
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="line_edittext">#C2C2C2</color>
+    <color name="button_background">#4F80FF</color>
+    <color name="image_background">#dedede</color>
+    <color name="placeholder_bg">#dddddd</color>
+    <color name="stars">#FDDE5C</color>
+</resources>

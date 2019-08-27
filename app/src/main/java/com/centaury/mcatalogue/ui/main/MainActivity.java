@@ -18,6 +18,7 @@ import com.centaury.mcatalogue.ui.main.fragment.TVShowFragment;
 import com.centaury.mcatalogue.ui.search.SearchMovieActivity;
 import com.centaury.mcatalogue.ui.search.SearchTVShowActivity;
 import com.centaury.mcatalogue.ui.settings.SettingsActivity;
+import com.centaury.mcatalogue.utils.Helper;
 import com.centaury.mcatalogue.utils.ViewPagerAdapter;
 
 import butterknife.BindView;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
         setupViewPager(mViewPager);
         mTabs.setupWithViewPager(mViewPager);
+        Helper.updateWidget(this);
         //showcaseGuide();
 
     }
@@ -61,6 +63,12 @@ public class MainActivity extends AppCompatActivity {
         viewPagerAdapter.addFragment(new MovieFragment(), getString(R.string.title_movie));
         viewPagerAdapter.addFragment(new TVShowFragment(), getString(R.string.title_tv_show));
         viewPager.setAdapter(viewPagerAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Helper.updateWidget(this);
     }
 
     /*private void showcaseGuide() {

@@ -1,6 +1,7 @@
 package com.centaury.mcatalogue.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -8,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+
+import com.centaury.mcatalogue.ui.widget.FavoriteWidget;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -73,5 +76,11 @@ public class Helper {
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
+    public static void updateWidget(Context context) {
+        Intent intent = new Intent(context, FavoriteWidget.class);
+        intent.setAction(FavoriteWidget.UPDATE_WIDGET);
+        context.sendBroadcast(intent);
     }
 }

@@ -1,0 +1,152 @@
+package com.centaury.favoritecatalogue.ui.movie.adapter;
+
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.centaury.favoritecatalogue.R;
+import com.centaury.favoritecatalogue.data.entity.MovieEntity;
+import com.centaury.favoritecatalogue.ui.detail.DetailMovieActivity;
+import com.centaury.favoritecatalogue.utils.AppConstants;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+import static com.centaury.favoritecatalogue.data.DatabaseContract.MovieColumns.CONTENT_URI;
+
+/**
+ * Created by Centaury on 8/22/2019.
+ */
+public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> {
+
+    private Context context;
+    private List<MovieEntity> movieEntityList = new ArrayList<>();
+    private OnDeleteItemClickCallback onDeleteItemClickCallback;
+
+    public interface OnDeleteItemClickCallback {
+        void onDeleteClicked(Uri movieId);
+    }
+
+    public void setOnDeleteItemClickCallback(OnDeleteItemClickCallback onDeleteItemClickCallback) {
+        this.onDeleteItemClickCallback = onDeleteItemClickCallback;
+    }
+
+    public MovieAdapter(Context context) {
+        this.context = context;
+    }
+
+    public void setMovies(List<MovieEntity> movies) {
+        this.movieEntityList.clear();
+        this.movieEntityList.addAll(movies);
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<MovieEntity> getListMovies() {
+        return (ArrayList<MovieEntity>) movieEntityList;
+    }
+
+    @NonNull
+    @Override
+    public viewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_favorite_movielist, viewGroup, false);
+
+        return new viewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull viewHolder viewHolder, int i) {
+        if (movieEntityList != null) {
+            MovieEntity entity = movieEntityList.get(i);
+            viewHolder.bind(entity);
+
+            Uri uri = Uri.parse(CONTENT_URI + "/" + getListMovies().get(i).getId());
+
+            viewHolder.itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(context, DetailMovieActivity.class);
+                intent.setData(uri);
+                context.startActivity(intent);
+            });
+            viewHolder.mBtnDelete.setOnClickListener(v ->
+                    onDeleteItemClickCallback.onDeleteClicked(uri));
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        if (movieEntityList != null) {
+            return movieEntityList.size();
+        } else {
+            return 0;
+        }
+    }
+
+    public class viewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.txt_titlefavbackground)
+        TextView mTxtTitlebackground;
+        @BindView(R.id.iv_moviefavlist)
+        ImageView mIvMovielist;
+        @BindView(R.id.txt_genremoviefavlist)
+        TextView mTxtGenremovielist;
+        @BindView(R.id.txt_titlemoviefavlist)
+        TextView mTxtTitlemovielist;
+        @BindView(R.id.txt_descmoviefavlist)
+        TextView mTxtDescmovielist;
+        @BindView(R.id.txt_datemoviefavlist)
+        TextView mTxtDatemovielist;
+        @BindView(R.id.btn_delete)
+        ImageView mBtnDelete;
+
+        public viewHolder(@NonNull View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+
+        public void bind(MovieEntity movie) {
+
+            mTxtTitlemovielist.setText(movie.getTitle());
+            mTxtTitlebackground.setText(movie.getOriginalTitle());
+            if (movie.getGenreIds() == null || movie.getGenreIds().equals("")) {
+                mTxtGenremovielist.setText(context.getResources().getString(R.string.txt_no_genre));
+            } else {
+                mTxtGenremovielist.setText(movie.getGenreIds());
+            }
+            Glide.with(context).load(AppConstants.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvMovielist);
+
+            if (movie.getOverview() == null || movie.getOverview().equals("")) {
+                mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));
+            } else {
+                mTxtDescmovielist.setText(movie.getOverview());
+            }
+
+            DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+
+            try {
+                Date date = inputDate.parse(movie.getReleaseDate());
+                String releaseDate = outputDate.format(date);
+                mTxtDatemovielist.setText(releaseDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+}

@@ -19,6 +19,7 @@ import com.centaury.mcatalogue.utils.AppConstants;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -32,7 +33,7 @@ import butterknife.ButterKnife;
 public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAdapter.viewHolder> {
 
     private Context context;
-    private List<TVShowEntity> tvShowEntityList;
+    private List<TVShowEntity> tvShowEntityList = new ArrayList<>();
     private OnDeleteItemClickCallback onDeleteItemClickCallback;
 
     public interface OnDeleteItemClickCallback {
@@ -48,8 +49,13 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
     }
 
     public void setTVShows(List<TVShowEntity> tvShows) {
-        tvShowEntityList = tvShows;
+        this.tvShowEntityList.clear();
+        this.tvShowEntityList.addAll(tvShows);
         notifyDataSetChanged();
+    }
+
+    public ArrayList<TVShowEntity> getListTVShows() {
+        return (ArrayList<TVShowEntity>) tvShowEntityList;
     }
 
     @NonNull

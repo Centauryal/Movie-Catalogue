@@ -1,0 +1,63 @@
+<resources>
+    <string name="app_name">Favorite Catalogue</string>
+
+    <string name="title_storyline">Storyline</string>
+    <string name="title_movie">Movie</string>
+    <string name="title_tv_show">TV Show</string>
+    <string name="title_favorite">Favorite</string>
+    <string name="title_search">Search</string>
+    <string name="title_settings">Settings</string>
+
+    <string name="contoh_desc">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+    <string name="contoh_judul">COBA AJAA</string>
+    <string name="contoh_genre">Comedy</string>
+    <string name="contoh_tanggal">friday, Jun 29, 2017</string>
+    <string name="contoh_rate">7.5</string>
+    <string name="contoh_bahasa">English</string>
+
+    <string name="contentdesc_coverimage_detail">cover image on detail</string>
+    <string name="contentdesc_image_detail">image on detail</string>
+    <string name="contentdesc_empty_state">image if the data is empty</string>
+    <string name="contentdesc_image_favorite">image on favorite</string>
+    <string name="contentdesc_image">image on data</string>
+
+    <string name="contentdesc_btn_back">back button</string>
+    <string name="contentdesc_btn_favorite">favorite button</string>
+    <string name="contentdesc_btn_delete">delete button</string>
+    <string name="contentdesc_btn_settings">settings button</string>
+    <string name="contentdesc_btn_search">search button</string>
+
+    <string name="txt_change_language_settings">Change Language</string>
+    <string name="txt_error_state">No movies were found</string>
+    <string name="txt_nodesc">No description</string>
+    <string name="txt_loading">Please wait! This may take a moment.</string>
+    <string name="txt_no_genre">No Genre</string>
+    <string name="txt_no_internet">Not connected to internet</string>
+    <string name="txt_add_movie">Favorite movie added</string>
+    <string name="txt_remove_movie">Favorite movie deleted</string>
+    <string name="txt_add_tvshow">Favorite TVshow added</string>
+    <string name="txt_remove_tvshow">Favorite TVshow deleted</string>
+    <string name="txt_title_delete_dialog">Are you sure to delete this favorite?</string>
+    <string name="txt_showcase_one">New! special page to see your favorite contents</string>
+    <string name="txt_release_reminder">Release Reminder</string>
+    <string name="txt_nomovie_release">There are no movies released today</string>
+    <string name="txt_movie_release">Today is the release of the new movie</string>
+    <string name="txt_desc_release">Reminder showing the movie that released today</string>
+    <string name="txt_toast_release">Set release reminders</string>
+    <string name="txt_cancel_release">Release reminders canceled</string>
+    <string name="txt_daily_reminder">Daily Reminder</string>
+    <string name="txt_movie_daily">Don\'t miss it, there\'s the latest movie!</string>
+    <string name="txt_desc_daily">Reminder for return to app</string>
+    <string name="txt_toast_daily">Set daily reminders</string>
+    <string name="txt_cancel_daily">Daily reminders canceled</string>
+    <string name="txt_hint_movie">Type movie…</string>
+    <string name="txt_hint_tvshow">Type TVShow…</string>
+
+    <string name="btn_try_again">try again</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_cancel">Cancel</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

@@ -1,10 +1,14 @@
 package com.centaury.mcatalogue.ui.favorite.fragment;
 
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
+import android.content.Context;
+import android.database.ContentObserver;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,32 +25,33 @@ import android.widget.Toast;
 
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.db.entity.MovieEntity;
-import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
 import com.centaury.mcatalogue.ui.favorite.adapter.FavoriteMovieAdapter;
 import com.centaury.mcatalogue.ui.favorite.viewmodel.FavoriteMovieViewModel;
-import com.centaury.mcatalogue.ui.widget.FavoriteWidget;
 import com.centaury.mcatalogue.utils.Helper;
+import com.centaury.mcatalogue.utils.Mapping;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
-import java.util.List;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.Unbinder;
+
+import static com.centaury.mcatalogue.data.db.DatabaseContract.MovieColumns.CONTENT_URI;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FavoriteMovieFragment extends Fragment {
+public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback {
+
+    private static final String EXTRA_STATE = "EXTRA_STATE";
 
     @BindView(R.id.rv_favmovie)
     RecyclerView mRvFavmovie;
     @BindView(R.id.shimmer_view_container)
     ShimmerFrameLayout mShimmerViewContainer;
-    @BindView(R.id.btn_try_again)
-    TextView mBtnTryAgain;
     @BindView(R.id.empty_state)
     LinearLayout mEmptyState;
     private Unbinder unbinder;
@@ -74,38 +79,39 @@ public class FavoriteMovieFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         favoriteMovieViewModel = ViewModelProviders.of(this).get(FavoriteMovieViewModel.class);
-        favoriteMovieViewModel.getMovies().observe(this, getFavMovie);
+
+        HandlerThread handlerThread = new HandlerThread("DataObserver");
+        handlerThread.start();
+        Handler handler = new Handler(handlerThread.getLooper());
+        DataObserver dataObserver = new DataObserver(handler, getContext());
+        getContext().getContentResolver().registerContentObserver(CONTENT_URI, true, dataObserver);
 
         showRecyclerList();
 
-    }
-
-    private Observer<List<MovieEntity>> getFavMovie = new Observer<List<MovieEntity>>() {
-        @Override
-        public void onChanged(@Nullable List<MovieEntity> movieEntities) {
-            if (movieEntities != null) {
-                toggleEmptyMovies(movieEntities.size());
-                favoriteMovieAdapter.setMovies(movieEntities);
+        if (savedInstanceState == null) {
+            new LoadMovieAsync(getContext(), this).execute();
+        } else {
+            ArrayList<MovieEntity> list = savedInstanceState.getParcelableArrayList(EXTRA_STATE);
+            if (list != null) {
                 mShimmerViewContainer.stopShimmer();
-                mShimmerViewContainer.setVisibility(View.GONE);
+                favoriteMovieAdapter.setMovies(list);
             }
         }
-    };
 
-    private void toggleEmptyMovies(int size) {
-        if (size > 0) {
-            mEmptyState.setVisibility(View.GONE);
-            mRvFavmovie.setVisibility(View.VISIBLE);
-        } else {
-            mRvFavmovie.setVisibility(View.GONE);
-            mEmptyState.setVisibility(View.VISIBLE);
-        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(EXTRA_STATE, favoriteMovieAdapter.getListMovies());
     }
 
     @Override
     public void onResume() {
         super.onResume();
         mShimmerViewContainer.startShimmer();
+        new LoadMovieAsync(getContext(), this).execute();
+        Helper.updateWidget(getContext());
     }
 
     @Override
@@ -123,12 +129,6 @@ public class FavoriteMovieFragment extends Fragment {
         mRvFavmovie.addItemDecoration(new Helper.TopItemDecoration(55));
 
         favoriteMovieAdapter.setOnDeleteItemClickCallback(this::showDialogDeleteFavorite);
-    }
-
-    private void updateWidget() {
-        Intent intent = new Intent(getContext(), FavoriteWidget.class);
-        intent.setAction(FavoriteWidget.UPDATE_WIDGET);
-        getContext().sendBroadcast(intent);
     }
 
     private void showDialogDeleteFavorite(int movieId) {
@@ -149,7 +149,8 @@ public class FavoriteMovieFragment extends Fragment {
                     .setPositiveButton(getString(R.string.btn_delete), (dialog, which) -> {
                         favoriteMovieViewModel.deleteMovie(movieEntity);
                         dialog.dismiss();
-                        updateWidget();
+                        Helper.updateWidget(getContext());
+                        new LoadMovieAsync(getContext(), this).execute();
                         Toast.makeText(getContext(), getString(R.string.txt_remove_movie), Toast.LENGTH_SHORT).show();
                     })
                     .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> {
@@ -169,11 +170,73 @@ public class FavoriteMovieFragment extends Fragment {
         unbinder.unbind();
     }
 
-    @OnClick(R.id.btn_try_again)
-    public void onClick(View v) {
-        if (v.getId() == R.id.btn_try_again) {
-            mShimmerViewContainer.startShimmer();
-            favoriteMovieViewModel.getMovies().observe(this, getFavMovie);
+    @Override
+    public void preExecute() {
+        getActivity().runOnUiThread(() -> mShimmerViewContainer.startShimmer());
+
+    }
+
+    @Override
+    public void postExecute(Cursor movies) {
+        mShimmerViewContainer.stopShimmer();
+
+        ArrayList<MovieEntity> movieEntities = Mapping.mapMovieCursorToArrayList(movies);
+        if (movieEntities.size() > 0) {
+            mEmptyState.setVisibility(View.GONE);
+            mRvFavmovie.setVisibility(View.VISIBLE);
+            mShimmerViewContainer.setVisibility(View.GONE);
+            favoriteMovieAdapter.setMovies(movieEntities);
+        } else {
+            mRvFavmovie.setVisibility(View.GONE);
+            mEmptyState.setVisibility(View.VISIBLE);
+            mShimmerViewContainer.setVisibility(View.GONE);
+            favoriteMovieAdapter.setMovies(new ArrayList<>());
+        }
+    }
+
+    private static class LoadMovieAsync extends AsyncTask<Void, Void, Cursor> {
+
+        private final WeakReference<Context> weakContext;
+        private final WeakReference<LoadMovieCallback> weakCallback;
+
+        private LoadMovieAsync(Context context, LoadMovieCallback callback) {
+            weakContext = new WeakReference<>(context);
+            weakCallback = new WeakReference<>(callback);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            weakCallback.get().preExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Cursor cursor) {
+            super.onPostExecute(cursor);
+            weakCallback.get().postExecute(cursor);
+        }
+
+        @Override
+        protected Cursor doInBackground(Void... voids) {
+            Context context = weakContext.get();
+            return context.getContentResolver().query(CONTENT_URI, null, null, null, null);
+        }
+    }
+
+    public static class DataObserver extends ContentObserver {
+
+        final Context context;
+
+        public DataObserver(Handler handler, Context context) {
+            super(handler);
+            this.context = context;
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            super.onChange(selfChange);
+            new LoadMovieAsync(context, (LoadMovieCallback) context).execute();
+
         }
     }
 }

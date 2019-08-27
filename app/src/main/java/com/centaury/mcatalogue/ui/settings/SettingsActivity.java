@@ -56,11 +56,13 @@ public class SettingsActivity extends AppCompatActivity {
 
         preference = new ReminderPreference(this);
         DailyReminder dailyReminder = new DailyReminder();
+        String timeDaily = "07:00";
         mSwDailyReminder.setChecked(preference.getDailyReminder());
         mSwDailyReminder.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 preference.setDailyReminder(true);
-                dailyReminder.setDailyReminder(this);
+                preference.setTimeDaily(timeDaily);
+                dailyReminder.setDailyReminder(this, timeDaily);
             } else {
                 preference.setDailyReminder(false);
                 dailyReminder.cancelDailyReminder(this);
@@ -68,11 +70,13 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         ReleaseReminder releaseReminder = new ReleaseReminder();
+        String timeRelease = "08:00";
         mSwReleaseReminder.setChecked(preference.getReleaseReminder());
         mSwReleaseReminder.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 preference.setReleaseReminder(true);
-                releaseReminder.setReleaseReminder(this);
+                preference.setTimeRelease(timeRelease);
+                releaseReminder.setReleaseReminder(this, timeRelease);
             } else {
                 preference.setReleaseReminder(false);
                 releaseReminder.cancelReleaseReminder(this);

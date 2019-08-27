@@ -16,7 +16,6 @@ import com.centaury.mcatalogue.utils.AppConstants;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +60,7 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.item_widget);
 
-        if (resultsItems.size() != 0) {
+        if (resultsItems.size() > 0) {
             URL url;
             Bitmap bitmap = null;
             try {
@@ -77,14 +76,15 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
                 Log.e("getViewAtWidget: ", e.getMessage());
             }
             remoteViews.setImageViewBitmap(R.id.iv_widget, bitmap);
+
+            Bundle bundle = new Bundle();
+            bundle.putInt(FavoriteWidget.EXTRA_ITEM, resultsItems.get(position).getId());
+            Intent intent = new Intent();
+            intent.putExtras(bundle);
+
+            remoteViews.setOnClickFillInIntent(R.id.iv_widget, intent);
         }
 
-        Bundle bundle = new Bundle();
-        bundle.putInt(FavoriteWidget.EXTRA_ITEM, resultsItems.get(position).getId());
-        Intent intent = new Intent();
-        intent.putExtras(bundle);
-
-        remoteViews.setOnClickFillInIntent(R.id.iv_widget, intent);
         return remoteViews;
     }
 

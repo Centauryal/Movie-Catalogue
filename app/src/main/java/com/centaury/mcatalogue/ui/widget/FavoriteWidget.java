@@ -8,10 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.db.entity.MovieEntity;
 import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
 
 /**

@@ -6,6 +6,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+import android.database.Cursor;
 
 import com.centaury.mcatalogue.data.db.entity.TVShowEntity;
 
@@ -16,11 +17,20 @@ import java.util.List;
  */
 @Dao
 public interface TVShowDao {
-    @Query("SELECT * FROM tvshows ORDER BY id ASC")
+    @Query("SELECT * FROM tvshows ORDER BY " + TVShowEntity.COLUMN_ID + " ASC")
     LiveData<List<TVShowEntity>> getAllTVShows();
 
-    @Query("SELECT * FROM tvshows WHERE id=:id")
+    @Query("SELECT * FROM tvshows ORDER BY " + TVShowEntity.COLUMN_ID + " ASC")
+    Cursor selectAll();
+
+    @Query("SELECT * FROM tvshows WHERE " + TVShowEntity.COLUMN_ID + "=:id")
     TVShowEntity getTVShowById(int id);
+
+    @Query("SELECT * FROM tvshows WHERE " + TVShowEntity.COLUMN_ID + "=:id")
+    Cursor selectedById(int id);
+
+    @Query("DELETE FROM tvshows WHERE " + TVShowEntity.COLUMN_ID + "=:id")
+    int deleteById(int id);
 
     @Query("DELETE FROM tvshows")
     void deleteAll();

@@ -4,7 +4,6 @@ import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +23,7 @@ import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.model.movie.MovieResponse;
 import com.centaury.mcatalogue.data.model.movie.MovieResultsItem;
+import com.centaury.mcatalogue.data.prefs.ReminderPreference;
 import com.centaury.mcatalogue.ui.main.MainActivity;
 import com.centaury.mcatalogue.utils.AppConstants;
 import com.google.gson.Gson;
@@ -46,12 +46,18 @@ public class ReleaseReminder extends BroadcastReceiver {
 
     private List<MovieResultsItem> movieResultsItems = new ArrayList<>();
     private List<String> releaseMovieList = new ArrayList<>();
+    private ReminderPreference preference = null;
 
     public ReleaseReminder() {
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (intent.getAction() != null && context != null) {
+            if (intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
+                setReleaseReminder(context, preference.getTimeRelease());
+            }
+        }
         getReleaseMovie(context);
     }
 
@@ -77,8 +83,7 @@ public class ReleaseReminder extends BroadcastReceiver {
 
         if (jmlmovie == 0) {
             intent = new Intent(context, MainActivity.class);
-            pendingIntent = TaskStackBuilder.create(context).addNextIntent(intent)
-                    .getPendingIntent(REQUEST_RELEASE, PendingIntent.FLAG_UPDATE_CURRENT);
+            pendingIntent = PendingIntent.getActivity(context, REQUEST_RELEASE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             String message = context.getString(R.string.txt_nomovie_release);
             builder.setSmallIcon(R.drawable.ic_notif_logo)
@@ -86,13 +91,12 @@ public class ReleaseReminder extends BroadcastReceiver {
                     .setContentText(message)
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                     .setContentIntent(pendingIntent)
-                    .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                    .setVibrate(new long[]{1000, 1000})
                     .setSound(soundAlarm)
                     .setAutoCancel(true);
         } else {
             intent = new Intent(context, MainActivity.class);
-            pendingIntent = TaskStackBuilder.create(context).addNextIntent(intent)
-                    .getPendingIntent(REQUEST_RELEASE, PendingIntent.FLAG_UPDATE_CURRENT);
+            pendingIntent = PendingIntent.getActivity(context, REQUEST_RELEASE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             String message = context.getString(R.string.txt_movie_release) + " " + TextUtils.join(", ", releaseMovieList);
             builder.setSmallIcon(R.drawable.ic_notif_logo)
@@ -100,7 +104,7 @@ public class ReleaseReminder extends BroadcastReceiver {
                     .setContentText(message)
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                     .setContentIntent(pendingIntent)
-                    .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                    .setVibrate(new long[]{1000, 1000})
                     .setSound(soundAlarm)
                     .setAutoCancel(true);
         }
@@ -117,7 +121,7 @@ public class ReleaseReminder extends BroadcastReceiver {
             channel.enableVibration(true);
             channel.enableLights(true);
             channel.setSound(soundAlarm, attributes);
-            channel.setVibrationPattern(new long[]{1000, 1000, 1000, 1000, 1000});
+            channel.setVibrationPattern(new long[]{1000, 1000});
 
             builder.setChannelId(CHANNEL_ID);
             if (notificationManager != null) {
@@ -130,12 +134,13 @@ public class ReleaseReminder extends BroadcastReceiver {
         }
     }
 
-    public void setReleaseReminder(Context context) {
+    public void setReleaseReminder(Context context, String time) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, ReleaseReminder.class);
+        String[] timeArray = time.split(":");
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 8);
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeArray[0]));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(timeArray[1]));
         calendar.set(Calendar.SECOND, 0);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, RELEASE_REMINDER, intent, 0);
@@ -175,10 +180,12 @@ public class ReleaseReminder extends BroadcastReceiver {
                     public void onResponse(JSONObject response) {
                         Log.d("onResponseRelease: ", response + "");
                         MovieResponse movieResponse = new Gson().fromJson(response + "", MovieResponse.class);
+                        movieResultsItems.clear();
                         movieResultsItems = movieResponse.getResults();
                         for (MovieResultsItem resultsItem : movieResultsItems) {
                             String movieDate = resultsItem.getReleaseDate();
                             if (movieDate.equals(dateRelease)) {
+                                releaseMovieList.clear();
                                 releaseMovieList.add(resultsItem.getTitle());
                             }
                         }

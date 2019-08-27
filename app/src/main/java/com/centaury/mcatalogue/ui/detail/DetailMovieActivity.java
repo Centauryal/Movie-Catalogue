@@ -3,7 +3,6 @@ package com.centaury.mcatalogue.ui.detail;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -25,7 +24,6 @@ import com.centaury.mcatalogue.data.model.genre.GenresItem;
 import com.centaury.mcatalogue.data.model.movie.MovieResultsItem;
 import com.centaury.mcatalogue.ui.detail.viewmodel.DetailViewModel;
 import com.centaury.mcatalogue.ui.favorite.viewmodel.FavoriteMovieViewModel;
-import com.centaury.mcatalogue.ui.widget.FavoriteWidget;
 import com.centaury.mcatalogue.utils.AppConstants;
 import com.centaury.mcatalogue.utils.Helper;
 
@@ -186,6 +184,12 @@ public class DetailMovieActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Helper.updateWidget(this);
+    }
+
     private Observer<List<GenresItem>> getGenre = genresItems -> {
         if (genresItems != null) {
             showDialogLoading();
@@ -286,7 +290,7 @@ public class DetailMovieActivity extends AppCompatActivity {
             favoriteMovieViewModel.insertMovie(movieEntity);
         }
 
-        updateWidget();
+        Helper.updateWidget(this);
 
         Toast.makeText(this, getString(R.string.txt_add_movie), Toast.LENGTH_SHORT).show();
     }
@@ -297,19 +301,13 @@ public class DetailMovieActivity extends AppCompatActivity {
             movieEntity = favoriteMovieViewModel.getMovie(id);
             favoriteMovieViewModel.deleteMovie(movieEntity);
 
-            updateWidget();
+            Helper.updateWidget(this);
             Toast.makeText(this, getString(R.string.txt_remove_movie), Toast.LENGTH_SHORT).show();
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    private void updateWidget() {
-        Intent intent = new Intent(this, FavoriteWidget.class);
-        intent.setAction(FavoriteWidget.UPDATE_WIDGET);
-        this.sendBroadcast(intent);
     }
 
     @OnClick({R.id.btn_back, R.id.btn_favorite})

@@ -3,40 +3,97 @@ package com.centaury.mcatalogue.data.db.entity;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.provider.BaseColumns;
+
+import com.centaury.mcatalogue.data.db.DatabaseContract.TVShowColumns;
+
+import static com.centaury.mcatalogue.data.db.DatabaseContract.getColumnInt;
+import static com.centaury.mcatalogue.data.db.DatabaseContract.getColumnString;
 
 /**
  * Created by Centaury on 7/28/2019.
  */
-@Entity(tableName = "tvshows")
+@Entity(tableName = TVShowEntity.TABLE_NAME)
 public class TVShowEntity implements Parcelable {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
 
-    @ColumnInfo(name = "name")
+    public static final String TABLE_NAME = "tvshows";
+    public static final String COLUMN_ID = BaseColumns._ID;
+    public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_ORIGINAL = "original";
+    public static final String COLUMN_DESC = "desc";
+    public static final String COLUMN_PHOTO = "photo";
+    public static final String COLUMN_BACKDROP = "backdrop";
+    public static final String COLUMN_VOTE = "vote";
+    public static final String COLUMN_DATE = "date";
+    public static final String COLUMN_GENRE = "genre";
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(index = true, name = COLUMN_ID)
+    public int id;
+
+    @ColumnInfo(name = COLUMN_NAME)
     private String name;
 
-    @ColumnInfo(name = "original")
+    @ColumnInfo(name = COLUMN_ORIGINAL)
     private String originalName;
 
-    @ColumnInfo(name = "desc")
+    @ColumnInfo(name = COLUMN_DESC)
     private String overview;
 
-    @ColumnInfo(name = "photo")
+    @ColumnInfo(name = COLUMN_PHOTO)
     private String posterPath;
 
-    @ColumnInfo(name = "backdrop")
+    @ColumnInfo(name = COLUMN_BACKDROP)
     private String backdropPath;
 
-    @ColumnInfo(name = "vote")
+    @ColumnInfo(name = COLUMN_VOTE)
     private String voteAverage;
 
-    @ColumnInfo(name = "date")
+    @ColumnInfo(name = COLUMN_DATE)
     private String firstAirDate;
 
-    @ColumnInfo(name = "genre")
+    @ColumnInfo(name = COLUMN_GENRE)
     private String genreIds;
+
+    public static TVShowEntity fromContentValues(ContentValues values) {
+        final TVShowEntity tvShowEntity = new TVShowEntity();
+        if (values.containsKey(COLUMN_ID)) {
+            tvShowEntity.id = values.getAsInteger(COLUMN_ID);
+        }
+        if (values.containsKey(COLUMN_NAME)) {
+            tvShowEntity.name = values.getAsString(COLUMN_NAME);
+        }
+        if (values.containsKey(COLUMN_ORIGINAL)) {
+            tvShowEntity.originalName = values.getAsString(COLUMN_ORIGINAL);
+        }
+        if (values.containsKey(COLUMN_DESC)) {
+            tvShowEntity.overview = values.getAsString(COLUMN_DESC);
+        }
+        if (values.containsKey(COLUMN_PHOTO)) {
+            tvShowEntity.posterPath = values.getAsString(COLUMN_PHOTO);
+        }
+        if (values.containsKey(COLUMN_BACKDROP)) {
+            tvShowEntity.backdropPath = values.getAsString(COLUMN_BACKDROP);
+        }
+        if (values.containsKey(COLUMN_VOTE)) {
+            tvShowEntity.voteAverage = values.getAsString(COLUMN_VOTE);
+        }
+        if (values.containsKey(COLUMN_DATE)) {
+            tvShowEntity.firstAirDate = values.getAsString(COLUMN_DATE);
+        }
+        if (values.containsKey(COLUMN_GENRE)) {
+            tvShowEntity.genreIds = values.getAsString(COLUMN_GENRE);
+        }
+        return tvShowEntity;
+    }
+
+    public TVShowEntity() {
+
+    }
 
     public TVShowEntity(int id, String name, String originalName, String overview, String posterPath, String backdropPath, String voteAverage, String firstAirDate, String genreIds) {
         this.id = id;
@@ -48,6 +105,18 @@ public class TVShowEntity implements Parcelable {
         this.voteAverage = voteAverage;
         this.firstAirDate = firstAirDate;
         this.genreIds = genreIds;
+    }
+
+    public TVShowEntity(Cursor cursor) {
+        this.id = getColumnInt(cursor, TVShowColumns.ID);
+        this.name = getColumnString(cursor, TVShowColumns.TITLE);
+        this.originalName = getColumnString(cursor, TVShowColumns.ORIGINAL_TITLE);
+        this.overview = getColumnString(cursor, TVShowColumns.OVERVIEW);
+        this.posterPath = getColumnString(cursor, TVShowColumns.POSTER_PATH);
+        this.backdropPath = getColumnString(cursor, TVShowColumns.BACKDROP_PATH);
+        this.voteAverage = getColumnString(cursor, TVShowColumns.VOTE_AVERAGE);
+        this.firstAirDate = getColumnString(cursor, TVShowColumns.RELEASE_DATE);
+        this.genreIds = getColumnString(cursor, TVShowColumns.GENRE);
     }
 
     public int getId() {

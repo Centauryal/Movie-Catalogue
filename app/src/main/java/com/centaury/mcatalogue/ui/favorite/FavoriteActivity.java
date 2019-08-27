@@ -1,5 +1,6 @@
 package com.centaury.mcatalogue.ui.favorite;
 
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -12,13 +13,15 @@ import android.widget.ImageView;
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.ui.favorite.fragment.FavoriteMovieFragment;
 import com.centaury.mcatalogue.ui.favorite.fragment.FavoriteTVShowFragment;
+import com.centaury.mcatalogue.ui.favorite.fragment.LoadMovieCallback;
+import com.centaury.mcatalogue.ui.favorite.fragment.LoadTVShowCallback;
 import com.centaury.mcatalogue.utils.ViewPagerAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class FavoriteActivity extends AppCompatActivity {
+public class FavoriteActivity extends AppCompatActivity implements LoadMovieCallback, LoadTVShowCallback {
 
     @BindView(R.id.btn_back)
     ImageView mBtnBack;
@@ -53,5 +56,25 @@ public class FavoriteActivity extends AppCompatActivity {
         if (v.getId() == R.id.btn_back) {
             onBackPressed();
         }
+    }
+
+    @Override
+    public void preExecute() {
+
+    }
+
+    @Override
+    public void postExecute(Cursor movies) {
+
+    }
+
+    @Override
+    public void preExecuteTVShow() {
+
+    }
+
+    @Override
+    public void postExecuteTVShow(Cursor tvshows) {
+
     }
 }

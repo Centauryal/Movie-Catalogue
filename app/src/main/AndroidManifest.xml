@@ -13,6 +13,13 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <permission
+        android:name="com.centaury.mcatalogue.READ_DATABASE"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.centaury.mcatalogue.WRITE_DATABASE"
+        android:protectionLevel="normal" />
+
     <application
         android:name=".MovieCatalogueApp"
         android:allowBackup="true"
@@ -46,12 +53,20 @@
         <receiver
             android:name=".services.reminder.DailyReminder"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <receiver
             android:name=".services.reminder.ReleaseReminder"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <receiver android:name=".ui.widget.FavoriteWidget">
             <intent-filter>
@@ -66,6 +81,14 @@
         <service
             android:name=".ui.widget.StackWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+        <provider
+            android:name=".provider.FavoriteMovieProvider"
+            android:authorities="com.centaury.mcatalogue"
+            android:exported="true"
+            android:readPermission="com.centaury.mcatalogue.READ_DATABASE"
+            android:writePermission="com.centaury.mcatalogue.WRITE_DATABASE" />
+
     </application>
 
 </manifest>

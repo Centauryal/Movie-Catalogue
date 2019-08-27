@@ -1,9 +1,14 @@
 package com.centaury.mcatalogue.ui.favorite.fragment;
 
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.database.ContentObserver;
+import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +16,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,27 +29,30 @@ import com.centaury.mcatalogue.data.db.entity.TVShowEntity;
 import com.centaury.mcatalogue.ui.favorite.adapter.FavoriteTVShowAdapter;
 import com.centaury.mcatalogue.ui.favorite.viewmodel.FavoriteTVShowViewModel;
 import com.centaury.mcatalogue.utils.Helper;
+import com.centaury.mcatalogue.utils.Mapping;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
-import java.util.List;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.Unbinder;
+
+import static com.centaury.mcatalogue.data.db.DatabaseContract.TVShowColumns.CONTENT_URI;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FavoriteTVShowFragment extends Fragment {
+public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallback {
+
+    private static final String EXTRA_STATE = "EXTRA_STATE_TVSHOW";
 
     @BindView(R.id.rv_favtvshow)
     RecyclerView mRvFavtvshow;
     @BindView(R.id.shimmer_view_container)
     ShimmerFrameLayout mShimmerViewContainer;
-    @BindView(R.id.btn_try_again)
-    TextView mBtnTryAgain;
     @BindView(R.id.empty_state)
     LinearLayout mEmptyState;
     private Unbinder unbinder;
@@ -71,37 +80,37 @@ public class FavoriteTVShowFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         favoriteTVShowViewModel = ViewModelProviders.of(this).get(FavoriteTVShowViewModel.class);
-        favoriteTVShowViewModel.getTvshows().observe(this, getFavTVShow);
+
+        HandlerThread handlerThread = new HandlerThread("Observer");
+        handlerThread.start();
+        Handler handler = new Handler(handlerThread.getLooper());
+        DataObserver dataObserver = new DataObserver(handler, getContext());
+        getContext().getContentResolver().registerContentObserver(CONTENT_URI, true, dataObserver);
 
         showRecyclerList();
-    }
 
-    private Observer<List<TVShowEntity>> getFavTVShow = new Observer<List<TVShowEntity>>() {
-        @Override
-        public void onChanged(@Nullable List<TVShowEntity> tvShowEntities) {
-            if (tvShowEntities != null) {
-                toggleEmptyTVShows(tvShowEntities.size());
-                favoriteTVShowAdapter.setTVShows(tvShowEntities);
+        if (savedInstanceState == null) {
+            new LoadTVShowAsync(getContext(), this).execute();
+        } else {
+            ArrayList<TVShowEntity> list = savedInstanceState.getParcelableArrayList(EXTRA_STATE);
+            if (list != null) {
                 mShimmerViewContainer.stopShimmer();
-                mShimmerViewContainer.setVisibility(View.GONE);
+                favoriteTVShowAdapter.setTVShows(list);
             }
         }
-    };
+    }
 
-    private void toggleEmptyTVShows(int size) {
-        if (size > 0) {
-            mEmptyState.setVisibility(View.GONE);
-            mRvFavtvshow.setVisibility(View.VISIBLE);
-        } else {
-            mRvFavtvshow.setVisibility(View.GONE);
-            mEmptyState.setVisibility(View.VISIBLE);
-        }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(EXTRA_STATE, favoriteTVShowAdapter.getListTVShows());
     }
 
     @Override
     public void onResume() {
         super.onResume();
         mShimmerViewContainer.startShimmer();
+        new LoadTVShowAsync(getContext(), this).execute();
     }
 
     @Override
@@ -139,6 +148,7 @@ public class FavoriteTVShowFragment extends Fragment {
                     .setPositiveButton(getString(R.string.btn_delete), (dialog, which) -> {
                         favoriteTVShowViewModel.deleteMovie(tvShowEntity);
                         dialog.dismiss();
+                        new LoadTVShowAsync(getContext(), this).execute();
                         Toast.makeText(getContext(), getString(R.string.txt_remove_movie), Toast.LENGTH_SHORT).show();
                     })
                     .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> {
@@ -158,11 +168,74 @@ public class FavoriteTVShowFragment extends Fragment {
         unbinder.unbind();
     }
 
-    @OnClick(R.id.btn_try_again)
-    public void onClick(View v) {
-        if (v.getId() == R.id.btn_try_again) {
-            mShimmerViewContainer.startShimmer();
-            favoriteTVShowViewModel.getTvshows().observe(this, getFavTVShow);
+    @Override
+    public void preExecuteTVShow() {
+        getActivity().runOnUiThread(() -> mShimmerViewContainer.startShimmer());
+    }
+
+    @Override
+    public void postExecuteTVShow(Cursor tvshows) {
+        mShimmerViewContainer.stopShimmer();
+
+        Log.e("postExecuteTVShow: ", tvshows + "");
+
+        ArrayList<TVShowEntity> tvShowEntities = Mapping.mapTVShowCursorToArrayList(tvshows);
+        if (tvShowEntities.size() > 0) {
+            mEmptyState.setVisibility(View.GONE);
+            mRvFavtvshow.setVisibility(View.VISIBLE);
+            mShimmerViewContainer.setVisibility(View.GONE);
+            favoriteTVShowAdapter.setTVShows(tvShowEntities);
+        } else {
+            mRvFavtvshow.setVisibility(View.GONE);
+            mEmptyState.setVisibility(View.VISIBLE);
+            mShimmerViewContainer.setVisibility(View.GONE);
+            favoriteTVShowAdapter.setTVShows(new ArrayList<>());
+        }
+    }
+
+    private static class LoadTVShowAsync extends AsyncTask<Void, Void, Cursor> {
+
+        private final WeakReference<Context> weakContext;
+        private final WeakReference<LoadTVShowCallback> weakCallback;
+
+        private LoadTVShowAsync(Context context, LoadTVShowCallback callback) {
+            weakContext = new WeakReference<>(context);
+            weakCallback = new WeakReference<>(callback);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            weakCallback.get().preExecuteTVShow();
+        }
+
+        @Override
+        protected void onPostExecute(Cursor cursor) {
+            super.onPostExecute(cursor);
+            weakCallback.get().postExecuteTVShow(cursor);
+        }
+
+        @Override
+        protected Cursor doInBackground(Void... voids) {
+            Context context = weakContext.get();
+            return context.getContentResolver().query(CONTENT_URI, null, null, null, null);
+        }
+    }
+
+    public static class DataObserver extends ContentObserver {
+
+        final Context context;
+
+        public DataObserver(Handler handler, Context context) {
+            super(handler);
+            this.context = context;
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            super.onChange(selfChange);
+            new LoadTVShowAsync(context, (LoadTVShowCallback) context).execute();
+
         }
     }
 }

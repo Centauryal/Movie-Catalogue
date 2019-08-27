@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/_16sdp"
+    android:layout_marginEnd="@dimen/_16sdp"
+    android:layout_marginBottom="@dimen/_16sdp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_150sdp"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:background="@drawable/card_background"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txt_titlebackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_60sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:ellipsize="end"
+            android:maxLength="6"
+            android:textColor="@color/grey_10"
+            android:textSize="@dimen/_40ssp"
+            android:textStyle="bold"
+            tools:text="@string/contoh_judul" />
+
+    </LinearLayout>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cv_image"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="@dimen/_150sdp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="2dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true">
+
+        <ImageView
+            android:id="@+id/iv_movielist"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_150sdp"
+            android:contentDescription="@string/contentdesc_image"
+            android:scaleType="centerCrop"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+    </android.support.v7.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginTop="@dimen/_30sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_toEndOf="@id/cv_image"
+        android:background="@android:color/transparent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txt_genremovielist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_3sdp"
+            android:background="@drawable/genre_background"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingTop="@dimen/_5sdp"
+            android:paddingEnd="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_5sdp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10ssp"
+            android:textStyle="bold"
+            tools:text="@string/contoh_genre" />
+
+        <TextView
+            android:id="@+id/txt_titlemovielist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textSize="@dimen/_14ssp"
+            android:textStyle="bold"
+            tools:text="@string/contoh_judul" />
+
+        <TextView
+            android:id="@+id/txt_descmovielist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/grey_60"
+            android:textSize="@dimen/_12ssp"
+            tools:text="@string/contoh_desc" />
+
+        <TextView
+            android:id="@+id/txt_datemovielist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/_12ssp"
+            tools:text="@string/contoh_tanggal" />
+
+    </LinearLayout>
+
+</RelativeLayout>

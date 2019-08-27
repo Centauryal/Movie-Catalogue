@@ -13,7 +13,7 @@ import com.centaury.mcatalogue.data.db.entity.TVShowEntity;
 /**
  * Created by Centaury on 7/28/2019.
  */
-@Database(entities = {MovieEntity.class, TVShowEntity.class}, version = 1)
+@Database(entities = {MovieEntity.class, TVShowEntity.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract MovieDao movieDao();
@@ -28,6 +28,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             AppDatabase.class, "movie_database")
+                            .fallbackToDestructiveMigration()
                             .build();
 
                 }

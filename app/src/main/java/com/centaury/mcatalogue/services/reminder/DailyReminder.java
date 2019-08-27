@@ -5,7 +5,6 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +16,7 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.centaury.mcatalogue.R;
+import com.centaury.mcatalogue.data.prefs.ReminderPreference;
 import com.centaury.mcatalogue.ui.main.MainActivity;
 
 import java.util.Calendar;
@@ -27,12 +27,18 @@ import java.util.Calendar;
 public class DailyReminder extends BroadcastReceiver {
 
     private final int DAILY_REMINDER = 100;
+    private ReminderPreference preference = null;
 
     public DailyReminder() {
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (intent.getAction() != null && context != null) {
+            if (intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
+                setDailyReminder(context, preference.getTimeDaily());
+            }
+        }
         showDailyReminderNotification(context);
     }
 
@@ -42,8 +48,7 @@ public class DailyReminder extends BroadcastReceiver {
         int REQUEST_CODE = 110;
 
         Intent intent = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = TaskStackBuilder.create(context).addNextIntent(intent)
-                .getPendingIntent(REQUEST_CODE, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         String title = context.getString(R.string.txt_daily_reminder);
         String message = context.getString(R.string.txt_movie_daily);
@@ -56,7 +61,7 @@ public class DailyReminder extends BroadcastReceiver {
                 .setContentText(message)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setContentIntent(pendingIntent)
-                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                .setVibrate(new long[]{1000, 1000})
                 .setSound(soundAlarm)
                 .setAutoCancel(true);
 
@@ -72,7 +77,7 @@ public class DailyReminder extends BroadcastReceiver {
             channel.enableVibration(true);
             channel.enableLights(true);
             channel.setSound(soundAlarm, attributes);
-            channel.setVibrationPattern(new long[]{1000, 1000, 1000, 1000, 1000});
+            channel.setVibrationPattern(new long[]{1000, 1000});
 
             builder.setChannelId(CHANNEL_ID);
             if (notificationManager != null) {
@@ -87,12 +92,13 @@ public class DailyReminder extends BroadcastReceiver {
 
     }
 
-    public void setDailyReminder(Context context) {
+    public void setDailyReminder(Context context, String time) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, DailyReminder.class);
+        String[] timeArray = time.split(":");
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 7);
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeArray[0]));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(timeArray[1]));
         calendar.set(Calendar.SECOND, 0);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, DAILY_REMINDER, intent, 0);
