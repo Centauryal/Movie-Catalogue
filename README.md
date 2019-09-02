@@ -1,6 +1,6 @@
 # Catalogue Movie
 
-This repository contains detailed application examples of MADE course projects in the [Dicoding Academy](dicoding.com). This application uses the API from [TheMovieDB](api.themoviedb.org).
+This repository contains detailed application examples of MADE course projects in the [Dicoding Academy](https://dicoding.com). This application uses the API from [TheMovieDB](https://api.themoviedb.org).
 <p align="center">
   <img src="https://centauryal.github.io/img/movie_catalogue_pic/Screenshot_Splash_Screen.png" width="250">
   <img src="https://centauryal.github.io/img/movie_catalogue_pic/Screenshot_Main.png" width="250">
