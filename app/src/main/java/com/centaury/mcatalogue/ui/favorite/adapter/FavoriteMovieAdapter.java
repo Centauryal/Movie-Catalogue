@@ -130,7 +130,7 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
                 mTxtDescmovielist.setText(movie.getOverview());
             }
 
-            DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
 
             try {

@@ -1,12 +1,13 @@
 package com.centaury.mcatalogue.ui.main;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -20,6 +21,7 @@ import com.centaury.mcatalogue.ui.search.SearchTVShowActivity;
 import com.centaury.mcatalogue.ui.settings.SettingsActivity;
 import com.centaury.mcatalogue.utils.Helper;
 import com.centaury.mcatalogue.utils.ViewPagerAdapter;
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,14 +34,8 @@ public class MainActivity extends AppCompatActivity {
     TabLayout mTabs;
     @BindView(R.id.view_pager)
     ViewPager mViewPager;
-    @BindView(R.id.toolbar)
-    Toolbar mToolbar;
-    @BindView(R.id.search)
-    ImageView mSearch;
     @BindView(R.id.favorite)
     ImageView mFavorite;
-    @BindView(R.id.settings)
-    ImageView mSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         setupViewPager(mViewPager);
         mTabs.setupWithViewPager(mViewPager);
         Helper.updateWidget(this);
-        //showcaseGuide();
+        showcaseGuide();
 
     }
 
@@ -71,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         Helper.updateWidget(this);
     }
 
-    /*private void showcaseGuide() {
+    private void showcaseGuide() {
         BubbleShowCaseBuilder builder = new BubbleShowCaseBuilder(this)
                 .title(getString(R.string.title_favorite))
                 .description(getString(R.string.txt_showcase_one))
@@ -81,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                 .targetView(mFavorite)
                 .showOnce(EXTRA_FIRST_RUN);
         builder.show();
-    }*/
+    }
 
     @Override
     public void onBackPressed() {

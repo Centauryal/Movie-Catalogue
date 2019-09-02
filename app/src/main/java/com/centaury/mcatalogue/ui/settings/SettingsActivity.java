@@ -7,8 +7,6 @@ import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -25,20 +23,12 @@ import butterknife.OnClick;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    @BindView(R.id.btn_back)
-    ImageView mBtnBack;
-    @BindView(R.id.setting_change_language)
-    LinearLayout mSettingChangeLanguage;
     @BindView(R.id.sw_release_reminder)
     Switch mSwReleaseReminder;
     @BindView(R.id.sw_daily_reminder)
     Switch mSwDailyReminder;
     @BindView(R.id.settings_language)
     TextView mSettingsLanguage;
-    @BindView(R.id.ln_release)
-    LinearLayout mLnRelease;
-    @BindView(R.id.ln_daily)
-    LinearLayout mLnDaily;
 
     private ReminderPreference preference;
 
@@ -65,6 +55,7 @@ public class SettingsActivity extends AppCompatActivity {
                 dailyReminder.setDailyReminder(this, timeDaily);
             } else {
                 preference.setDailyReminder(false);
+                preference.setTimeDaily("");
                 dailyReminder.cancelDailyReminder(this);
             }
         });
@@ -79,6 +70,7 @@ public class SettingsActivity extends AppCompatActivity {
                 releaseReminder.setReleaseReminder(this, timeRelease);
             } else {
                 preference.setReleaseReminder(false);
+                preference.setTimeRelease("");
                 releaseReminder.cancelReleaseReminder(this);
             }
         });

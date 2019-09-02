@@ -48,8 +48,6 @@ public class DetailTVShowActivity extends AppCompatActivity {
 
     @BindView(R.id.iv_covertvdetail)
     ImageView mIvCovertvdetail;
-    @BindView(R.id.btn_back)
-    ImageView mBtnBack;
     @BindView(R.id.btn_favorite)
     LottieAnimationView mBtnFavorite;
     @BindView(R.id.iv_imgtvdetail)
@@ -67,7 +65,7 @@ public class DetailTVShowActivity extends AppCompatActivity {
     @BindView(R.id.txt_desctvdetail)
     TextView mTxtDesctvdetail;
 
-    private DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
+    private DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     private DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
 
     private TVShowEntity entity = null;

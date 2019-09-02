@@ -8,7 +8,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageView;
 
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.ui.favorite.fragment.FavoriteMovieFragment;
@@ -23,8 +22,6 @@ import butterknife.OnClick;
 
 public class FavoriteActivity extends AppCompatActivity implements LoadMovieCallback, LoadTVShowCallback {
 
-    @BindView(R.id.btn_back)
-    ImageView mBtnBack;
     @BindView(R.id.tab_favorite)
     TabLayout mTabFavorite;
     @BindView(R.id.vp_favorite)

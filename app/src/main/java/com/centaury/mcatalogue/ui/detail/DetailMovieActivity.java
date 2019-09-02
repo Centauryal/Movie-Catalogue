@@ -46,8 +46,6 @@ public class DetailMovieActivity extends AppCompatActivity {
     public static final String EXTRA_FAV_MOVIE = "extra_favmovie";
     @BindView(R.id.iv_coverdetail)
     ImageView mIvCoverdetail;
-    @BindView(R.id.btn_back)
-    ImageView mBtnBack;
     @BindView(R.id.iv_imgdetail)
     ImageView mIvImgdetail;
     @BindView(R.id.txt_titledetail)
@@ -65,7 +63,7 @@ public class DetailMovieActivity extends AppCompatActivity {
     @BindView(R.id.btn_favorite)
     LottieAnimationView mBtnFavorite;
 
-    private DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
+    private DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     private DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
 
     private List<Integer> genreData = new ArrayList<>();

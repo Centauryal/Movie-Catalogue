@@ -37,6 +37,7 @@ public class DailyReminder extends BroadcastReceiver {
         if (intent.getAction() != null && context != null) {
             if (intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
                 setDailyReminder(context, preference.getTimeDaily());
+                return;
             }
         }
         showDailyReminderNotification(context);
@@ -93,19 +94,22 @@ public class DailyReminder extends BroadcastReceiver {
     }
 
     public void setDailyReminder(Context context, String time) {
+
+        cancelDailyReminder(context);
+
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, DailyReminder.class);
         String[] timeArray = time.split(":");
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeArray[0]));
         calendar.set(Calendar.MINUTE, Integer.parseInt(timeArray[1]));
         calendar.set(Calendar.SECOND, 0);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, DAILY_REMINDER, intent, 0);
-        if (alarmManager != null) {
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-        }
+
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+                calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
 
         Toast.makeText(context, context.getString(R.string.txt_toast_daily), Toast.LENGTH_SHORT).show();
     }

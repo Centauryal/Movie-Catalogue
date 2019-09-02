@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Centaury on 8/13/2019.
@@ -56,6 +57,7 @@ public class ReleaseReminder extends BroadcastReceiver {
         if (intent.getAction() != null && context != null) {
             if (intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
                 setReleaseReminder(context, preference.getTimeRelease());
+                return;
             }
         }
         getReleaseMovie(context);
@@ -83,6 +85,7 @@ public class ReleaseReminder extends BroadcastReceiver {
 
         if (jmlmovie == 0) {
             intent = new Intent(context, MainActivity.class);
+
             pendingIntent = PendingIntent.getActivity(context, REQUEST_RELEASE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             String message = context.getString(R.string.txt_nomovie_release);
@@ -98,7 +101,7 @@ public class ReleaseReminder extends BroadcastReceiver {
             intent = new Intent(context, MainActivity.class);
             pendingIntent = PendingIntent.getActivity(context, REQUEST_RELEASE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            String message = context.getString(R.string.txt_movie_release) + " " + TextUtils.join(", ", releaseMovieList);
+            String message = context.getString(R.string.txt_movie_release) + " " + TextUtils.join("; ", releaseMovieList);
             builder.setSmallIcon(R.drawable.ic_notif_logo)
                     .setContentTitle(title)
                     .setContentText(message)
@@ -135,19 +138,22 @@ public class ReleaseReminder extends BroadcastReceiver {
     }
 
     public void setReleaseReminder(Context context, String time) {
+
+        cancelReleaseReminder(context);
+
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, ReleaseReminder.class);
         String[] timeArray = time.split(":");
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeArray[0]));
         calendar.set(Calendar.MINUTE, Integer.parseInt(timeArray[1]));
         calendar.set(Calendar.SECOND, 0);
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, RELEASE_REMINDER, intent, 0);
-        if (alarmManager != null) {
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
-        }
+
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+                calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
 
         Toast.makeText(context, context.getString(R.string.txt_toast_release), Toast.LENGTH_SHORT).show();
     }
@@ -165,7 +171,7 @@ public class ReleaseReminder extends BroadcastReceiver {
     }
 
     private void getReleaseMovie(Context context) {
-        DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date date = Calendar.getInstance().getTime();
         String dateRelease = inputDate.format(date);
 
@@ -180,12 +186,10 @@ public class ReleaseReminder extends BroadcastReceiver {
                     public void onResponse(JSONObject response) {
                         Log.d("onResponseRelease: ", response + "");
                         MovieResponse movieResponse = new Gson().fromJson(response + "", MovieResponse.class);
-                        movieResultsItems.clear();
                         movieResultsItems = movieResponse.getResults();
                         for (MovieResultsItem resultsItem : movieResultsItems) {
                             String movieDate = resultsItem.getReleaseDate();
                             if (movieDate.equals(dateRelease)) {
-                                releaseMovieList.clear();
                                 releaseMovieList.add(resultsItem.getTitle());
                             }
                         }

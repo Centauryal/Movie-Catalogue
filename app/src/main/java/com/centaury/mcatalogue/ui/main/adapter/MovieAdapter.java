@@ -115,7 +115,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
                 mTxtDescmovielist.setText(movie.getOverview());
             }
 
-            DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
             try {
                 Date date = inputDate.parse(movie.getReleaseDate());

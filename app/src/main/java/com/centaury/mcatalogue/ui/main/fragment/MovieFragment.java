@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.model.genre.GenresItem;
@@ -43,8 +42,6 @@ public class MovieFragment extends Fragment {
     RecyclerView mRvMovie;
     @BindView(R.id.shimmer_view_container)
     ShimmerFrameLayout mShimmerViewContainer;
-    @BindView(R.id.btn_try_again)
-    TextView mBtnTryAgain;
     @BindView(R.id.empty_state)
     LinearLayout mEmptyState;
     private Unbinder unbinder;

@@ -115,7 +115,7 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
                 mTxtDescmovielist.setText(tvShow.getOverview());
             }
 
-            DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
             try {
                 Date date = inputDate.parse(tvShow.getFirstAirDate());
