@@ -2,15 +2,15 @@
 
 This repository contains detailed application examples of MADE course projects in the [Dicoding Academy](dicoding.com). This application uses the API from [TheMovieDB](api.themoviedb.org).
 <p align="center">
-  <img src="https://centauryal.github.io/img/movie_catalogue_pic/screenshot_splash_screen.png" width="250">
-  <img src="https://centauryal.github.io/img/movie_catalogue_pic/screenshot_main.png" width="250">
-  <img src="https://centauryal.github.io/img/movie_catalogue_pic/screenshot_detail.png" width="250">
+  <img src="https://centauryal.github.io/img/movie_catalogue_pic/Screenshot_Splash_Screen.png" width="250">
+  <img src="https://centauryal.github.io/img/movie_catalogue_pic/Screenshot_Main.png" width="250">
+  <img src="https://centauryal.github.io/img/movie_catalogue_pic/Screenshot_Detail.png" width="250">
 </p>
 <br>
 <p align="center">
-  <img src="https://centauryal.github.io/img/movie_catalogue_pic/screenshot_favorite.png" width="250">
-  <img src="https://centauryal.github.io/img/movie_catalogue_pic/screenshot_search.png" width="250">
-  <img src="https://centauryal.github.io/img/movie_catalogue_pic/screenshot_settings.png" width="250">
+  <img src="https://centauryal.github.io/img/movie_catalogue_pic/Screenshot_Favorite.png" width="250">
+  <img src="https://centauryal.github.io/img/movie_catalogue_pic/Screenshot_Search.png" width="250">
+  <img src="https://centauryal.github.io/img/movie_catalogue_pic/Screenshot_Settings.png" width="250">
 </p>
 <br>
 <br>
