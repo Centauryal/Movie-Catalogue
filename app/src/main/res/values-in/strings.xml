@@ -23,6 +23,8 @@
     <string name="txt_showcase_one">Baru! halaman khusus untuk lihat isi favoritmu</string>
     <string name="txt_release_reminder">Pengingat Rilis</string>
     <string name="txt_nomovie_release">Tidak ada film yang dirilis hari ini</string>
+    <string name="txt_title_nomovie_release">Tidak ada film dirilis</string>
+    <string name="txt_title_movie_release">Film telah rilis</string>
     <string name="txt_movie_release">Hari ini adalah rilis film baru</string>
     <string name="txt_desc_release">Pengingat untuk menunjukkan film yang rilis hari ini</string>
     <string name="txt_toast_release">Atur pengingat rilis</string>

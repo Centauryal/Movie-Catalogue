@@ -81,8 +81,6 @@ public class ReleaseReminder extends BroadcastReceiver {
             jmlmovie = 0;
         }
 
-        String title = context.getString(R.string.txt_release_reminder);
-
         if (jmlmovie == 0) {
             intent = new Intent(context, MainActivity.class);
 
@@ -90,7 +88,7 @@ public class ReleaseReminder extends BroadcastReceiver {
 
             String message = context.getString(R.string.txt_nomovie_release);
             builder.setSmallIcon(R.drawable.ic_notif_logo)
-                    .setContentTitle(title)
+                    .setContentTitle(context.getString(R.string.txt_title_nomovie_release))
                     .setContentText(message)
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                     .setContentIntent(pendingIntent)
@@ -101,9 +99,9 @@ public class ReleaseReminder extends BroadcastReceiver {
             intent = new Intent(context, MainActivity.class);
             pendingIntent = PendingIntent.getActivity(context, REQUEST_RELEASE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            String message = context.getString(R.string.txt_movie_release) + " " + TextUtils.join("; ", releaseMovieList);
+            String message = context.getString(R.string.txt_movie_release) + " " + TextUtils.join(", ", releaseMovieList);
             builder.setSmallIcon(R.drawable.ic_notif_logo)
-                    .setContentTitle(title)
+                    .setContentTitle(releaseMovieList.size() + " " + context.getString(R.string.txt_title_movie_release))
                     .setContentText(message)
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                     .setContentIntent(pendingIntent)

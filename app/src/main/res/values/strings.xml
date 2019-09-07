@@ -29,6 +29,8 @@
     <string name="txt_showcase_one">New! special page to see your favorite contents</string>
     <string name="txt_release_reminder">Release Reminder</string>
     <string name="txt_nomovie_release">There are no movies released today</string>
+    <string name="txt_title_nomovie_release">No movies released</string>
+    <string name="txt_title_movie_release">Movies released</string>
     <string name="txt_movie_release">Today is the release of the new movie</string>
     <string name="txt_desc_release">Reminder showing the movie that released today</string>
     <string name="txt_toast_release">Set release reminders</string>
