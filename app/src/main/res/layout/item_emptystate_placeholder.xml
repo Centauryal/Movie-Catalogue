@@ -32,7 +32,7 @@
         android:paddingEnd="@dimen/_10sdp"
         android:paddingBottom="@dimen/_5sdp"
         android:text="@string/btn_try_again"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         android:textSize="@dimen/_12ssp"
         android:textStyle="bold" />
 

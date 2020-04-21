@@ -6,15 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".ui.settings.SettingsActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
-        app:contentInsetEnd="0dp"
-        app:contentInsetLeft="0dp"
-        app:contentInsetRight="0dp"
-        app:contentInsetStart="0dp"
         app:popupTheme="@style/AppTheme.PopupOverlay">
 
         <RelativeLayout
@@ -46,7 +42,7 @@
                 android:textStyle="bold" />
 
         </RelativeLayout>
-    </android.support.v7.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -74,8 +70,7 @@
                 android:id="@+id/settings_language"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:alpha="0.5"
-                android:textColor="@color/black"
+                android:textColor="@color/colorSecondaryText"
                 android:textSize="@dimen/_12ssp"
                 tools:text="@string/contoh_bahasa" />
 
@@ -84,8 +79,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:alpha="0.1"
-            android:background="@color/black" />
+            android:background="@color/colorDevider" />
 
         <LinearLayout
             android:id="@+id/ln_release"
@@ -100,6 +94,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_10sdp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -112,10 +107,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:alpha="0.5"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_12ssp"
-                    android:text="@string/txt_desc_release" />
+                    android:text="@string/txt_desc_release"
+                    android:textColor="@color/colorSecondaryText"
+                    android:textSize="@dimen/_12ssp" />
 
             </LinearLayout>
 
@@ -152,10 +146,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:alpha="0.5"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/_12ssp"
-                    android:text="@string/txt_desc_daily" />
+                    android:text="@string/txt_desc_daily"
+                    android:textColor="@color/colorSecondaryText"
+                    android:textSize="@dimen/_12ssp" />
 
             </LinearLayout>
 

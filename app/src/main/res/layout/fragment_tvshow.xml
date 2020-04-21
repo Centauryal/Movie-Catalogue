@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.fragment.TVShowFragment">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_tvshow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:listitem="@layout/item_movielist">
 
-    </android.support.v7.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmer_view_container"
