@@ -9,9 +9,10 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
+import com.centaury.mcatalogue.BuildConfig;
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.db.AppDatabase;
-import com.centaury.mcatalogue.data.db.entity.MovieEntity;
+import com.centaury.mcatalogue.data.local.db.AppDatabase;
+import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
 import com.centaury.mcatalogue.utils.AppConstants;
 
 import java.io.IOException;
@@ -27,8 +28,8 @@ import javax.net.ssl.HttpsURLConnection;
  */
 public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
-    private List<MovieEntity> resultsItems = new ArrayList<>();
     private final Context context;
+    private List<MovieEntity> resultsItems = new ArrayList<>();
 
     public StackRemoteViewsFactory(Context context) {
         this.context = context;
@@ -64,7 +65,7 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
             URL url;
             Bitmap bitmap = null;
             try {
-                url = new URL(AppConstants.IMAGE_WIDGET_URL + resultsItems.get(position).getPosterPath());
+                url = new URL(BuildConfig.IMAGE_WIDGET_URL + resultsItems.get(position).getPosterPath());
                 HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
                 urlConnection.setDoInput(true);
                 urlConnection.connect();
@@ -78,7 +79,7 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
             remoteViews.setImageViewBitmap(R.id.iv_widget, bitmap);
 
             Bundle bundle = new Bundle();
-            bundle.putInt(FavoriteWidget.EXTRA_ITEM, resultsItems.get(position).getId());
+            bundle.putInt(AppConstants.EXTRA_ITEM, resultsItems.get(position).getId());
             Intent intent = new Intent();
             intent.putExtras(bundle);
 

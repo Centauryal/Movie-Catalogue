@@ -1,12 +1,13 @@
 package com.centaury.mcatalogue.ui.favorite.viewmodel;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
-import android.support.annotation.NonNull;
 
-import com.centaury.mcatalogue.data.db.TVShowRepository;
-import com.centaury.mcatalogue.data.db.entity.TVShowEntity;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+
+import com.centaury.mcatalogue.data.local.db.TVShowRepository;
+import com.centaury.mcatalogue.data.local.db.entity.TVShowEntity;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;

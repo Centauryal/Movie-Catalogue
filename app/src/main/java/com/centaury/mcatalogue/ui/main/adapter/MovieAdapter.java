@@ -2,8 +2,6 @@ package com.centaury.mcatalogue.ui.main.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
+import com.centaury.mcatalogue.BuildConfig;
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.model.genre.GenresItem;
-import com.centaury.mcatalogue.data.model.movie.MovieResultsItem;
+import com.centaury.mcatalogue.data.remote.model.genre.GenresItem;
+import com.centaury.mcatalogue.data.remote.model.movie.MovieResultsItem;
 import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
 import com.centaury.mcatalogue.utils.AppConstants;
 
@@ -69,7 +71,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
         viewHolder.bind(movie);
         viewHolder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetailMovieActivity.class);
-            intent.putExtra(DetailMovieActivity.EXTRA_MOVIE, movieResultsList.get(viewHolder.getAdapterPosition()));
+            intent.putExtra(AppConstants.EXTRA_MOVIE, movieResultsList.get(viewHolder.getAdapterPosition()));
             context.startActivity(intent);
         });
     }
@@ -94,7 +96,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
         @BindView(R.id.txt_datemovielist)
         TextView mTxtDatemovielist;
 
-        public viewHolder(@NonNull View itemView) {
+        viewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -107,7 +109,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
             } else {
                 mTxtGenremovielist.setText(getGenres(movie.getGenreIds()));
             }
-            Glide.with(context).load(AppConstants.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvMovielist);
+            Glide.with(context).load(BuildConfig.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvMovielist);
 
             if (movie.getOverview() == null || movie.getOverview().equals("")) {
                 mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));

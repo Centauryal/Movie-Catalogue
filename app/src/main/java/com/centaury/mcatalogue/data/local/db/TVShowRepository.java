@@ -1,11 +1,12 @@
-package com.centaury.mcatalogue.data.db;
+package com.centaury.mcatalogue.data.local.db;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
-import com.centaury.mcatalogue.data.db.dao.TVShowDao;
-import com.centaury.mcatalogue.data.db.entity.TVShowEntity;
+import androidx.lifecycle.LiveData;
+
+import com.centaury.mcatalogue.data.local.db.dao.TVShowDao;
+import com.centaury.mcatalogue.data.local.db.entity.TVShowEntity;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -35,16 +36,8 @@ public class TVShowRepository {
         new insertTVShowsAsync(tvShowDao).execute(tvshow);
     }
 
-    public void updateTVShow(TVShowEntity tvshow) {
-        new updateTVShowsAsync(tvShowDao).execute(tvshow);
-    }
-
     public void deleteTVShow(TVShowEntity tvshow) {
         new deleteTVShowsAsync(tvShowDao).execute(tvshow);
-    }
-
-    public void deleteAllTVShows() {
-        new deleteAllTVShowsAsync(tvShowDao).execute();
     }
 
     /**
@@ -81,21 +74,6 @@ public class TVShowRepository {
         }
     }
 
-    private static class updateTVShowsAsync extends AsyncTask<TVShowEntity, Void, Void> {
-
-        private TVShowDao mTVShowDaoAsync;
-
-        updateTVShowsAsync(TVShowDao tvShowDao) {
-            mTVShowDaoAsync = tvShowDao;
-        }
-
-        @Override
-        protected Void doInBackground(TVShowEntity... tvShowEntities) {
-            mTVShowDaoAsync.update(tvShowEntities[0]);
-            return null;
-        }
-    }
-
     private static class deleteTVShowsAsync extends AsyncTask<TVShowEntity, Void, Void> {
 
         private TVShowDao mTVShowDaoAsync;
@@ -107,21 +85,6 @@ public class TVShowRepository {
         @Override
         protected Void doInBackground(TVShowEntity... tvShowEntities) {
             mTVShowDaoAsync.delete(tvShowEntities[0]);
-            return null;
-        }
-    }
-
-    private static class deleteAllTVShowsAsync extends AsyncTask<TVShowEntity, Void, Void> {
-
-        private TVShowDao mTVShowDaoAsync;
-
-        deleteAllTVShowsAsync(TVShowDao tvShowDao) {
-            mTVShowDaoAsync = tvShowDao;
-        }
-
-        @Override
-        protected Void doInBackground(TVShowEntity... tvShowEntities) {
-            mTVShowDaoAsync.deleteAll();
             return null;
         }
     }

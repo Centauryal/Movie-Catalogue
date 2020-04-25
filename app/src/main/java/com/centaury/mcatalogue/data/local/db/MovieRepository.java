@@ -1,11 +1,12 @@
-package com.centaury.mcatalogue.data.db;
+package com.centaury.mcatalogue.data.local.db;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
-import com.centaury.mcatalogue.data.db.dao.MovieDao;
-import com.centaury.mcatalogue.data.db.entity.MovieEntity;
+import androidx.lifecycle.LiveData;
+
+import com.centaury.mcatalogue.data.local.db.dao.MovieDao;
+import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -36,16 +37,8 @@ public class MovieRepository {
         new insertMoviesAsync(movieDao).execute(movie);
     }
 
-    public void updateMovie(MovieEntity movie) {
-        new updateMoviesAsync(movieDao).execute(movie);
-    }
-
     public void deleteMovie(MovieEntity movie) {
         new deleteMoviesAsync(movieDao).execute(movie);
-    }
-
-    public void deleteAllMovies() {
-        new deleteAllMoviesAsync(movieDao).execute();
     }
 
     /**
@@ -82,21 +75,6 @@ public class MovieRepository {
         }
     }
 
-    private static class updateMoviesAsync extends AsyncTask<MovieEntity, Void, Void> {
-
-        private MovieDao mMovieDaoAsync;
-
-        updateMoviesAsync(MovieDao movieDao) {
-            mMovieDaoAsync = movieDao;
-        }
-
-        @Override
-        protected Void doInBackground(MovieEntity... movieEntities) {
-            mMovieDaoAsync.update(movieEntities[0]);
-            return null;
-        }
-    }
-
     private static class deleteMoviesAsync extends AsyncTask<MovieEntity, Void, Void> {
 
         private MovieDao mMovieDaoAsync;
@@ -108,21 +86,6 @@ public class MovieRepository {
         @Override
         protected Void doInBackground(MovieEntity... movieEntities) {
             mMovieDaoAsync.delete(movieEntities[0]);
-            return null;
-        }
-    }
-
-    private static class deleteAllMoviesAsync extends AsyncTask<MovieEntity, Void, Void> {
-
-        private MovieDao mMovieDaoAsync;
-
-        deleteAllMoviesAsync(MovieDao movieDao) {
-            mMovieDaoAsync = movieDao;
-        }
-
-        @Override
-        protected Void doInBackground(MovieEntity... movieEntities) {
-            mMovieDaoAsync.deleteAll();
             return null;
         }
     }

@@ -1,25 +1,26 @@
 package com.centaury.mcatalogue.ui.main.fragment;
 
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.model.genre.GenresItem;
-import com.centaury.mcatalogue.data.model.movie.MovieResultsItem;
+import com.centaury.mcatalogue.data.remote.model.genre.GenresItem;
+import com.centaury.mcatalogue.data.remote.model.movie.MovieResultsItem;
 import com.centaury.mcatalogue.ui.main.adapter.MovieAdapter;
 import com.centaury.mcatalogue.ui.main.viewmodel.MovieViewModel;
 import com.centaury.mcatalogue.utils.Helper;
@@ -27,6 +28,7 @@ import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,11 +51,23 @@ public class MovieFragment extends Fragment {
     private MovieAdapter movieAdapter;
     private MovieViewModel movieViewModel;
     private String language;
+    private Observer<List<MovieResultsItem>> getMovie = movieResultsItems -> {
+        if (movieResultsItems != null) {
+            mShimmerViewContainer.stopShimmer();
+            mShimmerViewContainer.setVisibility(View.GONE);
+            toggleEmptyMovies(movieResultsItems.size());
+            movieAdapter.setMovieData(movieResultsItems);
+        }
+    };
+    private Observer<List<GenresItem>> getGenre = genresItems -> {
+        if (genresItems != null) {
+            movieAdapter.setGenreData(genresItems);
+        }
+    };
 
     public MovieFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,9 +83,9 @@ public class MovieFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        movieViewModel = ViewModelProviders.of(this).get(MovieViewModel.class);
-        movieViewModel.getMovies().observe(this, getMovie);
-        movieViewModel.getGenres().observe(this, getGenre);
+        movieViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(MovieViewModel.class);
+        movieViewModel.getMovies().observe(getViewLifecycleOwner(), getMovie);
+        movieViewModel.getGenres().observe(getViewLifecycleOwner(), getGenre);
         language = String.valueOf(Locale.getDefault().toLanguageTag());
 
         showRecyclerList();
@@ -104,7 +118,7 @@ public class MovieFragment extends Fragment {
         }
     }
 
-    public void checkConnection(Context context) {
+    private void checkConnection(Context context) {
         if (Helper.isNetworkConnected(context)) {
             mShimmerViewContainer.startShimmer();
             movieViewModel.setMovie(language);
@@ -138,7 +152,7 @@ public class MovieFragment extends Fragment {
     }
 
     private void showNoInternet() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
         builder.setView(R.layout.item_alert_dialog);
         builder.setPositiveButton(getString(R.string.btn_ok), (dialog, which) -> {
             dialog.dismiss();

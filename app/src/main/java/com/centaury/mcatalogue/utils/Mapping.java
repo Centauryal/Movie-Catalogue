@@ -2,21 +2,21 @@ package com.centaury.mcatalogue.utils;
 
 import android.database.Cursor;
 
-import com.centaury.mcatalogue.data.db.DatabaseContract;
-import com.centaury.mcatalogue.data.db.entity.MovieEntity;
-import com.centaury.mcatalogue.data.db.entity.TVShowEntity;
+import com.centaury.mcatalogue.data.local.db.DatabaseContract;
+import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
+import com.centaury.mcatalogue.data.local.db.entity.TVShowEntity;
 
 import java.util.ArrayList;
 
-import static com.centaury.mcatalogue.data.db.DatabaseContract.MovieColumns.BACKDROP_PATH;
-import static com.centaury.mcatalogue.data.db.DatabaseContract.MovieColumns.GENRE;
-import static com.centaury.mcatalogue.data.db.DatabaseContract.MovieColumns.ID;
-import static com.centaury.mcatalogue.data.db.DatabaseContract.MovieColumns.ORIGINAL_TITLE;
-import static com.centaury.mcatalogue.data.db.DatabaseContract.MovieColumns.OVERVIEW;
-import static com.centaury.mcatalogue.data.db.DatabaseContract.MovieColumns.POSTER_PATH;
-import static com.centaury.mcatalogue.data.db.DatabaseContract.MovieColumns.RELEASE_DATE;
-import static com.centaury.mcatalogue.data.db.DatabaseContract.MovieColumns.TITLE;
-import static com.centaury.mcatalogue.data.db.DatabaseContract.MovieColumns.VOTE_AVERAGE;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns.BACKDROP_PATH;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns.GENRE;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns.ID;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns.ORIGINAL_TITLE;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns.OVERVIEW;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns.POSTER_PATH;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns.RELEASE_DATE;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns.TITLE;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns.VOTE_AVERAGE;
 
 
 /**

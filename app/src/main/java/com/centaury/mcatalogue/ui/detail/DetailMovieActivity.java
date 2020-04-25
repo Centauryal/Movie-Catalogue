@@ -1,12 +1,8 @@
 package com.centaury.mcatalogue.ui.detail;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -16,12 +12,18 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
+import com.centaury.mcatalogue.BuildConfig;
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.db.entity.MovieEntity;
-import com.centaury.mcatalogue.data.model.genre.GenresItem;
-import com.centaury.mcatalogue.data.model.movie.MovieResultsItem;
+import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
+import com.centaury.mcatalogue.data.remote.model.genre.GenresItem;
+import com.centaury.mcatalogue.data.remote.model.movie.MovieResultsItem;
 import com.centaury.mcatalogue.ui.detail.viewmodel.DetailViewModel;
 import com.centaury.mcatalogue.ui.favorite.viewmodel.FavoriteMovieViewModel;
 import com.centaury.mcatalogue.utils.AppConstants;
@@ -42,8 +44,6 @@ import butterknife.OnClick;
 
 public class DetailMovieActivity extends AppCompatActivity {
 
-    public static final String EXTRA_MOVIE = "extra_movie";
-    public static final String EXTRA_FAV_MOVIE = "extra_favmovie";
     @BindView(R.id.iv_coverdetail)
     ImageView mIvCoverdetail;
     @BindView(R.id.iv_imgdetail)
@@ -74,6 +74,12 @@ public class DetailMovieActivity extends AppCompatActivity {
     private AlertDialog alertDialog;
     private String language;
     private Boolean isFavorite = false;
+    private Observer<List<GenresItem>> getGenre = genresItems -> {
+        if (genresItems != null) {
+            showDialogLoading();
+            getGenresString(genresItems);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,24 +90,24 @@ public class DetailMovieActivity extends AppCompatActivity {
         Window window = getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            View view = getWindow().getDecorView();
+        View view = getWindow().getDecorView();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         }
 
         language = String.valueOf(Locale.getDefault().toLanguageTag());
-        detailViewModel = ViewModelProviders.of(this).get(DetailViewModel.class);
-        favoriteMovieViewModel = ViewModelProviders.of(this).get(FavoriteMovieViewModel.class);
+        detailViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(DetailViewModel.class);
+        favoriteMovieViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(FavoriteMovieViewModel.class);
         detailViewModel.getGenresDetail().observe(this, getGenre);
 
         checkConnection(this);
 
-        movie = getIntent().getParcelableExtra(EXTRA_MOVIE);
+        movie = getIntent().getParcelableExtra(AppConstants.EXTRA_MOVIE);
         if (movie != null) {
             itemMovie(movie);
             stateFavoriteDB(movie.getId());
         } else {
-            int entityId = getIntent().getIntExtra(EXTRA_FAV_MOVIE, 0);
+            int entityId = getIntent().getIntExtra(AppConstants.EXTRA_FAV_MOVIE, 0);
             try {
                 entity = favoriteMovieViewModel.getMovie(entityId);
                 itemMovieDB(entity);
@@ -127,11 +133,11 @@ public class DetailMovieActivity extends AppCompatActivity {
         mTxtRatemovie.setText(String.valueOf(movie.getVoteAverage()));
         float movieRating = (float) (movie.getVoteAverage() / 2);
         mRbRatingdetail.setRating(movieRating);
-        Glide.with(this).load(AppConstants.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvImgdetail);
+        Glide.with(this).load(BuildConfig.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvImgdetail);
         if (movie.getBackdropPath() != null) {
-            Glide.with(this).load(AppConstants.IMAGE_URL + movie.getBackdropPath()).placeholder(R.drawable.noimage).into(mIvCoverdetail);
+            Glide.with(this).load(BuildConfig.IMAGE_URL + movie.getBackdropPath()).placeholder(R.drawable.noimage).into(mIvCoverdetail);
         } else {
-            Glide.with(this).load(AppConstants.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvCoverdetail);
+            Glide.with(this).load(BuildConfig.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvCoverdetail);
         }
 
         if (movie.getOverview() == null || movie.getOverview().equals("")) {
@@ -160,11 +166,11 @@ public class DetailMovieActivity extends AppCompatActivity {
         int rate = (int) Double.parseDouble(entity.getVoteAverage());
         float movieRating = (float) (rate / 2);
         mRbRatingdetail.setRating(movieRating);
-        Glide.with(this).load(AppConstants.IMAGE_URL + entity.getPosterPath()).placeholder(R.drawable.noimage).into(mIvImgdetail);
+        Glide.with(this).load(BuildConfig.IMAGE_URL + entity.getPosterPath()).placeholder(R.drawable.noimage).into(mIvImgdetail);
         if (entity.getBackdropPath() != null) {
-            Glide.with(this).load(AppConstants.IMAGE_URL + entity.getBackdropPath()).placeholder(R.drawable.noimage).into(mIvCoverdetail);
+            Glide.with(this).load(BuildConfig.IMAGE_URL + entity.getBackdropPath()).placeholder(R.drawable.noimage).into(mIvCoverdetail);
         } else {
-            Glide.with(this).load(AppConstants.IMAGE_URL + entity.getPosterPath()).placeholder(R.drawable.noimage).into(mIvCoverdetail);
+            Glide.with(this).load(BuildConfig.IMAGE_URL + entity.getPosterPath()).placeholder(R.drawable.noimage).into(mIvCoverdetail);
         }
 
         if (entity.getOverview() == null || entity.getOverview().equals("")) {
@@ -187,13 +193,6 @@ public class DetailMovieActivity extends AppCompatActivity {
         super.onResume();
         Helper.updateWidget(this);
     }
-
-    private Observer<List<GenresItem>> getGenre = genresItems -> {
-        if (genresItems != null) {
-            showDialogLoading();
-            getGenresString(genresItems);
-        }
-    };
 
     public void checkConnection(Context context) {
         if (Helper.isNetworkConnected(context)) {
@@ -301,9 +300,7 @@ public class DetailMovieActivity extends AppCompatActivity {
 
             Helper.updateWidget(this);
             Toast.makeText(this, getString(R.string.txt_remove_movie), Toast.LENGTH_SHORT).show();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
     }

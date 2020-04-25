@@ -2,17 +2,19 @@ package com.centaury.mcatalogue.ui.favorite.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
+import com.centaury.mcatalogue.BuildConfig;
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.db.entity.TVShowEntity;
+import com.centaury.mcatalogue.data.local.db.entity.TVShowEntity;
 import com.centaury.mcatalogue.ui.detail.DetailTVShowActivity;
 import com.centaury.mcatalogue.utils.AppConstants;
 
@@ -36,16 +38,12 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
     private List<TVShowEntity> tvShowEntityList = new ArrayList<>();
     private OnDeleteItemClickCallback onDeleteItemClickCallback;
 
-    public interface OnDeleteItemClickCallback {
-        void onDeleteClicked(int tvshowId);
+    public FavoriteTVShowAdapter(Context context) {
+        this.context = context;
     }
 
     public void setOnDeleteItemClickCallback(OnDeleteItemClickCallback onDeleteItemClickCallback) {
         this.onDeleteItemClickCallback = onDeleteItemClickCallback;
-    }
-
-    public FavoriteTVShowAdapter(Context context) {
-        this.context = context;
     }
 
     public void setTVShows(List<TVShowEntity> tvShows) {
@@ -75,7 +73,7 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
 
             viewHolder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(context, DetailTVShowActivity.class);
-                intent.putExtra(DetailTVShowActivity.EXTRA_FAV_TVSHOW, tvShowEntityList.get(viewHolder.getAdapterPosition()));
+                intent.putExtra(AppConstants.EXTRA_FAV_TVSHOW, tvShowEntityList.get(viewHolder.getAdapterPosition()));
                 context.startActivity(intent);
             });
             viewHolder.mBtnDelete.setOnClickListener(v ->
@@ -90,6 +88,10 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
         } else {
             return 0;
         }
+    }
+
+    public interface OnDeleteItemClickCallback {
+        void onDeleteClicked(int tvshowId);
     }
 
     public class viewHolder extends RecyclerView.ViewHolder {
@@ -109,7 +111,7 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
         @BindView(R.id.btn_delete)
         ImageView mBtnDelete;
 
-        public viewHolder(@NonNull View itemView) {
+        viewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -122,7 +124,7 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
             } else {
                 mTxtGenremovielist.setText(tvShow.getGenreIds());
             }
-            Glide.with(context).load(AppConstants.IMAGE_URL + tvShow.getPosterPath()).placeholder(R.drawable.noimage).into(mIvMovielist);
+            Glide.with(context).load(BuildConfig.IMAGE_URL + tvShow.getPosterPath()).placeholder(R.drawable.noimage).into(mIvMovielist);
 
             if (tvShow.getOverview() == null || tvShow.getOverview().equals("")) {
                 mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));

@@ -12,11 +12,12 @@ import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationCompat;
+
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.prefs.ReminderPreference;
+import com.centaury.mcatalogue.data.local.prefs.ReminderPreference;
 import com.centaury.mcatalogue.ui.main.MainActivity;
 
 import java.util.Calendar;

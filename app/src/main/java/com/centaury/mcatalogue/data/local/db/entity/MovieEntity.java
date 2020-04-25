@@ -1,18 +1,19 @@
-package com.centaury.mcatalogue.data.db.entity;
+package com.centaury.mcatalogue.data.local.db.entity;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
 
-import com.centaury.mcatalogue.data.db.DatabaseContract.MovieColumns;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-import static com.centaury.mcatalogue.data.db.DatabaseContract.getColumnInt;
-import static com.centaury.mcatalogue.data.db.DatabaseContract.getColumnString;
+import com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns;
+
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.getColumnInt;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.getColumnString;
 
 /**
  * Created by Centaury on 7/27/2019.
@@ -30,34 +31,76 @@ public class MovieEntity implements Parcelable {
     public static final String COLUMN_VOTE = "vote";
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_GENRE = "genre";
+    public static final Parcelable.Creator<MovieEntity> CREATOR = new Parcelable.Creator<MovieEntity>() {
+        @Override
+        public MovieEntity createFromParcel(Parcel source) {
+            return new MovieEntity(source);
+        }
 
+        @Override
+        public MovieEntity[] newArray(int size) {
+            return new MovieEntity[size];
+        }
+    };
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(index = true, name = COLUMN_ID)
     public int id;
-
     @ColumnInfo(name = COLUMN_NAME)
     private String title;
-
     @ColumnInfo(name = COLUMN_ORIGINAL)
     private String originalTitle;
-
     @ColumnInfo(name = COLUMN_DESC)
     private String overview;
-
     @ColumnInfo(name = COLUMN_PHOTO)
     private String posterPath;
-
     @ColumnInfo(name = COLUMN_BACKDROP)
     private String backdropPath;
-
     @ColumnInfo(name = COLUMN_VOTE)
     private String voteAverage;
-
     @ColumnInfo(name = COLUMN_DATE)
     private String releaseDate;
-
     @ColumnInfo(name = COLUMN_GENRE)
     private String genreIds;
+
+    public MovieEntity() {
+
+    }
+
+    public MovieEntity(int id, String title, String originalTitle, String overview, String posterPath, String backdropPath, String voteAverage, String releaseDate, String genreIds) {
+        this.id = id;
+        this.title = title;
+        this.originalTitle = originalTitle;
+        this.overview = overview;
+        this.posterPath = posterPath;
+        this.backdropPath = backdropPath;
+        this.voteAverage = voteAverage;
+        this.releaseDate = releaseDate;
+        this.genreIds = genreIds;
+    }
+
+    public MovieEntity(Cursor cursor) {
+        this.id = getColumnInt(cursor, MovieColumns.ID);
+        this.title = getColumnString(cursor, MovieColumns.TITLE);
+        this.originalTitle = getColumnString(cursor, MovieColumns.ORIGINAL_TITLE);
+        this.overview = getColumnString(cursor, MovieColumns.OVERVIEW);
+        this.posterPath = getColumnString(cursor, MovieColumns.POSTER_PATH);
+        this.backdropPath = getColumnString(cursor, MovieColumns.BACKDROP_PATH);
+        this.voteAverage = getColumnString(cursor, MovieColumns.VOTE_AVERAGE);
+        this.releaseDate = getColumnString(cursor, MovieColumns.RELEASE_DATE);
+        this.genreIds = getColumnString(cursor, MovieColumns.GENRE);
+    }
+
+    protected MovieEntity(Parcel in) {
+        this.id = in.readInt();
+        this.title = in.readString();
+        this.originalTitle = in.readString();
+        this.overview = in.readString();
+        this.posterPath = in.readString();
+        this.backdropPath = in.readString();
+        this.voteAverage = in.readString();
+        this.releaseDate = in.readString();
+        this.genreIds = in.readString();
+    }
 
     public static MovieEntity fromContentValues(ContentValues values) {
         final MovieEntity movieEntity = new MovieEntity();
@@ -89,34 +132,6 @@ public class MovieEntity implements Parcelable {
             movieEntity.genreIds = values.getAsString(COLUMN_GENRE);
         }
         return movieEntity;
-    }
-
-    public MovieEntity() {
-
-    }
-
-    public MovieEntity(int id, String title, String originalTitle, String overview, String posterPath, String backdropPath, String voteAverage, String releaseDate, String genreIds) {
-        this.id = id;
-        this.title = title;
-        this.originalTitle = originalTitle;
-        this.overview = overview;
-        this.posterPath = posterPath;
-        this.backdropPath = backdropPath;
-        this.voteAverage = voteAverage;
-        this.releaseDate = releaseDate;
-        this.genreIds = genreIds;
-    }
-
-    public MovieEntity(Cursor cursor) {
-        this.id = getColumnInt(cursor, MovieColumns.ID);
-        this.title = getColumnString(cursor, MovieColumns.TITLE);
-        this.originalTitle = getColumnString(cursor, MovieColumns.ORIGINAL_TITLE);
-        this.overview = getColumnString(cursor, MovieColumns.OVERVIEW);
-        this.posterPath = getColumnString(cursor, MovieColumns.POSTER_PATH);
-        this.backdropPath = getColumnString(cursor, MovieColumns.BACKDROP_PATH);
-        this.voteAverage = getColumnString(cursor, MovieColumns.VOTE_AVERAGE);
-        this.releaseDate = getColumnString(cursor, MovieColumns.RELEASE_DATE);
-        this.genreIds = getColumnString(cursor, MovieColumns.GENRE);
     }
 
     public int getId() {
@@ -208,28 +223,4 @@ public class MovieEntity implements Parcelable {
         dest.writeString(this.releaseDate);
         dest.writeString(this.genreIds);
     }
-
-    protected MovieEntity(Parcel in) {
-        this.id = in.readInt();
-        this.title = in.readString();
-        this.originalTitle = in.readString();
-        this.overview = in.readString();
-        this.posterPath = in.readString();
-        this.backdropPath = in.readString();
-        this.voteAverage = in.readString();
-        this.releaseDate = in.readString();
-        this.genreIds = in.readString();
-    }
-
-    public static final Parcelable.Creator<MovieEntity> CREATOR = new Parcelable.Creator<MovieEntity>() {
-        @Override
-        public MovieEntity createFromParcel(Parcel source) {
-            return new MovieEntity(source);
-        }
-
-        @Override
-        public MovieEntity[] newArray(int size) {
-            return new MovieEntity[size];
-        }
-    };
 }

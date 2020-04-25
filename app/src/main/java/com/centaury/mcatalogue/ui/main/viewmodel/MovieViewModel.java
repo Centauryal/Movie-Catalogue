@@ -1,19 +1,21 @@
 package com.centaury.mcatalogue.ui.main.viewmodel;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 import android.util.Log;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
-import com.centaury.mcatalogue.data.model.genre.GenreResponse;
-import com.centaury.mcatalogue.data.model.genre.GenresItem;
-import com.centaury.mcatalogue.data.model.movie.MovieResponse;
-import com.centaury.mcatalogue.data.model.movie.MovieResultsItem;
-import com.centaury.mcatalogue.utils.AppConstants;
+import com.centaury.mcatalogue.BuildConfig;
+import com.centaury.mcatalogue.data.remote.ApiEndPoint;
+import com.centaury.mcatalogue.data.remote.model.genre.GenreResponse;
+import com.centaury.mcatalogue.data.remote.model.genre.GenresItem;
+import com.centaury.mcatalogue.data.remote.model.movie.MovieResponse;
+import com.centaury.mcatalogue.data.remote.model.movie.MovieResultsItem;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -44,15 +46,14 @@ public class MovieViewModel extends ViewModel {
     }
 
     public void setMovie(String language) {
-        AndroidNetworking.get(AppConstants.BASE_URL + "discover/movie")
-                .addQueryParameter("api_key", AppConstants.API_KEY)
+        AndroidNetworking.get(ApiEndPoint.ENDPOINT_DISCOVERY_MOVIE)
+                .addQueryParameter("api_key", BuildConfig.API_KEY)
                 .addQueryParameter("language", language)
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "onResponseMovie: " + response);
                         MovieResponse movieResponse = new Gson().fromJson(response + "", MovieResponse.class);
                         List<MovieResultsItem> resultsItems = movieResponse.getResults();
 
@@ -67,8 +68,8 @@ public class MovieViewModel extends ViewModel {
     }
 
     public void setSearchMovie(String query, String language) {
-        AndroidNetworking.get(AppConstants.BASE_URL + "search/movie")
-                .addQueryParameter("api_key", AppConstants.API_KEY)
+        AndroidNetworking.get(ApiEndPoint.ENDPOINT_SEARCH_MOVIE)
+                .addQueryParameter("api_key", BuildConfig.API_KEY)
                 .addQueryParameter("language", language)
                 .addQueryParameter("query", query)
                 .setPriority(Priority.MEDIUM)
@@ -90,15 +91,14 @@ public class MovieViewModel extends ViewModel {
     }
 
     public void setGenre(String language) {
-        AndroidNetworking.get(AppConstants.BASE_URL + "genre/movie/list")
-                .addQueryParameter("api_key", AppConstants.API_KEY)
+        AndroidNetworking.get(ApiEndPoint.ENDPOINT_GENRE_MOVIE)
+                .addQueryParameter("api_key", BuildConfig.API_KEY)
                 .addQueryParameter("language", language)
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "onResponseGenre: " + response);
                         GenreResponse genreResponse = new Gson().fromJson(response + "", GenreResponse.class);
                         List<GenresItem> genresItems = genreResponse.getGenres();
 

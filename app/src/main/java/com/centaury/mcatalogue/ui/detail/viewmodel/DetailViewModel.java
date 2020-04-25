@@ -1,17 +1,19 @@
 package com.centaury.mcatalogue.ui.detail.viewmodel;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 import android.util.Log;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
-import com.centaury.mcatalogue.data.model.genre.GenreResponse;
-import com.centaury.mcatalogue.data.model.genre.GenresItem;
-import com.centaury.mcatalogue.utils.AppConstants;
+import com.centaury.mcatalogue.BuildConfig;
+import com.centaury.mcatalogue.data.remote.ApiEndPoint;
+import com.centaury.mcatalogue.data.remote.model.genre.GenreResponse;
+import com.centaury.mcatalogue.data.remote.model.genre.GenresItem;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -32,15 +34,14 @@ public class DetailViewModel extends ViewModel {
     }
 
     public void setGenreMovieDetail(String language) {
-        AndroidNetworking.get(AppConstants.BASE_URL + "genre/movie/list")
-                .addQueryParameter("api_key", AppConstants.API_KEY)
+        AndroidNetworking.get(ApiEndPoint.ENDPOINT_GENRE_MOVIE)
+                .addQueryParameter("api_key", BuildConfig.API_KEY)
                 .addQueryParameter("language", language)
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "onResponseGenre: " + response);
                         GenreResponse genreResponse = new Gson().fromJson(response + "", GenreResponse.class);
                         List<GenresItem> genresItems = genreResponse.getGenres();
                         listGenreLiveData.setValue(genresItems);
@@ -54,15 +55,14 @@ public class DetailViewModel extends ViewModel {
     }
 
     public void setGenreTVShowDetail(String language) {
-        AndroidNetworking.get(AppConstants.BASE_URL + "genre/tv/list")
-                .addQueryParameter("api_key", AppConstants.API_KEY)
+        AndroidNetworking.get(ApiEndPoint.ENDPOINT_GENRE_TVSHOW)
+                .addQueryParameter("api_key", BuildConfig.API_KEY)
                 .addQueryParameter("language", language)
                 .setPriority(Priority.MEDIUM)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "onResponseGenre: " + response);
                         GenreResponse genreResponse = new Gson().fromJson(response + "", GenreResponse.class);
                         List<GenresItem> genresItems = genreResponse.getGenres();
                         listGenreLiveData.setValue(genresItems);

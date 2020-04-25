@@ -2,8 +2,6 @@ package com.centaury.mcatalogue.ui.main.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
+import com.centaury.mcatalogue.BuildConfig;
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.model.genre.GenresItem;
-import com.centaury.mcatalogue.data.model.tvshow.TVShowResultsItem;
+import com.centaury.mcatalogue.data.remote.model.genre.GenresItem;
+import com.centaury.mcatalogue.data.remote.model.tvshow.TVShowResultsItem;
 import com.centaury.mcatalogue.ui.detail.DetailTVShowActivity;
 import com.centaury.mcatalogue.utils.AppConstants;
 
@@ -69,7 +71,7 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
         viewHolder.bind(tvShow);
         viewHolder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetailTVShowActivity.class);
-            intent.putExtra(DetailTVShowActivity.EXTRA_TVSHOW, tvShowResultsList.get(viewHolder.getAdapterPosition()));
+            intent.putExtra(AppConstants.EXTRA_TVSHOW, tvShowResultsList.get(viewHolder.getAdapterPosition()));
             context.startActivity(intent);
         });
     }
@@ -94,7 +96,7 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
         @BindView(R.id.txt_datemovielist)
         TextView mTxtDatemovielist;
 
-        public viewHolder(@NonNull View itemView) {
+        viewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -107,7 +109,7 @@ public class TVShowAdapter extends RecyclerView.Adapter<TVShowAdapter.viewHolder
             } else {
                 mTxtGenremovielist.setText(getGenres(tvShow.getGenreIds()));
             }
-            Glide.with(context).load(AppConstants.IMAGE_URL + tvShow.getPosterPath()).placeholder(R.drawable.noimage).into(mIvMovielist);
+            Glide.with(context).load(BuildConfig.IMAGE_URL + tvShow.getPosterPath()).placeholder(R.drawable.noimage).into(mIvMovielist);
 
             if (tvShow.getOverview() == null || tvShow.getOverview().equals("")) {
                 mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));

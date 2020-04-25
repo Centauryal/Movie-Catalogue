@@ -1,4 +1,4 @@
-package com.centaury.mcatalogue.data.model.genre;
+package com.centaury.mcatalogue.data.remote.model.genre;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -13,20 +13,20 @@ public class GenresItem {
     @SerializedName("id")
     private int id;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

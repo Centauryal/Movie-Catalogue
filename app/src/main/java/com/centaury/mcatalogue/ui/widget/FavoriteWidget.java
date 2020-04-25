@@ -11,15 +11,12 @@ import android.widget.RemoteViews;
 
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
+import com.centaury.mcatalogue.utils.AppConstants;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class FavoriteWidget extends AppWidgetProvider {
-
-    private static final String TOAST_ACTION = "com.centaury.mcatalogue.TOAST_ACTION";
-    public static final String EXTRA_ITEM = "com.centaury.mcatalogue.EXTRA_ITEM";
-    public static final String UPDATE_WIDGET = "Update Widget";
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
@@ -27,12 +24,12 @@ public class FavoriteWidget extends AppWidgetProvider {
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
 
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.favorite_widget);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_favorite);
         views.setRemoteAdapter(R.id.stack_view, intent);
         views.setEmptyView(R.id.stack_view, R.id.empty_view);
 
         Intent toastIntent = new Intent(context, FavoriteWidget.class);
-        toastIntent.setAction(FavoriteWidget.TOAST_ACTION);
+        toastIntent.setAction(AppConstants.TOAST_ACTION);
         toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         toastIntent.setData(Uri.parse(toastIntent.toUri(Intent.URI_INTENT_SCHEME)));
 
@@ -64,16 +61,16 @@ public class FavoriteWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
 
         if (intent.getAction() != null) {
-            if (intent.getAction().equals(TOAST_ACTION)) {
-                int viewIndex = intent.getIntExtra(EXTRA_ITEM, 0);
+            if (intent.getAction().equals(AppConstants.TOAST_ACTION)) {
+                int viewIndex = intent.getIntExtra(AppConstants.EXTRA_ITEM, 0);
 
                 Intent intentDetail = new Intent(context, DetailMovieActivity.class);
-                intentDetail.putExtra(DetailMovieActivity.EXTRA_FAV_MOVIE, viewIndex);
+                intentDetail.putExtra(AppConstants.EXTRA_FAV_MOVIE, viewIndex);
                 intentDetail.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intentDetail);
             }
 
-            if (intent.getAction().equals(UPDATE_WIDGET)) {
+            if (intent.getAction().equals(AppConstants.UPDATE_WIDGET)) {
                 AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);
                 ComponentName name = new ComponentName(context, FavoriteWidget.class);
                 int[] ints = widgetManager.getAppWidgetIds(name);

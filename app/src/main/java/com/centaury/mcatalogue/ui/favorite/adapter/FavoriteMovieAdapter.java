@@ -2,17 +2,19 @@ package com.centaury.mcatalogue.ui.favorite.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
+import com.centaury.mcatalogue.BuildConfig;
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.db.entity.MovieEntity;
+import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
 import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
 import com.centaury.mcatalogue.utils.AppConstants;
 
@@ -36,16 +38,12 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
     private List<MovieEntity> movieEntityList = new ArrayList<>();
     private OnDeleteItemClickCallback onDeleteItemClickCallback;
 
-    public interface OnDeleteItemClickCallback {
-        void onDeleteClicked(int movieId);
+    public FavoriteMovieAdapter(Context context) {
+        this.context = context;
     }
 
     public void setOnDeleteItemClickCallback(OnDeleteItemClickCallback onDeleteItemClickCallback) {
         this.onDeleteItemClickCallback = onDeleteItemClickCallback;
-    }
-
-    public FavoriteMovieAdapter(Context context) {
-        this.context = context;
     }
 
     public void setMovies(List<MovieEntity> movies) {
@@ -75,7 +73,7 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
 
             viewHolder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(context, DetailMovieActivity.class);
-                intent.putExtra(DetailMovieActivity.EXTRA_FAV_MOVIE, movieEntityList.get(viewHolder.getAdapterPosition()).getId());
+                intent.putExtra(AppConstants.EXTRA_FAV_MOVIE, movieEntityList.get(viewHolder.getAdapterPosition()).getId());
                 context.startActivity(intent);
             });
             viewHolder.mBtnDelete.setOnClickListener(v ->
@@ -90,6 +88,10 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
         } else {
             return 0;
         }
+    }
+
+    public interface OnDeleteItemClickCallback {
+        void onDeleteClicked(int movieId);
     }
 
     public class viewHolder extends RecyclerView.ViewHolder {
@@ -109,7 +111,7 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
         @BindView(R.id.btn_delete)
         ImageView mBtnDelete;
 
-        public viewHolder(@NonNull View itemView) {
+        viewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -122,7 +124,7 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
             } else {
                 mTxtGenremovielist.setText(movie.getGenreIds());
             }
-            Glide.with(context).load(AppConstants.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvMovielist);
+            Glide.with(context).load(BuildConfig.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvMovielist);
 
             if (movie.getOverview() == null || movie.getOverview().equals("")) {
                 mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));

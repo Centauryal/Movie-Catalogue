@@ -1,21 +1,12 @@
 package com.centaury.mcatalogue.ui.search;
 
 import android.app.SearchManager;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,9 +16,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.model.genre.GenresItem;
-import com.centaury.mcatalogue.data.model.movie.MovieResultsItem;
+import com.centaury.mcatalogue.data.remote.model.genre.GenresItem;
+import com.centaury.mcatalogue.data.remote.model.movie.MovieResultsItem;
 import com.centaury.mcatalogue.ui.main.adapter.MovieAdapter;
 import com.centaury.mcatalogue.ui.main.viewmodel.MovieViewModel;
 import com.centaury.mcatalogue.utils.Helper;
@@ -55,6 +56,19 @@ public class SearchMovieActivity extends AppCompatActivity {
     private MovieAdapter movieAdapter;
     private MovieViewModel movieViewModel;
     private String language;
+    private Observer<List<MovieResultsItem>> getSearchMovie = movieResultsItems -> {
+        if (movieResultsItems != null) {
+            mShimmerViewContainer.stopShimmer();
+            mShimmerViewContainer.setVisibility(View.GONE);
+            toggleEmptyMovies(movieResultsItems.size());
+            movieAdapter.setMovieData(movieResultsItems);
+        }
+    };
+    private Observer<List<GenresItem>> getGenre = genresItems -> {
+        if (genresItems != null) {
+            movieAdapter.setGenreData(genresItems);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,14 +135,14 @@ public class SearchMovieActivity extends AppCompatActivity {
             searchView.setQueryHint(getString(R.string.txt_hint_movie));
             searchView.setIconified(false);
 
-            EditText editSearch = searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+            EditText editSearch = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
             editSearch.setTextColor(Color.WHITE);
-            editSearch.setHintTextColor(getResources().getColor(R.color.grey_20));
+            editSearch.setHintTextColor(ContextCompat.getColor(this, R.color.grey_20));
 
-            ImageView imageSearch = searchView.findViewById(android.support.v7.appcompat.R.id.search_button);
+            ImageView imageSearch = searchView.findViewById(androidx.appcompat.R.id.search_button);
             imageSearch.setImageResource(R.drawable.ic_search_white_24dp);
 
-            ImageView imageCloseSearch = searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+            ImageView imageCloseSearch = searchView.findViewById(androidx.appcompat.R.id.search_close_btn);
             imageCloseSearch.setImageResource(R.drawable.ic_close);
 
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

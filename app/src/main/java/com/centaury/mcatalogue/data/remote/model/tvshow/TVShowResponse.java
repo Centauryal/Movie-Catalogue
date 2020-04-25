@@ -1,4 +1,4 @@
-package com.centaury.mcatalogue.data.model.tvshow;
+package com.centaury.mcatalogue.data.remote.model.tvshow;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -12,48 +12,66 @@ import javax.annotation.Generated;
 @Generated("com.robohorse.robopojogenerator")
 public class TVShowResponse implements Parcelable {
 
+    public static final Parcelable.Creator<TVShowResponse> CREATOR = new Parcelable.Creator<TVShowResponse>() {
+        @Override
+        public TVShowResponse createFromParcel(Parcel source) {
+            return new TVShowResponse(source);
+        }
+
+        @Override
+        public TVShowResponse[] newArray(int size) {
+            return new TVShowResponse[size];
+        }
+    };
     @SerializedName("page")
     private int page;
-
     @SerializedName("total_pages")
     private int totalPages;
-
     @SerializedName("results")
     private List<TVShowResultsItem> results;
-
     @SerializedName("total_results")
     private int totalResults;
 
-    public void setPage(int page) {
-        this.page = page;
+    public TVShowResponse() {
+    }
+
+    protected TVShowResponse(Parcel in) {
+        this.page = in.readInt();
+        this.totalPages = in.readInt();
+        this.results = in.createTypedArrayList(TVShowResultsItem.CREATOR);
+        this.totalResults = in.readInt();
     }
 
     public int getPage() {
         return page;
     }
 
-    public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
+    public void setPage(int page) {
+        this.page = page;
     }
 
     public int getTotalPages() {
         return totalPages;
     }
 
-    public void setResults(List<TVShowResultsItem> results) {
-        this.results = results;
+    public void setTotalPages(int totalPages) {
+        this.totalPages = totalPages;
     }
 
     public List<TVShowResultsItem> getResults() {
         return results;
     }
 
-    public void setTotalResults(int totalResults) {
-        this.totalResults = totalResults;
+    public void setResults(List<TVShowResultsItem> results) {
+        this.results = results;
     }
 
     public int getTotalResults() {
         return totalResults;
+    }
+
+    public void setTotalResults(int totalResults) {
+        this.totalResults = totalResults;
     }
 
     @Override
@@ -79,26 +97,4 @@ public class TVShowResponse implements Parcelable {
         dest.writeTypedList(this.results);
         dest.writeInt(this.totalResults);
     }
-
-    public TVShowResponse() {
-    }
-
-    protected TVShowResponse(Parcel in) {
-        this.page = in.readInt();
-        this.totalPages = in.readInt();
-        this.results = in.createTypedArrayList(TVShowResultsItem.CREATOR);
-        this.totalResults = in.readInt();
-    }
-
-    public static final Parcelable.Creator<TVShowResponse> CREATOR = new Parcelable.Creator<TVShowResponse>() {
-        @Override
-        public TVShowResponse createFromParcel(Parcel source) {
-            return new TVShowResponse(source);
-        }
-
-        @Override
-        public TVShowResponse[] newArray(int size) {
-            return new TVShowResponse[size];
-        }
-    };
 }

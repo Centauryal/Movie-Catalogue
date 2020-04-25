@@ -1,7 +1,6 @@
 package com.centaury.mcatalogue.ui.favorite.fragment;
 
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -9,14 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,30 +15,39 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.db.entity.TVShowEntity;
+import com.centaury.mcatalogue.data.local.db.entity.TVShowEntity;
 import com.centaury.mcatalogue.ui.favorite.adapter.FavoriteTVShowAdapter;
 import com.centaury.mcatalogue.ui.favorite.viewmodel.FavoriteTVShowViewModel;
+import com.centaury.mcatalogue.utils.AppConstants;
 import com.centaury.mcatalogue.utils.Helper;
 import com.centaury.mcatalogue.utils.Mapping;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-import static com.centaury.mcatalogue.data.db.DatabaseContract.TVShowColumns.CONTENT_URI;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.TVShowColumns.CONTENT_URI;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallback {
-
-    private static final String EXTRA_STATE = "EXTRA_STATE_TVSHOW";
 
     @BindView(R.id.rv_favtvshow)
     RecyclerView mRvFavtvshow;
@@ -79,7 +79,7 @@ public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallba
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        favoriteTVShowViewModel = ViewModelProviders.of(this).get(FavoriteTVShowViewModel.class);
+        favoriteTVShowViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(FavoriteTVShowViewModel.class);
 
         HandlerThread handlerThread = new HandlerThread("Observer");
         handlerThread.start();
@@ -92,7 +92,7 @@ public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallba
         if (savedInstanceState == null) {
             new LoadTVShowAsync(getContext(), this).execute();
         } else {
-            ArrayList<TVShowEntity> list = savedInstanceState.getParcelableArrayList(EXTRA_STATE);
+            ArrayList<TVShowEntity> list = savedInstanceState.getParcelableArrayList(AppConstants.EXTRA_STATE_TVSHOW);
             if (list != null) {
                 mShimmerViewContainer.stopShimmer();
                 favoriteTVShowAdapter.setTVShows(list);
@@ -103,7 +103,7 @@ public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallba
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(EXTRA_STATE, favoriteTVShowAdapter.getListTVShows());
+        outState.putParcelableArrayList(AppConstants.EXTRA_STATE_TVSHOW, favoriteTVShowAdapter.getListTVShows());
     }
 
     @Override
@@ -138,7 +138,7 @@ public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallba
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View view = inflater.inflate(R.layout.item_alert_dialog, null);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
             builder.setView(view);
 
             TextView title = view.findViewById(R.id.alerttitle);
@@ -151,9 +151,7 @@ public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallba
                         new LoadTVShowAsync(getContext(), this).execute();
                         Toast.makeText(getContext(), getString(R.string.txt_remove_movie), Toast.LENGTH_SHORT).show();
                     })
-                    .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> {
-                        dialog.dismiss();
-                    });
+                    .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> dialog.dismiss());
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
 

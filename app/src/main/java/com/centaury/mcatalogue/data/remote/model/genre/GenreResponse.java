@@ -1,4 +1,4 @@
-package com.centaury.mcatalogue.data.model.genre;
+package com.centaury.mcatalogue.data.remote.model.genre;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -12,12 +12,12 @@ public class GenreResponse {
     @SerializedName("genres")
     private List<GenresItem> genres;
 
-    public void setGenres(List<GenresItem> genres) {
-        this.genres = genres;
-    }
-
     public List<GenresItem> getGenres() {
         return genres;
+    }
+
+    public void setGenres(List<GenresItem> genres) {
+        this.genres = genres;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.centaury.mcatalogue.ui.favorite.fragment;
 
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -9,13 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,30 +15,39 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.db.entity.MovieEntity;
+import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
 import com.centaury.mcatalogue.ui.favorite.adapter.FavoriteMovieAdapter;
 import com.centaury.mcatalogue.ui.favorite.viewmodel.FavoriteMovieViewModel;
+import com.centaury.mcatalogue.utils.AppConstants;
 import com.centaury.mcatalogue.utils.Helper;
 import com.centaury.mcatalogue.utils.Mapping;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-import static com.centaury.mcatalogue.data.db.DatabaseContract.MovieColumns.CONTENT_URI;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns.CONTENT_URI;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback {
-
-    private static final String EXTRA_STATE = "EXTRA_STATE";
 
     @BindView(R.id.rv_favmovie)
     RecyclerView mRvFavmovie;
@@ -78,7 +79,7 @@ public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        favoriteMovieViewModel = ViewModelProviders.of(this).get(FavoriteMovieViewModel.class);
+        favoriteMovieViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(FavoriteMovieViewModel.class);
 
         HandlerThread handlerThread = new HandlerThread("DataObserver");
         handlerThread.start();
@@ -91,7 +92,7 @@ public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback
         if (savedInstanceState == null) {
             new LoadMovieAsync(getContext(), this).execute();
         } else {
-            ArrayList<MovieEntity> list = savedInstanceState.getParcelableArrayList(EXTRA_STATE);
+            ArrayList<MovieEntity> list = savedInstanceState.getParcelableArrayList(AppConstants.EXTRA_STATE_MOVIE);
             if (list != null) {
                 mShimmerViewContainer.stopShimmer();
                 favoriteMovieAdapter.setMovies(list);
@@ -103,7 +104,7 @@ public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(EXTRA_STATE, favoriteMovieAdapter.getListMovies());
+        outState.putParcelableArrayList(AppConstants.EXTRA_STATE_MOVIE, favoriteMovieAdapter.getListMovies());
     }
 
     @Override
@@ -139,7 +140,7 @@ public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View view = inflater.inflate(R.layout.item_alert_dialog, null);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
             builder.setView(view);
 
             TextView title = view.findViewById(R.id.alerttitle);
@@ -153,9 +154,7 @@ public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback
                         new LoadMovieAsync(getContext(), this).execute();
                         Toast.makeText(getContext(), getString(R.string.txt_remove_movie), Toast.LENGTH_SHORT).show();
                     })
-                    .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> {
-                        dialog.dismiss();
-                    });
+                    .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> dialog.dismiss());
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
 

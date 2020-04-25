@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.centaury.mcatalogue.ui.widget.FavoriteWidget;
 
@@ -37,6 +38,19 @@ public class Helper {
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
 
         return numberFormat.format(value).replace("Rp", "");
+    }
+
+    public static boolean isNetworkConnected(Context context) {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
+
+    public static void updateWidget(Context context) {
+        Intent intent = new Intent(context, FavoriteWidget.class);
+        intent.setAction(AppConstants.UPDATE_WIDGET);
+        context.sendBroadcast(intent);
     }
 
     public static class LeftItemDecotaion extends RecyclerView.ItemDecoration {
@@ -69,18 +83,5 @@ public class Helper {
                 outRect.top = spacing;
             }
         }
-    }
-
-    public static boolean isNetworkConnected(Context context) {
-        ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-    }
-
-    public static void updateWidget(Context context) {
-        Intent intent = new Intent(context, FavoriteWidget.class);
-        intent.setAction(FavoriteWidget.UPDATE_WIDGET);
-        context.sendBroadcast(intent);
     }
 }

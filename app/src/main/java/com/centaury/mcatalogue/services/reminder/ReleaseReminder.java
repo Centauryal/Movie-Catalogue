@@ -11,21 +11,23 @@ import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.core.app.NotificationCompat;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.centaury.mcatalogue.BuildConfig;
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.model.movie.MovieResponse;
-import com.centaury.mcatalogue.data.model.movie.MovieResultsItem;
-import com.centaury.mcatalogue.data.prefs.ReminderPreference;
+import com.centaury.mcatalogue.data.local.prefs.ReminderPreference;
+import com.centaury.mcatalogue.data.remote.ApiEndPoint;
+import com.centaury.mcatalogue.data.remote.model.movie.MovieResponse;
+import com.centaury.mcatalogue.data.remote.model.movie.MovieResultsItem;
 import com.centaury.mcatalogue.ui.main.MainActivity;
-import com.centaury.mcatalogue.utils.AppConstants;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
@@ -75,11 +77,7 @@ public class ReleaseReminder extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
         Uri soundAlarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        if (releaseMovieList.size() > 0) {
-            jmlmovie = releaseMovieList.size();
-        } else {
-            jmlmovie = 0;
-        }
+        jmlmovie = Math.max(releaseMovieList.size(), 0);
 
         if (jmlmovie == 0) {
             intent = new Intent(context, MainActivity.class);
@@ -173,8 +171,8 @@ public class ReleaseReminder extends BroadcastReceiver {
         Date date = Calendar.getInstance().getTime();
         String dateRelease = inputDate.format(date);
 
-        AndroidNetworking.get(AppConstants.BASE_URL + "discover/movie")
-                .addQueryParameter("api_key", AppConstants.API_KEY)
+        AndroidNetworking.get(ApiEndPoint.ENDPOINT_DISCOVERY_MOVIE)
+                .addQueryParameter("api_key", BuildConfig.API_KEY)
                 .addQueryParameter("primary_release_date.gte", dateRelease)
                 .addQueryParameter("primary_release_date.lte", dateRelease)
                 .setPriority(Priority.MEDIUM)
@@ -182,7 +180,6 @@ public class ReleaseReminder extends BroadcastReceiver {
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d("onResponseRelease: ", response + "");
                         MovieResponse movieResponse = new Gson().fromJson(response + "", MovieResponse.class);
                         movieResultsItems = movieResponse.getResults();
                         for (MovieResultsItem resultsItem : movieResultsItems) {

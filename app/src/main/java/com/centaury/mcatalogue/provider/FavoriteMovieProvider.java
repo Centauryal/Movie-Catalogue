@@ -7,45 +7,45 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.centaury.mcatalogue.data.db.AppDatabase;
-import com.centaury.mcatalogue.data.db.DatabaseContract;
-import com.centaury.mcatalogue.data.db.dao.MovieDao;
-import com.centaury.mcatalogue.data.db.dao.TVShowDao;
-import com.centaury.mcatalogue.data.db.entity.MovieEntity;
-import com.centaury.mcatalogue.data.db.entity.TVShowEntity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.centaury.mcatalogue.data.local.db.AppDatabase;
+import com.centaury.mcatalogue.data.local.db.DatabaseContract;
+import com.centaury.mcatalogue.data.local.db.dao.MovieDao;
+import com.centaury.mcatalogue.data.local.db.dao.TVShowDao;
+import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
+import com.centaury.mcatalogue.data.local.db.entity.TVShowEntity;
 import com.centaury.mcatalogue.ui.favorite.fragment.FavoriteMovieFragment;
 import com.centaury.mcatalogue.ui.favorite.fragment.FavoriteTVShowFragment;
+import com.centaury.mcatalogue.utils.AppConstants;
 
-import static com.centaury.mcatalogue.data.db.DatabaseContract.AUTHORITY;
-import static com.centaury.mcatalogue.data.db.DatabaseContract.MovieColumns.CONTENT_URI;
-import static com.centaury.mcatalogue.data.db.DatabaseContract.MovieColumns.TABLE_NAME;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.AUTHORITY;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns.CONTENT_URI;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns.TABLE_NAME;
 
 /**
  * Created by Centaury on 8/19/2019.
  */
 public class FavoriteMovieProvider extends ContentProvider {
 
-    private static final int MOVIE = 1;
-    private static final int MOVIE_ID = 2;
-    private static final int TVSHOW = 3;
-    private static final int TVSHOW_ID = 4;
+
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-    private MovieDao movieDao;
-    private TVShowDao tvShowDao;
 
     static {
 
-        sUriMatcher.addURI(AUTHORITY, TABLE_NAME, MOVIE);
+        sUriMatcher.addURI(AUTHORITY, TABLE_NAME, AppConstants.MOVIE);
 
-        sUriMatcher.addURI(AUTHORITY, TABLE_NAME + "/#", MOVIE_ID);
+        sUriMatcher.addURI(AUTHORITY, TABLE_NAME + "/#", AppConstants.MOVIE_ID);
 
-        sUriMatcher.addURI(AUTHORITY, DatabaseContract.TVShowColumns.TABLE_NAME, TVSHOW);
+        sUriMatcher.addURI(AUTHORITY, DatabaseContract.TVShowColumns.TABLE_NAME, AppConstants.TVSHOW);
 
-        sUriMatcher.addURI(AUTHORITY, DatabaseContract.TVShowColumns.TABLE_NAME + "/#", TVSHOW_ID);
+        sUriMatcher.addURI(AUTHORITY, DatabaseContract.TVShowColumns.TABLE_NAME + "/#", AppConstants.TVSHOW_ID);
     }
+
+    private MovieDao movieDao;
+    private TVShowDao tvShowDao;
 
     @Override
     public boolean onCreate() {
@@ -59,16 +59,16 @@ public class FavoriteMovieProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         Cursor cursor;
         switch (sUriMatcher.match(uri)) {
-            case MOVIE:
+            case AppConstants.MOVIE:
                 cursor = movieDao.selectAll();
                 break;
-            case MOVIE_ID:
+            case AppConstants.MOVIE_ID:
                 cursor = movieDao.selectedById((int) ContentUris.parseId(uri));
                 break;
-            case TVSHOW:
+            case AppConstants.TVSHOW:
                 cursor = tvShowDao.selectAll();
                 break;
-            case TVSHOW_ID:
+            case AppConstants.TVSHOW_ID:
                 cursor = tvShowDao.selectedById((int) ContentUris.parseId(uri));
                 break;
             default:
@@ -90,13 +90,15 @@ public class FavoriteMovieProvider extends ContentProvider {
         long added;
         Uri uriReturn;
         switch (sUriMatcher.match(uri)) {
-            case MOVIE:
+            case AppConstants.MOVIE:
+                assert values != null;
                 added = movieDao.insert(MovieEntity.fromContentValues(values));
                 uriReturn = Uri.parse(CONTENT_URI + "/" + added);
                 getContext().getContentResolver().notifyChange(CONTENT_URI,
                         new FavoriteMovieFragment.DataObserver(new Handler(getContext().getMainLooper()), getContext()));
                 break;
-            case TVSHOW:
+            case AppConstants.TVSHOW:
+                assert values != null;
                 added = tvShowDao.insert(TVShowEntity.fromContentValues(values));
                 uriReturn = Uri.parse(DatabaseContract.TVShowColumns.CONTENT_URI + "/" + added);
                 getContext().getContentResolver().notifyChange(DatabaseContract.TVShowColumns.CONTENT_URI,
@@ -114,12 +116,12 @@ public class FavoriteMovieProvider extends ContentProvider {
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         int deleted;
         switch (sUriMatcher.match(uri)) {
-            case MOVIE_ID:
+            case AppConstants.MOVIE_ID:
                 deleted = movieDao.deleteById((int) ContentUris.parseId(uri));
                 getContext().getContentResolver().notifyChange(CONTENT_URI,
                         new FavoriteMovieFragment.DataObserver(new Handler(getContext().getMainLooper()), getContext()));
                 break;
-            case TVSHOW_ID:
+            case AppConstants.TVSHOW_ID:
                 deleted = tvShowDao.deleteById((int) ContentUris.parseId(uri));
                 getContext().getContentResolver().notifyChange(DatabaseContract.TVShowColumns.CONTENT_URI,
                         new FavoriteTVShowFragment.DataObserver(new Handler(getContext().getMainLooper()), getContext()));

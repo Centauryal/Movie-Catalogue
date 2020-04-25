@@ -1,17 +1,17 @@
 package com.centaury.mcatalogue.ui.settings;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.centaury.mcatalogue.R;
-import com.centaury.mcatalogue.data.prefs.ReminderPreference;
+import com.centaury.mcatalogue.data.local.prefs.ReminderPreference;
 import com.centaury.mcatalogue.services.reminder.DailyReminder;
 import com.centaury.mcatalogue.services.reminder.ReleaseReminder;
 
@@ -37,10 +37,8 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Window window = getWindow();
-            window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
-        }
+        Window window = getWindow();
+        window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
 
         mSettingsLanguage.setText(Locale.getDefault().getDisplayLanguage());
 

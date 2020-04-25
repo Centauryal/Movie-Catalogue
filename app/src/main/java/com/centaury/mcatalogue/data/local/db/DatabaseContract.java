@@ -1,11 +1,11 @@
-package com.centaury.mcatalogue.data.db;
+package com.centaury.mcatalogue.data.local.db;
 
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import com.centaury.mcatalogue.data.db.entity.MovieEntity;
-import com.centaury.mcatalogue.data.db.entity.TVShowEntity;
+import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
+import com.centaury.mcatalogue.data.local.db.entity.TVShowEntity;
 
 /**
  * Created by Centaury on 8/22/2019.
@@ -15,6 +15,14 @@ public class DatabaseContract {
     private static final String SCHEME = "content";
 
     public DatabaseContract() {
+    }
+
+    public static String getColumnString(Cursor cursor, String columnName) {
+        return cursor.getString(cursor.getColumnIndex(columnName));
+    }
+
+    public static int getColumnInt(Cursor cursor, String columnName) {
+        return cursor.getInt(cursor.getColumnIndex(columnName));
     }
 
     public static final class MovieColumns implements BaseColumns {
@@ -51,13 +59,5 @@ public class DatabaseContract {
                 .authority(AUTHORITY)
                 .appendPath(TABLE_NAME)
                 .build();
-    }
-
-    public static String getColumnString(Cursor cursor, String columnName) {
-        return cursor.getString(cursor.getColumnIndex(columnName));
-    }
-
-    public static int getColumnInt(Cursor cursor, String columnName) {
-        return cursor.getInt(cursor.getColumnIndex(columnName));
     }
 }

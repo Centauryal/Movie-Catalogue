@@ -2,15 +2,14 @@ package com.centaury.mcatalogue.ui.main;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.viewpager.widget.ViewPager;
 
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.ui.favorite.FavoriteActivity;
@@ -19,9 +18,11 @@ import com.centaury.mcatalogue.ui.main.fragment.TVShowFragment;
 import com.centaury.mcatalogue.ui.search.SearchMovieActivity;
 import com.centaury.mcatalogue.ui.search.SearchTVShowActivity;
 import com.centaury.mcatalogue.ui.settings.SettingsActivity;
+import com.centaury.mcatalogue.utils.AppConstants;
 import com.centaury.mcatalogue.utils.Helper;
 import com.centaury.mcatalogue.utils.ViewPagerAdapter;
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder;
+import com.google.android.material.tabs.TabLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,7 +30,6 @@ import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String EXTRA_FIRST_RUN = "first_run";
     @BindView(R.id.tabs)
     TabLayout mTabs;
     @BindView(R.id.view_pager)
@@ -42,10 +42,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Window window = getWindow();
-            window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
-        }
+        Window window = getWindow();
+        window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
 
         setupViewPager(mViewPager);
         mTabs.setupWithViewPager(mViewPager);
@@ -75,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 .textColor(Color.BLACK)
                 .closeActionImage(ContextCompat.getDrawable(this, R.drawable.ic_close_black_24dp))
                 .targetView(mFavorite)
-                .showOnce(EXTRA_FIRST_RUN);
+                .showOnce(AppConstants.EXTRA_FIRST_RUN);
         builder.show();
     }
 

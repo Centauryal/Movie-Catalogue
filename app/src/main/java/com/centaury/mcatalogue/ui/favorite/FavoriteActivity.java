@@ -3,11 +3,11 @@ package com.centaury.mcatalogue.ui.favorite;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.ui.favorite.fragment.FavoriteMovieFragment;
@@ -15,6 +15,7 @@ import com.centaury.mcatalogue.ui.favorite.fragment.FavoriteTVShowFragment;
 import com.centaury.mcatalogue.ui.favorite.fragment.LoadMovieCallback;
 import com.centaury.mcatalogue.ui.favorite.fragment.LoadTVShowCallback;
 import com.centaury.mcatalogue.utils.ViewPagerAdapter;
+import com.google.android.material.tabs.TabLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
