@@ -1,12 +1,13 @@
 package com.centaury.favoritecatalogue.utils;
 
 import android.graphics.Rect;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
 
-import java.text.NumberFormat;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 /**
@@ -14,39 +15,12 @@ import java.util.Locale;
  */
 public class Helper {
 
-    public static boolean isEmpty(EditText ed) {
-        String temp = ed.getText().toString().replaceAll("\\s", "");
-        return TextUtils.isEmpty(temp);
+    public static DateFormat inputDate() {
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     }
 
-    public static String toRupiah(long value) {
-        Locale locale = new Locale("in", "ID");
-        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
-
-        return numberFormat.format(value).replace("Rp", "Rp. ");
-    }
-
-    public static String toRupiahNoSymbol(long value) {
-        Locale locale = new Locale("in", "ID");
-        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
-
-        return numberFormat.format(value).replace("Rp", "");
-    }
-
-    public static class LeftItemDecotaion extends RecyclerView.ItemDecoration {
-        private int spacing;
-
-        public LeftItemDecotaion(int spacing) {
-            this.spacing = spacing;
-        }
-
-        @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            int position = parent.getChildAdapterPosition(view); // item position
-            if (position == 0) {
-                outRect.left = spacing;
-            }
-        }
+    public static DateFormat outputDate() {
+        return new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
     }
 
     public static class TopItemDecoration extends RecyclerView.ItemDecoration {
@@ -57,7 +31,7 @@ public class Helper {
         }
 
         @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, RecyclerView parent, @NonNull RecyclerView.State state) {
             int position = parent.getChildAdapterPosition(view); // item position
             if (position == 0) {
                 outRect.top = spacing;

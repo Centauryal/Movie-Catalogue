@@ -1,12 +1,13 @@
 package com.centaury.favoritecatalogue.data.entity;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.BaseColumns;
+
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.centaury.favoritecatalogue.data.DatabaseContract.TVShowColumns;
 
@@ -29,32 +30,34 @@ public class TVShowEntity implements Parcelable {
     public static final String COLUMN_VOTE = "vote";
     public static final String COLUMN_DATE = "date";
     public static final String COLUMN_GENRE = "genre";
+    public static final Parcelable.Creator<TVShowEntity> CREATOR = new Parcelable.Creator<TVShowEntity>() {
+        @Override
+        public TVShowEntity createFromParcel(Parcel source) {
+            return new TVShowEntity(source);
+        }
 
+        @Override
+        public TVShowEntity[] newArray(int size) {
+            return new TVShowEntity[size];
+        }
+    };
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(index = true, name = COLUMN_ID)
     public int id;
-
     @ColumnInfo(name = COLUMN_NAME)
     private String name;
-
     @ColumnInfo(name = COLUMN_ORIGINAL)
     private String originalName;
-
     @ColumnInfo(name = COLUMN_DESC)
     private String overview;
-
     @ColumnInfo(name = COLUMN_PHOTO)
     private String posterPath;
-
     @ColumnInfo(name = COLUMN_BACKDROP)
     private String backdropPath;
-
     @ColumnInfo(name = COLUMN_VOTE)
     private String voteAverage;
-
     @ColumnInfo(name = COLUMN_DATE)
     private String firstAirDate;
-
     @ColumnInfo(name = COLUMN_GENRE)
     private String genreIds;
 
@@ -80,6 +83,18 @@ public class TVShowEntity implements Parcelable {
         this.voteAverage = getColumnString(cursor, TVShowColumns.VOTE_AVERAGE);
         this.firstAirDate = getColumnString(cursor, TVShowColumns.RELEASE_DATE);
         this.genreIds = getColumnString(cursor, TVShowColumns.GENRE);
+    }
+
+    private TVShowEntity(Parcel in) {
+        this.id = in.readInt();
+        this.name = in.readString();
+        this.originalName = in.readString();
+        this.overview = in.readString();
+        this.posterPath = in.readString();
+        this.backdropPath = in.readString();
+        this.voteAverage = in.readString();
+        this.firstAirDate = in.readString();
+        this.genreIds = in.readString();
     }
 
     public int getId() {
@@ -171,28 +186,4 @@ public class TVShowEntity implements Parcelable {
         dest.writeString(this.firstAirDate);
         dest.writeString(this.genreIds);
     }
-
-    protected TVShowEntity(Parcel in) {
-        this.id = in.readInt();
-        this.name = in.readString();
-        this.originalName = in.readString();
-        this.overview = in.readString();
-        this.posterPath = in.readString();
-        this.backdropPath = in.readString();
-        this.voteAverage = in.readString();
-        this.firstAirDate = in.readString();
-        this.genreIds = in.readString();
-    }
-
-    public static final Parcelable.Creator<TVShowEntity> CREATOR = new Parcelable.Creator<TVShowEntity>() {
-        @Override
-        public TVShowEntity createFromParcel(Parcel source) {
-            return new TVShowEntity(source);
-        }
-
-        @Override
-        public TVShowEntity[] newArray(int size) {
-            return new TVShowEntity[size];
-        }
-    };
 }

@@ -3,27 +3,26 @@ package com.centaury.favoritecatalogue.ui.movie.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
+import com.centaury.favoritecatalogue.BuildConfig;
 import com.centaury.favoritecatalogue.R;
 import com.centaury.favoritecatalogue.data.entity.MovieEntity;
 import com.centaury.favoritecatalogue.ui.detail.DetailMovieActivity;
-import com.centaury.favoritecatalogue.utils.AppConstants;
+import com.centaury.favoritecatalogue.utils.Helper;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,16 +38,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
     private List<MovieEntity> movieEntityList = new ArrayList<>();
     private OnDeleteItemClickCallback onDeleteItemClickCallback;
 
-    public interface OnDeleteItemClickCallback {
-        void onDeleteClicked(Uri movieId);
+    public MovieAdapter(Context context) {
+        this.context = context;
     }
 
     public void setOnDeleteItemClickCallback(OnDeleteItemClickCallback onDeleteItemClickCallback) {
         this.onDeleteItemClickCallback = onDeleteItemClickCallback;
-    }
-
-    public MovieAdapter(Context context) {
-        this.context = context;
     }
 
     public void setMovies(List<MovieEntity> movies) {
@@ -96,7 +91,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
         }
     }
 
-    public class viewHolder extends RecyclerView.ViewHolder {
+    public interface OnDeleteItemClickCallback {
+        void onDeleteClicked(Uri movieId);
+    }
+
+    class viewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.txt_titlefavbackground)
         TextView mTxtTitlebackground;
@@ -113,12 +112,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
         @BindView(R.id.btn_delete)
         ImageView mBtnDelete;
 
-        public viewHolder(@NonNull View itemView) {
+        viewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        public void bind(MovieEntity movie) {
+        void bind(MovieEntity movie) {
 
             mTxtTitlemovielist.setText(movie.getTitle());
             mTxtTitlebackground.setText(movie.getOriginalTitle());
@@ -127,20 +126,20 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
             } else {
                 mTxtGenremovielist.setText(movie.getGenreIds());
             }
-            Glide.with(context).load(AppConstants.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvMovielist);
+            Glide.with(context)
+                    .load(BuildConfig.IMAGE_URL + movie.getPosterPath())
+                    .placeholder(R.drawable.noimage)
+                    .into(mIvMovielist);
 
             if (movie.getOverview() == null || movie.getOverview().equals("")) {
-                mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));
+                mTxtDescmovielist.setText(context.getString(R.string.txt_no_desc));
             } else {
                 mTxtDescmovielist.setText(movie.getOverview());
             }
 
-            DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
-
             try {
-                Date date = inputDate.parse(movie.getReleaseDate());
-                String releaseDate = outputDate.format(date);
+                Date date = Helper.inputDate().parse(movie.getReleaseDate());
+                String releaseDate = Helper.outputDate().format(date);
                 mTxtDatemovielist.setText(releaseDate);
             } catch (ParseException e) {
                 e.printStackTrace();

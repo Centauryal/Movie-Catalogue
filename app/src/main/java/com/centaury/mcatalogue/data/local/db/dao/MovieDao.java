@@ -7,7 +7,6 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.Update;
 
 import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
 
@@ -36,14 +35,8 @@ public interface MovieDao {
     @Query("DELETE FROM movies WHERE " + MovieEntity.COLUMN_ID + "=:id")
     int deleteById(int id);
 
-    @Query("DELETE FROM movies")
-    void deleteAll();
-
     @Insert
     long insert(MovieEntity movieEntity);
-
-    @Update
-    void update(MovieEntity movieEntity);
 
     @Delete
     void delete(MovieEntity movieEntity);

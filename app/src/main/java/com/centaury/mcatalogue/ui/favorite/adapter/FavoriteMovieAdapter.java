@@ -17,14 +17,12 @@ import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
 import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
 import com.centaury.mcatalogue.utils.AppConstants;
+import com.centaury.mcatalogue.utils.Helper;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -116,7 +114,7 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
             ButterKnife.bind(this, itemView);
         }
 
-        public void bind(MovieEntity movie) {
+        void bind(MovieEntity movie) {
             mTxtTitlemovielist.setText(movie.getTitle());
             mTxtTitlebackground.setText(movie.getOriginalTitle());
             if (movie.getGenreIds() == null || movie.getGenreIds().equals("")) {
@@ -124,20 +122,20 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
             } else {
                 mTxtGenremovielist.setText(movie.getGenreIds());
             }
-            Glide.with(context).load(BuildConfig.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvMovielist);
+            Glide.with(context)
+                    .load(BuildConfig.IMAGE_URL + movie.getPosterPath())
+                    .placeholder(R.drawable.noimage)
+                    .into(mIvMovielist);
 
             if (movie.getOverview() == null || movie.getOverview().equals("")) {
-                mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));
+                mTxtDescmovielist.setText(context.getString(R.string.txt_no_desc));
             } else {
                 mTxtDescmovielist.setText(movie.getOverview());
             }
 
-            DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
-
             try {
-                Date date = inputDate.parse(movie.getReleaseDate());
-                String releaseDate = outputDate.format(date);
+                Date date = Helper.inputDate().parse(movie.getReleaseDate());
+                String releaseDate = Helper.outputDate().format(date);
                 mTxtDatemovielist.setText(releaseDate);
             } catch (ParseException e) {
                 e.printStackTrace();

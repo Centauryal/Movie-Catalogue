@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.centaury.mcatalogue.data.local.db.AppDatabase;
-import com.centaury.mcatalogue.data.local.db.DatabaseContract;
 import com.centaury.mcatalogue.data.local.db.dao.MovieDao;
 import com.centaury.mcatalogue.data.local.db.dao.TVShowDao;
 import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
@@ -21,9 +20,11 @@ import com.centaury.mcatalogue.ui.favorite.fragment.FavoriteMovieFragment;
 import com.centaury.mcatalogue.ui.favorite.fragment.FavoriteTVShowFragment;
 import com.centaury.mcatalogue.utils.AppConstants;
 
-import static com.centaury.mcatalogue.data.local.db.DatabaseContract.AUTHORITY;
+import java.util.Objects;
+
 import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns.CONTENT_URI;
 import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumns.TABLE_NAME;
+import static com.centaury.mcatalogue.data.local.db.DatabaseContract.TVShowColumns;
 
 /**
  * Created by Centaury on 8/19/2019.
@@ -35,13 +36,13 @@ public class FavoriteMovieProvider extends ContentProvider {
 
     static {
 
-        sUriMatcher.addURI(AUTHORITY, TABLE_NAME, AppConstants.MOVIE);
+        sUriMatcher.addURI(AppConstants.DATABASE_AUTHORITY, TABLE_NAME, AppConstants.MOVIE);
 
-        sUriMatcher.addURI(AUTHORITY, TABLE_NAME + "/#", AppConstants.MOVIE_ID);
+        sUriMatcher.addURI(AppConstants.DATABASE_AUTHORITY, TABLE_NAME + "/#", AppConstants.MOVIE_ID);
 
-        sUriMatcher.addURI(AUTHORITY, DatabaseContract.TVShowColumns.TABLE_NAME, AppConstants.TVSHOW);
+        sUriMatcher.addURI(AppConstants.DATABASE_AUTHORITY, TVShowColumns.TABLE_NAME, AppConstants.TVSHOW);
 
-        sUriMatcher.addURI(AUTHORITY, DatabaseContract.TVShowColumns.TABLE_NAME + "/#", AppConstants.TVSHOW_ID);
+        sUriMatcher.addURI(AppConstants.DATABASE_AUTHORITY, TVShowColumns.TABLE_NAME + "/#", AppConstants.TVSHOW_ID);
     }
 
     private MovieDao movieDao;
@@ -94,14 +95,14 @@ public class FavoriteMovieProvider extends ContentProvider {
                 assert values != null;
                 added = movieDao.insert(MovieEntity.fromContentValues(values));
                 uriReturn = Uri.parse(CONTENT_URI + "/" + added);
-                getContext().getContentResolver().notifyChange(CONTENT_URI,
+                Objects.requireNonNull(getContext()).getContentResolver().notifyChange(CONTENT_URI,
                         new FavoriteMovieFragment.DataObserver(new Handler(getContext().getMainLooper()), getContext()));
                 break;
             case AppConstants.TVSHOW:
                 assert values != null;
                 added = tvShowDao.insert(TVShowEntity.fromContentValues(values));
-                uriReturn = Uri.parse(DatabaseContract.TVShowColumns.CONTENT_URI + "/" + added);
-                getContext().getContentResolver().notifyChange(DatabaseContract.TVShowColumns.CONTENT_URI,
+                uriReturn = Uri.parse(TVShowColumns.CONTENT_URI + "/" + added);
+                Objects.requireNonNull(getContext()).getContentResolver().notifyChange(TVShowColumns.CONTENT_URI,
                         new FavoriteTVShowFragment.DataObserver(new Handler(getContext().getMainLooper()), getContext()));
                 break;
             default:
@@ -118,12 +119,12 @@ public class FavoriteMovieProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case AppConstants.MOVIE_ID:
                 deleted = movieDao.deleteById((int) ContentUris.parseId(uri));
-                getContext().getContentResolver().notifyChange(CONTENT_URI,
+                Objects.requireNonNull(getContext()).getContentResolver().notifyChange(CONTENT_URI,
                         new FavoriteMovieFragment.DataObserver(new Handler(getContext().getMainLooper()), getContext()));
                 break;
             case AppConstants.TVSHOW_ID:
                 deleted = tvShowDao.deleteById((int) ContentUris.parseId(uri));
-                getContext().getContentResolver().notifyChange(DatabaseContract.TVShowColumns.CONTENT_URI,
+                Objects.requireNonNull(getContext()).getContentResolver().notifyChange(TVShowColumns.CONTENT_URI,
                         new FavoriteTVShowFragment.DataObserver(new Handler(getContext().getMainLooper()), getContext()));
                 break;
             default:

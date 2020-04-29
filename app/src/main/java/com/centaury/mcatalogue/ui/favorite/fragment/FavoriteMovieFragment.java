@@ -20,14 +20,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.centaury.mcatalogue.R;
+import com.centaury.mcatalogue.ViewModelFactory;
 import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
+import com.centaury.mcatalogue.ui.base.BaseFragment;
 import com.centaury.mcatalogue.ui.favorite.adapter.FavoriteMovieAdapter;
-import com.centaury.mcatalogue.ui.favorite.viewmodel.FavoriteMovieViewModel;
+import com.centaury.mcatalogue.ui.main.viewmodel.MovieViewModel;
 import com.centaury.mcatalogue.utils.AppConstants;
 import com.centaury.mcatalogue.utils.Helper;
 import com.centaury.mcatalogue.utils.Mapping;
@@ -47,7 +48,7 @@ import static com.centaury.mcatalogue.data.local.db.DatabaseContract.MovieColumn
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback {
+public class FavoriteMovieFragment extends BaseFragment implements LoadMovieCallback {
 
     @BindView(R.id.rv_favmovie)
     RecyclerView mRvFavmovie;
@@ -55,10 +56,12 @@ public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback
     ShimmerFrameLayout mShimmerViewContainer;
     @BindView(R.id.empty_state)
     LinearLayout mEmptyState;
+    @BindView(R.id.btn_try_again)
+    TextView mBtnTryAgain;
     private Unbinder unbinder;
 
     private FavoriteMovieAdapter favoriteMovieAdapter;
-    private FavoriteMovieViewModel favoriteMovieViewModel;
+    private MovieViewModel movieViewModel;
 
     public FavoriteMovieFragment() {
         // Required empty public constructor
@@ -79,13 +82,14 @@ public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        favoriteMovieViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(FavoriteMovieViewModel.class);
+        ViewModelFactory factory = ViewModelFactory.getInstance(getActivity());
+        movieViewModel = new ViewModelProvider(this, factory).get(MovieViewModel.class);
 
-        HandlerThread handlerThread = new HandlerThread("DataObserver");
+        HandlerThread handlerThread = new HandlerThread(AppConstants.OBSERVER_MOVIE);
         handlerThread.start();
         Handler handler = new Handler(handlerThread.getLooper());
         DataObserver dataObserver = new DataObserver(handler, getContext());
-        getContext().getContentResolver().registerContentObserver(CONTENT_URI, true, dataObserver);
+        Objects.requireNonNull(getContext()).getContentResolver().registerContentObserver(CONTENT_URI, true, dataObserver);
 
         showRecyclerList();
 
@@ -99,6 +103,7 @@ public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback
             }
         }
 
+        mBtnTryAgain.setVisibility(View.GONE);
     }
 
     @Override
@@ -126,7 +131,6 @@ public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback
 
         mRvFavmovie.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvFavmovie.setAdapter(favoriteMovieAdapter);
-        mRvFavmovie.setItemAnimator(new DefaultItemAnimator());
         mRvFavmovie.addItemDecoration(new Helper.TopItemDecoration(55));
 
         favoriteMovieAdapter.setOnDeleteItemClickCallback(this::showDialogDeleteFavorite);
@@ -135,7 +139,7 @@ public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback
     private void showDialogDeleteFavorite(int movieId) {
         MovieEntity movieEntity;
         try {
-            movieEntity = favoriteMovieViewModel.getMovie(movieId);
+            movieEntity = movieViewModel.getFavoriteMovie(movieId);
 
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View view = inflater.inflate(R.layout.item_alert_dialog, null);
@@ -144,15 +148,15 @@ public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback
             builder.setView(view);
 
             TextView title = view.findViewById(R.id.alerttitle);
-            title.setText(getString(R.string.txt_title_delete_dialog));
+            title.setText(getString(R.string.txt_dialog_title_delete));
 
             builder.setCancelable(false)
                     .setPositiveButton(getString(R.string.btn_delete), (dialog, which) -> {
-                        favoriteMovieViewModel.deleteMovie(movieEntity);
+                        movieViewModel.deleteFavoriteMovie(movieEntity);
                         dialog.dismiss();
                         Helper.updateWidget(getContext());
                         new LoadMovieAsync(getContext(), this).execute();
-                        Toast.makeText(getContext(), getString(R.string.txt_remove_movie), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.txt_movie_remove), Toast.LENGTH_SHORT).show();
                     })
                     .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> dialog.dismiss());
             AlertDialog alertDialog = builder.create();
@@ -171,8 +175,7 @@ public class FavoriteMovieFragment extends Fragment implements LoadMovieCallback
 
     @Override
     public void preExecute() {
-        getActivity().runOnUiThread(() -> mShimmerViewContainer.startShimmer());
-
+        Objects.requireNonNull(getActivity()).runOnUiThread(() -> mShimmerViewContainer.startShimmer());
     }
 
     @Override

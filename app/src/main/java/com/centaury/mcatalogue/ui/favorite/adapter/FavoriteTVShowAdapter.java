@@ -17,14 +17,12 @@ import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.local.db.entity.TVShowEntity;
 import com.centaury.mcatalogue.ui.detail.DetailTVShowActivity;
 import com.centaury.mcatalogue.utils.AppConstants;
+import com.centaury.mcatalogue.utils.Helper;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -91,7 +89,7 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
     }
 
     public interface OnDeleteItemClickCallback {
-        void onDeleteClicked(int tvshowId);
+        void onDeleteClicked(int tvShowId);
     }
 
     public class viewHolder extends RecyclerView.ViewHolder {
@@ -116,7 +114,7 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
             ButterKnife.bind(this, itemView);
         }
 
-        public void bind(TVShowEntity tvShow) {
+        void bind(TVShowEntity tvShow) {
             mTxtTitlemovielist.setText(tvShow.getName());
             mTxtTitlebackground.setText(tvShow.getOriginalName());
             if (tvShow.getGenreIds() == null || tvShow.getGenreIds().equals("")) {
@@ -124,19 +122,20 @@ public class FavoriteTVShowAdapter extends RecyclerView.Adapter<FavoriteTVShowAd
             } else {
                 mTxtGenremovielist.setText(tvShow.getGenreIds());
             }
-            Glide.with(context).load(BuildConfig.IMAGE_URL + tvShow.getPosterPath()).placeholder(R.drawable.noimage).into(mIvMovielist);
+            Glide.with(context)
+                    .load(BuildConfig.IMAGE_URL + tvShow.getPosterPath())
+                    .placeholder(R.drawable.noimage)
+                    .into(mIvMovielist);
 
             if (tvShow.getOverview() == null || tvShow.getOverview().equals("")) {
-                mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));
+                mTxtDescmovielist.setText(context.getString(R.string.txt_no_desc));
             } else {
                 mTxtDescmovielist.setText(tvShow.getOverview());
             }
 
-            DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
             try {
-                Date date = inputDate.parse(tvShow.getFirstAirDate());
-                String releaseDate = outputDate.format(date);
+                Date date = Helper.inputDate().parse(tvShow.getFirstAirDate());
+                String releaseDate = Helper.outputDate().format(date);
                 mTxtDatemovielist.setText(releaseDate);
             } catch (ParseException e) {
                 e.printStackTrace();

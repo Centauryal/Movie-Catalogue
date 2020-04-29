@@ -1,4 +1,4 @@
-package com.centaury.mcatalogue.services.reminder;
+package com.centaury.mcatalogue.services;
 
 import android.app.AlarmManager;
 import android.app.NotificationChannel;
@@ -28,17 +28,15 @@ import com.centaury.mcatalogue.data.remote.ApiEndPoint;
 import com.centaury.mcatalogue.data.remote.model.movie.MovieResponse;
 import com.centaury.mcatalogue.data.remote.model.movie.MovieResultsItem;
 import com.centaury.mcatalogue.ui.main.MainActivity;
+import com.centaury.mcatalogue.utils.Helper;
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by Centaury on 8/13/2019.
@@ -71,22 +69,22 @@ public class ReleaseReminder extends BroadcastReceiver {
         int REQUEST_RELEASE = 111;
         Intent intent;
         PendingIntent pendingIntent;
-        int jmlmovie;
+        int jmlMovie;
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
         Uri soundAlarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        jmlmovie = Math.max(releaseMovieList.size(), 0);
+        jmlMovie = Math.max(releaseMovieList.size(), 0);
 
-        if (jmlmovie == 0) {
+        if (jmlMovie == 0) {
             intent = new Intent(context, MainActivity.class);
 
             pendingIntent = PendingIntent.getActivity(context, REQUEST_RELEASE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            String message = context.getString(R.string.txt_nomovie_release);
+            String message = context.getString(R.string.txt_release_no_movie);
             builder.setSmallIcon(R.drawable.ic_notif_logo)
-                    .setContentTitle(context.getString(R.string.txt_title_nomovie_release))
+                    .setContentTitle(context.getString(R.string.txt_release_title_no_movie))
                     .setContentText(message)
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                     .setContentIntent(pendingIntent)
@@ -97,9 +95,9 @@ public class ReleaseReminder extends BroadcastReceiver {
             intent = new Intent(context, MainActivity.class);
             pendingIntent = PendingIntent.getActivity(context, REQUEST_RELEASE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            String message = context.getString(R.string.txt_movie_release) + " " + TextUtils.join(", ", releaseMovieList);
+            String message = context.getString(R.string.txt_release_movie) + " " + TextUtils.join(", ", releaseMovieList);
             builder.setSmallIcon(R.drawable.ic_notif_logo)
-                    .setContentTitle(releaseMovieList.size() + " " + context.getString(R.string.txt_title_movie_release))
+                    .setContentTitle(releaseMovieList.size() + " " + context.getString(R.string.txt_release_title_movie))
                     .setContentText(message)
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                     .setContentIntent(pendingIntent)
@@ -151,7 +149,7 @@ public class ReleaseReminder extends BroadcastReceiver {
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                 calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
 
-        Toast.makeText(context, context.getString(R.string.txt_toast_release), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, context.getString(R.string.txt_release_toast), Toast.LENGTH_SHORT).show();
     }
 
     public void cancelReleaseReminder(Context context) {
@@ -163,13 +161,12 @@ public class ReleaseReminder extends BroadcastReceiver {
             alarmManager.cancel(pendingIntent);
         }
 
-        Toast.makeText(context, context.getString(R.string.txt_cancel_release), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, context.getString(R.string.txt_release_cancel), Toast.LENGTH_SHORT).show();
     }
 
     private void getReleaseMovie(Context context) {
-        DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date date = Calendar.getInstance().getTime();
-        String dateRelease = inputDate.format(date);
+        String dateRelease = Helper.inputDate().format(date);
 
         AndroidNetworking.get(ApiEndPoint.ENDPOINT_DISCOVERY_MOVIE)
                 .addQueryParameter("api_key", BuildConfig.API_KEY)

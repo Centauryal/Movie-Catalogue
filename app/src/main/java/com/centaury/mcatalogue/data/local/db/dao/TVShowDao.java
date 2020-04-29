@@ -7,7 +7,6 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.Update;
 
 import com.centaury.mcatalogue.data.local.db.entity.TVShowEntity;
 
@@ -33,14 +32,8 @@ public interface TVShowDao {
     @Query("DELETE FROM tvshows WHERE " + TVShowEntity.COLUMN_ID + "=:id")
     int deleteById(int id);
 
-    @Query("DELETE FROM tvshows")
-    void deleteAll();
-
     @Insert
     long insert(TVShowEntity tvShowEntity);
-
-    @Update
-    void update(TVShowEntity tvShowEntity);
 
     @Delete
     void delete(TVShowEntity tvShowEntity);

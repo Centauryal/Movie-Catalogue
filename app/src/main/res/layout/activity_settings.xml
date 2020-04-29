@@ -11,37 +11,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
+        app:contentInsetEnd="0dp"
+        app:contentInsetStart="0dp"
         app:popupTheme="@style/AppTheme.PopupOverlay">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:paddingTop="@dimen/_8sdp"
-            android:paddingBottom="@dimen/_8sdp">
+            android:paddingBottom="@dimen/_8sdp"
+            android:text="@string/title_settings"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_18ssp"
+            android:textStyle="bold" />
 
-            <ImageView
-                android:id="@+id/btn_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/_5sdp"
-                android:contentDescription="@string/contentdesc_btn_back"
-                android:padding="@dimen/_5sdp"
-                android:src="@drawable/ic_arrow_back_black_24dp"
-                android:tint="@color/white" />
-
-            <TextView
-                android:id="@+id/txt_toolbar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:text="@string/title_settings"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_18ssp"
-                android:textStyle="bold" />
-
-        </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
@@ -63,7 +47,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/txt_change_language_settings"
+                android:text="@string/txt_settings_change_language"
                 android:textSize="@dimen/_14ssp" />
 
             <TextView
@@ -72,14 +56,14 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorSecondaryText"
                 android:textSize="@dimen/_12ssp"
-                tools:text="@string/contoh_bahasa" />
+                tools:text="@string/example_language" />
 
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@color/colorDevider" />
+            android:background="@color/color_devider" />
 
         <LinearLayout
             android:id="@+id/ln_release"
@@ -107,7 +91,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/txt_desc_release"
+                    android:text="@string/txt_release_desc"
                     android:textColor="@color/colorSecondaryText"
                     android:textSize="@dimen/_12ssp" />
 
@@ -146,7 +130,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/txt_desc_daily"
+                    android:text="@string/txt_daily_desc"
                     android:textColor="@color/colorSecondaryText"
                     android:textSize="@dimen/_12ssp" />
 

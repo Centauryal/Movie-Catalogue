@@ -10,7 +10,7 @@
         android:id="@+id/rv_favtvshow"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/item_movielist">
+        tools:listitem="@layout/item_movie_list">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -35,6 +35,6 @@
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 
-    <include layout="@layout/item_emptystate_placeholder" />
+    <include layout="@layout/item_empty_state_placeholder" />
 
 </RelativeLayout>

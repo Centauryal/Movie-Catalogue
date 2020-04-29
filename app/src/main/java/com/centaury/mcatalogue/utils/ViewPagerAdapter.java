@@ -1,5 +1,6 @@
 package com.centaury.mcatalogue.utils;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -16,9 +17,10 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     private final List<String> fragmentTitleList = new ArrayList<>();
 
     public ViewPagerAdapter(FragmentManager fm) {
-        super(fm);
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
 
+    @NonNull
     @Override
     public Fragment getItem(int i) {
         return fragmentList.get(i);
@@ -30,7 +32,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public int getItemPosition(Object object) {
+    public int getItemPosition(@NonNull Object object) {
         // POSITION_NONE makes it possible to reload the PagerAdapter
         return POSITION_NONE;
     }

@@ -6,13 +6,12 @@ import android.provider.BaseColumns;
 
 import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
 import com.centaury.mcatalogue.data.local.db.entity.TVShowEntity;
+import com.centaury.mcatalogue.utils.AppConstants;
 
 /**
  * Created by Centaury on 8/22/2019.
  */
 public class DatabaseContract {
-    public static final String AUTHORITY = "com.centaury.mcatalogue";
-    private static final String SCHEME = "content";
 
     public DatabaseContract() {
     }
@@ -37,8 +36,8 @@ public class DatabaseContract {
         public static final String RELEASE_DATE = MovieEntity.COLUMN_DATE;
         public static final String GENRE = MovieEntity.COLUMN_GENRE;
 
-        public static final Uri CONTENT_URI = new Uri.Builder().scheme(SCHEME)
-                .authority(AUTHORITY)
+        public static final Uri CONTENT_URI = new Uri.Builder().scheme(AppConstants.DATABASE_SCHEME)
+                .authority(AppConstants.DATABASE_AUTHORITY)
                 .appendPath(TABLE_NAME)
                 .build();
     }
@@ -55,8 +54,8 @@ public class DatabaseContract {
         public static final String RELEASE_DATE = TVShowEntity.COLUMN_DATE;
         public static final String GENRE = TVShowEntity.COLUMN_GENRE;
 
-        public static final Uri CONTENT_URI = new Uri.Builder().scheme(SCHEME)
-                .authority(AUTHORITY)
+        public static final Uri CONTENT_URI = new Uri.Builder().scheme(AppConstants.DATABASE_SCHEME)
+                .authority(AppConstants.DATABASE_AUTHORITY)
                 .appendPath(TABLE_NAME)
                 .build();
     }

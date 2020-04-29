@@ -2,7 +2,6 @@ package com.centaury.mcatalogue.ui.main.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +18,12 @@ import com.centaury.mcatalogue.data.remote.model.genre.GenresItem;
 import com.centaury.mcatalogue.data.remote.model.movie.MovieResultsItem;
 import com.centaury.mcatalogue.ui.detail.DetailMovieActivity;
 import com.centaury.mcatalogue.utils.AppConstants;
+import com.centaury.mcatalogue.utils.Helper;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,7 +56,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
     @NonNull
     @Override
     public viewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_movielist, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_movie_list, viewGroup, false);
 
         return new viewHolder(view);
     }
@@ -101,58 +98,32 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.viewHolder> 
             ButterKnife.bind(this, itemView);
         }
 
-        public void bind(MovieResultsItem movie) {
+        void bind(MovieResultsItem movie) {
             mTxtTitlemovielist.setText(movie.getTitle());
             mTxtTitlebackground.setText(movie.getOriginalTitle());
             if (movie.getGenreIds().size() == 0) {
                 mTxtGenremovielist.setText(context.getString(R.string.txt_no_genre));
             } else {
-                mTxtGenremovielist.setText(getGenres(movie.getGenreIds()));
+                mTxtGenremovielist.setText(Helper.getGenresString(genresItemsList, movie.getGenreIds()));
             }
-            Glide.with(context).load(BuildConfig.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvMovielist);
+            Glide.with(context)
+                    .load(BuildConfig.IMAGE_URL + movie.getPosterPath())
+                    .placeholder(R.drawable.noimage)
+                    .into(mIvMovielist);
 
             if (movie.getOverview() == null || movie.getOverview().equals("")) {
-                mTxtDescmovielist.setText(context.getString(R.string.txt_nodesc));
+                mTxtDescmovielist.setText(context.getString(R.string.txt_no_desc));
             } else {
                 mTxtDescmovielist.setText(movie.getOverview());
             }
 
-            DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
             try {
-                Date date = inputDate.parse(movie.getReleaseDate());
-                String releaseDate = outputDate.format(date);
+                Date date = Helper.inputDate().parse(movie.getReleaseDate());
+                String releaseDate = Helper.outputDate().format(date);
                 mTxtDatemovielist.setText(releaseDate);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-        }
-
-        private String getGenres(List<Integer> genreList) {
-            List<String> genreMovies = new ArrayList<>();
-            try {
-                if (genreList.size() == 1) {
-                    for (Integer genreId : genreList) {
-                        for (GenresItem genresItem : genresItemsList) {
-                            if (genresItem.getId() == genreId) {
-                                genreMovies.add(genresItem.getName());
-                            }
-                        }
-                    }
-                } else {
-                    List<Integer> integers = genreList.subList(0, 2);
-                    for (Integer genreId : integers) {
-                        for (GenresItem genresItem : genresItemsList) {
-                            if (genresItem.getId() == genreId) {
-                                genreMovies.add(genresItem.getName());
-                            }
-                        }
-                    }
-                }
-            } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
-                System.out.println("Exception thrown : " + e);
-            }
-            return TextUtils.join(", ", genreMovies);
         }
     }
 }

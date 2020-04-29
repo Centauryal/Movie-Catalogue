@@ -1,24 +1,24 @@
 package com.centaury.favoritecatalogue.ui.main;
 
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 
+import androidx.viewpager.widget.ViewPager;
+
 import com.centaury.favoritecatalogue.R;
+import com.centaury.favoritecatalogue.ui.base.BaseActivity;
 import com.centaury.favoritecatalogue.ui.movie.LoadMovieCallback;
 import com.centaury.favoritecatalogue.ui.movie.MovieFragment;
 import com.centaury.favoritecatalogue.ui.tvshow.LoadTVShowCallback;
 import com.centaury.favoritecatalogue.ui.tvshow.TVShowFragment;
 import com.centaury.favoritecatalogue.utils.ViewPagerAdapter;
+import com.google.android.material.tabs.TabLayout;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements LoadMovieCallback, LoadTVShowCallback {
+public class MainActivity extends BaseActivity implements LoadMovieCallback, LoadTVShowCallback {
 
     @BindView(R.id.tab_favorite)
     TabLayout mTabFavorite;
@@ -30,10 +30,8 @@ public class MainActivity extends AppCompatActivity implements LoadMovieCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Window window = getWindow();
-            window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
-        }
+        Window window = getWindow();
+        window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
 
         setupViewPager(mVpFavorite);
         mTabFavorite.setupWithViewPager(mVpFavorite);

@@ -1,77 +1,56 @@
 package com.centaury.mcatalogue.ui.detail.viewmodel;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
-import com.centaury.mcatalogue.BuildConfig;
-import com.centaury.mcatalogue.data.remote.ApiEndPoint;
-import com.centaury.mcatalogue.data.remote.model.genre.GenreResponse;
+import com.centaury.mcatalogue.data.MovieCatalogueRepository;
+import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
+import com.centaury.mcatalogue.data.local.db.entity.TVShowEntity;
 import com.centaury.mcatalogue.data.remote.model.genre.GenresItem;
-import com.google.gson.Gson;
-
-import org.json.JSONObject;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by Centaury on 7/18/2019.
  */
 public class DetailViewModel extends ViewModel {
 
-    private static final String TAG = DetailViewModel.class.getSimpleName();
+    private MovieCatalogueRepository movieCatalogueRepository;
 
-    private MutableLiveData<List<GenresItem>> listGenreLiveData = new MutableLiveData<>();
-
-    public LiveData<List<GenresItem>> getGenresDetail() {
-        return listGenreLiveData;
+    public DetailViewModel(MovieCatalogueRepository movieCatalogueRepository) {
+        this.movieCatalogueRepository = movieCatalogueRepository;
     }
 
-    public void setGenreMovieDetail(String language) {
-        AndroidNetworking.get(ApiEndPoint.ENDPOINT_GENRE_MOVIE)
-                .addQueryParameter("api_key", BuildConfig.API_KEY)
-                .addQueryParameter("language", language)
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        GenreResponse genreResponse = new Gson().fromJson(response + "", GenreResponse.class);
-                        List<GenresItem> genresItems = genreResponse.getGenres();
-                        listGenreLiveData.setValue(genresItems);
-                    }
-
-                    @Override
-                    public void onError(ANError anError) {
-                        Log.e(TAG, "onError: " + anError.getErrorBody());
-                    }
-                });
+    public LiveData<List<GenresItem>> getGenresMovie(String language) {
+        return movieCatalogueRepository.getGenresMovies(language);
     }
 
-    public void setGenreTVShowDetail(String language) {
-        AndroidNetworking.get(ApiEndPoint.ENDPOINT_GENRE_TVSHOW)
-                .addQueryParameter("api_key", BuildConfig.API_KEY)
-                .addQueryParameter("language", language)
-                .setPriority(Priority.MEDIUM)
-                .build()
-                .getAsJSONObject(new JSONObjectRequestListener() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        GenreResponse genreResponse = new Gson().fromJson(response + "", GenreResponse.class);
-                        List<GenresItem> genresItems = genreResponse.getGenres();
-                        listGenreLiveData.setValue(genresItems);
-                    }
+    public LiveData<List<GenresItem>> getGenresTVShow(String language) {
+        return movieCatalogueRepository.getGenresTVShows(language);
+    }
 
-                    @Override
-                    public void onError(ANError anError) {
-                        Log.e(TAG, "onError: " + anError.getErrorBody());
-                    }
-                });
+    public MovieEntity getFavoriteMovie(int id) throws ExecutionException, InterruptedException {
+        return movieCatalogueRepository.getFavMovie(id);
+    }
+
+    public void insertFavoriteMovie(MovieEntity movie) {
+        movieCatalogueRepository.insertFavMovie(movie);
+    }
+
+    public void deleteFavoriteMovie(MovieEntity movie) {
+        movieCatalogueRepository.deleteFavMovie(movie);
+    }
+
+    public TVShowEntity getFavoriteTVShow(int id) throws ExecutionException, InterruptedException {
+        return movieCatalogueRepository.getFavTVShow(id);
+    }
+
+    public void insertFavoriteTVShow(TVShowEntity tvshow) {
+        movieCatalogueRepository.insertFavTVShow(tvshow);
+    }
+
+    public void deleteFavoriteTVShow(TVShowEntity tvshow) {
+        movieCatalogueRepository.deleteFavTVShow(tvshow);
     }
 }

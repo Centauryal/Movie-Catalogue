@@ -14,13 +14,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.centaury.mcatalogue.R;
+import com.centaury.mcatalogue.ViewModelFactory;
 import com.centaury.mcatalogue.data.remote.model.genre.GenresItem;
 import com.centaury.mcatalogue.data.remote.model.tvshow.TVShowResultsItem;
+import com.centaury.mcatalogue.ui.base.BaseFragment;
 import com.centaury.mcatalogue.ui.main.adapter.TVShowAdapter;
 import com.centaury.mcatalogue.ui.main.viewmodel.TVShowViewModel;
 import com.centaury.mcatalogue.utils.Helper;
@@ -38,7 +39,7 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TVShowFragment extends Fragment {
+public class TVShowFragment extends BaseFragment {
 
     @BindView(R.id.rv_tvshow)
     RecyclerView mRvTvshow;
@@ -55,7 +56,7 @@ public class TVShowFragment extends Fragment {
         if (tvshowResultsItems != null) {
             mShimmerViewContainer.stopShimmer();
             mShimmerViewContainer.setVisibility(View.GONE);
-            toggleEmptyTVShows(tvshowResultsItems.size());
+            toggleEmptyState(tvshowResultsItems.size(), mEmptyState, mRvTvshow);
             tvShowAdapter.setTVShowData(tvshowResultsItems);
         }
     };
@@ -83,10 +84,12 @@ public class TVShowFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        tvShowViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(TVShowViewModel.class);
-        tvShowViewModel.getTVShows().observe(getViewLifecycleOwner(), getTVShow);
-        tvShowViewModel.getGenres().observe(getViewLifecycleOwner(), getGenre);
         language = String.valueOf(Locale.getDefault().toLanguageTag());
+
+        ViewModelFactory factory = ViewModelFactory.getInstance(getActivity());
+        tvShowViewModel = new ViewModelProvider(this, factory).get(TVShowViewModel.class);
+        tvShowViewModel.getTVShows(language).observe(getViewLifecycleOwner(), getTVShow);
+        tvShowViewModel.getGenres(language).observe(getViewLifecycleOwner(), getGenre);
 
         showRecyclerList();
         checkConnection(getContext());
@@ -121,8 +124,8 @@ public class TVShowFragment extends Fragment {
     private void checkConnection(Context context) {
         if (Helper.isNetworkConnected(context)) {
             mShimmerViewContainer.startShimmer();
-            tvShowViewModel.setTVShow(language);
-            tvShowViewModel.setGenreTVShow(language);
+            tvShowViewModel.getTVShows(language).observe(getViewLifecycleOwner(), getTVShow);
+            tvShowViewModel.getGenres(language).observe(getViewLifecycleOwner(), getGenre);
         } else {
             showNoInternet();
         }
@@ -146,7 +149,6 @@ public class TVShowFragment extends Fragment {
 
         mRvTvshow.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvTvshow.setAdapter(tvShowAdapter);
-        mRvTvshow.setItemAnimator(new DefaultItemAnimator());
         mRvTvshow.addItemDecoration(new Helper.TopItemDecoration(55));
     }
 
@@ -171,8 +173,8 @@ public class TVShowFragment extends Fragment {
     public void onClick(View v) {
         if (v.getId() == R.id.btn_try_again) {
             mShimmerViewContainer.startShimmer();
-            tvShowViewModel.setTVShow(language);
-            tvShowViewModel.setGenreTVShow(language);
+            tvShowViewModel.getTVShows(language).observe(getViewLifecycleOwner(), getTVShow);
+            tvShowViewModel.getGenres(language).observe(getViewLifecycleOwner(), getGenre);
         }
     }
 }

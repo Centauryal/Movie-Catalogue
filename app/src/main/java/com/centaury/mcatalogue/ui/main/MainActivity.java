@@ -7,11 +7,11 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.centaury.mcatalogue.R;
+import com.centaury.mcatalogue.ui.base.BaseActivity;
 import com.centaury.mcatalogue.ui.favorite.FavoriteActivity;
 import com.centaury.mcatalogue.ui.main.fragment.MovieFragment;
 import com.centaury.mcatalogue.ui.main.fragment.TVShowFragment;
@@ -28,7 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @BindView(R.id.tabs)
     TabLayout mTabs;

@@ -1,4 +1,4 @@
-package com.centaury.mcatalogue.services.reminder;
+package com.centaury.mcatalogue.services;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -53,7 +53,7 @@ public class DailyReminder extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         String title = context.getString(R.string.txt_daily_reminder);
-        String message = context.getString(R.string.txt_movie_daily);
+        String message = context.getString(R.string.txt_daily_movie);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Uri soundAlarm = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -112,7 +112,7 @@ public class DailyReminder extends BroadcastReceiver {
         alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP,
                 calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pendingIntent);
 
-        Toast.makeText(context, context.getString(R.string.txt_toast_daily), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, context.getString(R.string.txt_daily_toast), Toast.LENGTH_SHORT).show();
     }
 
     public void cancelDailyReminder(Context context) {
@@ -126,6 +126,6 @@ public class DailyReminder extends BroadcastReceiver {
             alarmManager.cancel(pendingIntent);
         }
 
-        Toast.makeText(context, context.getString(R.string.txt_cancel_daily), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, context.getString(R.string.txt_daily_cancel), Toast.LENGTH_SHORT).show();
     }
 }

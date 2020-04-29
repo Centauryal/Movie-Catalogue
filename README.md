@@ -17,10 +17,11 @@ This repository contains detailed application examples of MADE course projects i
 
 #### The app has following packages:
 1. **data**: It contains all the data accessing and manipulating components.
-2. **provider**: Implementation of content provider usage.
-3. **services**: implementation of the use of service alarms on the reminder.
-4. **ui**: View classes along with their corresponding ViewModel.
-5. **utils**: Utility classes.
+2. **di**: Implementation to inject context into resources.
+3. **provider**: Implementation of content provider usage.
+4. **services**: implementation of the use of service alarms on the reminder.
+5. **ui**: View classes along with their corresponding ViewModel.
+6. **utils**: Utility classes.
 
 ### Library reference resources:
 1. ButterKnife: https://github.com/JakeWharton/butterknife

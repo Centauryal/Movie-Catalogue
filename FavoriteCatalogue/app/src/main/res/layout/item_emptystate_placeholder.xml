@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/empty_state"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_vertical|center_horizontal"
     android:orientation="vertical"
-    android:visibility="gone">
+    android:visibility="gone"
+    tools:ignore="UseCompoundDrawables">
 
     <ImageView
         android:layout_width="@dimen/_150sdp"
         android:layout_height="@dimen/_150sdp"
         android:layout_marginBottom="@dimen/_16sdp"
-        android:contentDescription="@string/contentdesc_empty_state"
+        android:contentDescription="@string/content_desc_empty_state"
         android:src="@drawable/emptystate" />
 
     <TextView

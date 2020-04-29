@@ -3,9 +3,6 @@ package com.centaury.mcatalogue.ui.search;
 import android.app.SearchManager;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,19 +13,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.centaury.mcatalogue.R;
+import com.centaury.mcatalogue.ViewModelFactory;
 import com.centaury.mcatalogue.data.remote.model.genre.GenresItem;
 import com.centaury.mcatalogue.data.remote.model.tvshow.TVShowResultsItem;
+import com.centaury.mcatalogue.ui.base.BaseActivity;
 import com.centaury.mcatalogue.ui.main.adapter.TVShowAdapter;
 import com.centaury.mcatalogue.ui.main.viewmodel.TVShowViewModel;
 import com.centaury.mcatalogue.utils.Helper;
@@ -40,11 +37,11 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SearchTVShowActivity extends AppCompatActivity {
+public class SearchTVShowActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @BindView(R.id.rv_searchtvshow)
+    @BindView(R.id.rv_search_tv_show)
     RecyclerView mRvSearchtvshow;
     @BindView(R.id.shimmer_view_container)
     ShimmerFrameLayout mShimmerViewContainer;
@@ -60,7 +57,7 @@ public class SearchTVShowActivity extends AppCompatActivity {
         if (tvshowResultsItems != null) {
             mShimmerViewContainer.stopShimmer();
             mShimmerViewContainer.setVisibility(View.GONE);
-            toggleEmptyTVShows(tvshowResultsItems.size());
+            toggleEmptyState(tvshowResultsItems.size(), mEmptyState, mRvSearchtvshow);
             tvShowAdapter.setTVShowData(tvshowResultsItems);
         }
     };
@@ -75,24 +72,16 @@ public class SearchTVShowActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_tvshow);
         ButterKnife.bind(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Window window = getWindow();
-            window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
-        }
+        Window window = getWindow();
+        window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
 
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Drawable arrow = ContextCompat.getDrawable(this, R.drawable.ic_arrow_back_black_24dp);
-        if (arrow != null) {
-            arrow.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP);
-        }
-        getSupportActionBar().setHomeAsUpIndicator(arrow);
+        setUpToolbar(mToolbar);
 
-        tvShowViewModel = ViewModelProviders.of(this).get(TVShowViewModel.class);
-        tvShowViewModel.getSearchTVShow().observe(this, getSearchMovie);
-        tvShowViewModel.getGenres().observe(this, getGenre);
         language = String.valueOf(Locale.getDefault().toLanguageTag());
+
+        ViewModelFactory factory = ViewModelFactory.getInstance(this);
+        tvShowViewModel = new ViewModelProvider(this, factory).get(TVShowViewModel.class);
+        tvShowViewModel.getGenres(language).observe(this, getGenre);
 
         showRecyclerList();
         mBtnTryAgain.setVisibility(View.GONE);
@@ -132,7 +121,7 @@ public class SearchTVShowActivity extends AppCompatActivity {
             SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
             searchView.setMaxWidth(Integer.MAX_VALUE);
-            searchView.setQueryHint(getString(R.string.txt_hint_tvshow));
+            searchView.setQueryHint(getString(R.string.txt_tv_show_hint));
             searchView.setIconified(false);
 
             EditText editSearch = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
@@ -149,16 +138,16 @@ public class SearchTVShowActivity extends AppCompatActivity {
                 @Override
                 public boolean onQueryTextSubmit(String s) {
                     String query = s.toLowerCase();
-                    tvShowViewModel.setSearchTVShow(query, language);
-                    tvShowViewModel.setGenreTVShow(language);
+                    tvShowViewModel.getSearchTVShow(query, language)
+                            .observe(SearchTVShowActivity.this, getSearchMovie);
                     return false;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String s) {
                     String query = s.toLowerCase();
-                    tvShowViewModel.setSearchTVShow(query, language);
-                    tvShowViewModel.setGenreTVShow(language);
+                    tvShowViewModel.getSearchTVShow(query, language)
+                            .observe(SearchTVShowActivity.this, getSearchMovie);
                     return false;
                 }
             });
@@ -194,13 +183,11 @@ public class SearchTVShowActivity extends AppCompatActivity {
     }
 
     private void showRecyclerList() {
-
         tvShowAdapter = new TVShowAdapter(this);
         tvShowAdapter.notifyDataSetChanged();
 
         mRvSearchtvshow.setLayoutManager(new LinearLayoutManager(this));
         mRvSearchtvshow.setAdapter(tvShowAdapter);
-        mRvSearchtvshow.setItemAnimator(new DefaultItemAnimator());
         mRvSearchtvshow.addItemDecoration(new Helper.TopItemDecoration(55));
     }
 }

@@ -3,17 +3,19 @@ package com.centaury.mcatalogue.ui.settings;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.centaury.mcatalogue.R;
 import com.centaury.mcatalogue.data.local.prefs.ReminderPreference;
-import com.centaury.mcatalogue.services.reminder.DailyReminder;
-import com.centaury.mcatalogue.services.reminder.ReleaseReminder;
+import com.centaury.mcatalogue.services.DailyReminder;
+import com.centaury.mcatalogue.services.ReleaseReminder;
+import com.centaury.mcatalogue.ui.base.BaseActivity;
 
 import java.util.Locale;
 
@@ -21,8 +23,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
 
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
     @BindView(R.id.sw_release_reminder)
     Switch mSwReleaseReminder;
     @BindView(R.id.sw_daily_reminder)
@@ -39,6 +43,7 @@ public class SettingsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         Window window = getWindow();
         window.setStatusBarColor(getColor(R.color.colorPrimaryDark));
+        setUpToolbar(mToolbar);
 
         mSettingsLanguage.setText(Locale.getDefault().getDisplayLanguage());
 
@@ -75,14 +80,17 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    @OnClick({R.id.btn_back, R.id.setting_change_language, R.id.ln_release, R.id.ln_daily})
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @OnClick({R.id.setting_change_language, R.id.ln_release, R.id.ln_daily})
     public void onClick(View v) {
         switch (v.getId()) {
-            default:
-                break;
-            case R.id.btn_back:
-                onBackPressed();
-                break;
             case R.id.setting_change_language:
                 Intent intent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
                 startActivity(intent);

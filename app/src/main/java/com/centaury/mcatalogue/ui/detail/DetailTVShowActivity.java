@@ -3,7 +3,7 @@ package com.centaury.mcatalogue.ui.detail;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -21,17 +21,16 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.centaury.mcatalogue.BuildConfig;
 import com.centaury.mcatalogue.R;
+import com.centaury.mcatalogue.ViewModelFactory;
 import com.centaury.mcatalogue.data.local.db.entity.TVShowEntity;
 import com.centaury.mcatalogue.data.remote.model.genre.GenresItem;
 import com.centaury.mcatalogue.data.remote.model.tvshow.TVShowResultsItem;
+import com.centaury.mcatalogue.ui.base.BaseActivity;
 import com.centaury.mcatalogue.ui.detail.viewmodel.DetailViewModel;
-import com.centaury.mcatalogue.ui.favorite.viewmodel.FavoriteTVShowViewModel;
 import com.centaury.mcatalogue.utils.AppConstants;
 import com.centaury.mcatalogue.utils.Helper;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,42 +41,40 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class DetailTVShowActivity extends AppCompatActivity {
+public class DetailTVShowActivity extends BaseActivity {
 
-    @BindView(R.id.iv_covertvdetail)
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.iv_cover_tv_detail)
     ImageView mIvCovertvdetail;
     @BindView(R.id.btn_favorite)
     LottieAnimationView mBtnFavorite;
-    @BindView(R.id.iv_imgtvdetail)
+    @BindView(R.id.iv_img_tv_detail)
     ImageView mIvImgtvdetail;
-    @BindView(R.id.txt_titletvdetail)
+    @BindView(R.id.txt_title_tv_detail)
     TextView mTxtTitletvdetail;
-    @BindView(R.id.txt_genretvdetail)
+    @BindView(R.id.txt_genre_tv_detail)
     TextView mTxtGenretvdetail;
-    @BindView(R.id.rb_ratingtvdetail)
+    @BindView(R.id.rb_rating_tv_detail)
     RatingBar mRbRatingtvdetail;
-    @BindView(R.id.txt_ratetvmovie)
+    @BindView(R.id.txt_rate_tv_movie)
     TextView mTxtRatetvmovie;
-    @BindView(R.id.txt_datetvdetail)
+    @BindView(R.id.txt_date_tv_detail)
     TextView mTxtDatetvdetail;
-    @BindView(R.id.txt_desctvdetail)
+    @BindView(R.id.txt_desc_tv_detail)
     TextView mTxtDesctvdetail;
-
-    private DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-    private DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
 
     private List<Integer> genreData = new ArrayList<>();
     private TVShowResultsItem tvShow;
     private TVShowEntity entity;
     private DetailViewModel detailViewModel;
-    private FavoriteTVShowViewModel favoriteTVShowViewModel;
-    private AlertDialog alertDialog;
     private String language;
     private Boolean isFavorite = false;
     private Observer<List<GenresItem>> getGenre = genresItems -> {
         if (genresItems != null) {
             showDialogLoading();
-            getGenresString(genresItems);
+            Helper.getGenresString(genresItems, genreData, mTxtGenretvdetail);
+            dismissDialogLoading();
         }
     };
 
@@ -94,14 +91,21 @@ public class DetailTVShowActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         }
+        setUpToolbar(mToolbar);
 
         language = String.valueOf(Locale.getDefault().toLanguageTag());
-        detailViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(DetailViewModel.class);
-        favoriteTVShowViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(FavoriteTVShowViewModel.class);
-        detailViewModel.getGenresDetail().observe(this, getGenre);
+
+        ViewModelFactory factory = ViewModelFactory.getInstance(this);
+        detailViewModel = new ViewModelProvider(this, factory).get(DetailViewModel.class);
+        detailViewModel.getGenresTVShow(language).observe(this, getGenre);
 
         checkConnection(this);
+        setUp();
+        setFavorite();
+        mBtnFavorite.setScale(2.481f);
+    }
 
+    private void setUp() {
         tvShow = getIntent().getParcelableExtra(AppConstants.EXTRA_TVSHOW);
         if (tvShow != null) {
             itemTVShow(tvShow);
@@ -111,9 +115,6 @@ public class DetailTVShowActivity extends AppCompatActivity {
             itemTVShowDB(entity);
             stateFavoriteDB(entity.getId());
         }
-
-        setFavorite();
-        mBtnFavorite.setScale(2.481f);
     }
 
     private void itemTVShow(TVShowResultsItem tvShow) {
@@ -127,22 +128,31 @@ public class DetailTVShowActivity extends AppCompatActivity {
         mTxtRatetvmovie.setText(String.valueOf(tvShow.getVoteAverage()));
         float movieRating = (float) (tvShow.getVoteAverage() / 2);
         mRbRatingtvdetail.setRating(movieRating);
-        Glide.with(this).load(BuildConfig.IMAGE_URL + tvShow.getPosterPath()).placeholder(R.drawable.noimage).into(mIvImgtvdetail);
+        Glide.with(this)
+                .load(BuildConfig.IMAGE_URL + tvShow.getPosterPath())
+                .placeholder(R.drawable.noimage)
+                .into(mIvImgtvdetail);
         if (tvShow.getBackdropPath() != null) {
-            Glide.with(this).load(BuildConfig.IMAGE_URL + tvShow.getBackdropPath()).placeholder(R.drawable.noimage).into(mIvCovertvdetail);
+            Glide.with(this)
+                    .load(BuildConfig.IMAGE_URL + tvShow.getBackdropPath())
+                    .placeholder(R.drawable.noimage)
+                    .into(mIvCovertvdetail);
         } else {
-            Glide.with(this).load(BuildConfig.IMAGE_URL + tvShow.getPosterPath()).placeholder(R.drawable.noimage).into(mIvCovertvdetail);
+            Glide.with(this)
+                    .load(BuildConfig.IMAGE_URL + tvShow.getPosterPath())
+                    .placeholder(R.drawable.noimage)
+                    .into(mIvCovertvdetail);
         }
 
         if (tvShow.getOverview() == null || tvShow.getOverview().equals("")) {
-            mTxtDesctvdetail.setText(getResources().getString(R.string.txt_nodesc));
+            mTxtDesctvdetail.setText(getResources().getString(R.string.txt_no_desc));
         } else {
             mTxtDesctvdetail.setText(tvShow.getOverview());
         }
 
         try {
-            Date date = inputDate.parse(tvShow.getFirstAirDate());
-            String releaseDate = outputDate.format(date);
+            Date date = Helper.inputDate().parse(tvShow.getFirstAirDate());
+            String releaseDate = Helper.outputDate().format(date);
             mTxtDatetvdetail.setText(releaseDate);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -160,72 +170,51 @@ public class DetailTVShowActivity extends AppCompatActivity {
         int rate = (int) Double.parseDouble(entity.getVoteAverage());
         float movieRating = (float) (rate / 2);
         mRbRatingtvdetail.setRating(movieRating);
-        Glide.with(this).load(BuildConfig.IMAGE_URL + entity.getPosterPath()).placeholder(R.drawable.noimage).into(mIvImgtvdetail);
+        Glide.with(this)
+                .load(BuildConfig.IMAGE_URL + entity.getPosterPath())
+                .placeholder(R.drawable.noimage)
+                .into(mIvImgtvdetail);
         if (entity.getBackdropPath() != null) {
-            Glide.with(this).load(BuildConfig.IMAGE_URL + entity.getBackdropPath()).placeholder(R.drawable.noimage).into(mIvCovertvdetail);
+            Glide.with(this)
+                    .load(BuildConfig.IMAGE_URL + entity.getBackdropPath())
+                    .placeholder(R.drawable.noimage)
+                    .into(mIvCovertvdetail);
         } else {
-            Glide.with(this).load(BuildConfig.IMAGE_URL + entity.getPosterPath()).placeholder(R.drawable.noimage).into(mIvCovertvdetail);
+            Glide.with(this)
+                    .load(BuildConfig.IMAGE_URL + entity.getPosterPath())
+                    .placeholder(R.drawable.noimage)
+                    .into(mIvCovertvdetail);
         }
 
         if (entity.getOverview() == null || entity.getOverview().equals("")) {
-            mTxtDesctvdetail.setText(getResources().getString(R.string.txt_nodesc));
+            mTxtDesctvdetail.setText(getResources().getString(R.string.txt_no_desc));
         } else {
             mTxtDesctvdetail.setText(entity.getOverview());
         }
 
         try {
-            Date date = inputDate.parse(entity.getFirstAirDate());
-            String releaseDate = outputDate.format(date);
+            Date date = Helper.inputDate().parse(entity.getFirstAirDate());
+            String releaseDate = Helper.outputDate().format(date);
             mTxtDatetvdetail.setText(releaseDate);
         } catch (ParseException e) {
             e.printStackTrace();
         }
     }
 
-    public void checkConnection(Context context) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void checkConnection(Context context) {
         if (Helper.isNetworkConnected(context)) {
-            detailViewModel.setGenreMovieDetail(language);
-            detailViewModel.setGenreTVShowDetail(language);
+            detailViewModel.getGenresTVShow(language).observe(this, getGenre);
         } else {
             showNoInternet();
         }
-    }
-
-    private void getGenresString(List<GenresItem> itemList) {
-        List<String> genreMovies = new ArrayList<>();
-        try {
-            if (genreData.size() == 1) {
-                for (Integer genreId : genreData) {
-                    for (GenresItem genresItem : itemList) {
-                        if (genresItem.getId() == genreId) {
-                            genreMovies.add(genresItem.getName());
-                        }
-                    }
-                    mTxtGenretvdetail.setText(TextUtils.join(", ", genreMovies));
-                }
-            } else {
-                List<Integer> integers = genreData.subList(0, 2);
-                for (Integer genreId : integers) {
-                    for (GenresItem genresItem : itemList) {
-                        if (genresItem.getId() == genreId) {
-                            genreMovies.add(genresItem.getName());
-                        }
-                    }
-                    mTxtGenretvdetail.setText(TextUtils.join(", ", genreMovies));
-                }
-            }
-        } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
-            System.out.println("Exception thrown : " + e);
-        }
-        alertDialog.dismiss();
-    }
-
-    private void showDialogLoading() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setView(R.layout.item_loading_dialog);
-        alertDialog = builder.create();
-        alertDialog.show();
     }
 
     private void showNoInternet() {
@@ -242,7 +231,7 @@ public class DetailTVShowActivity extends AppCompatActivity {
     private void stateFavoriteDB(int id) {
         final TVShowEntity tvShowEntity;
         try {
-            tvShowEntity = favoriteTVShowViewModel.getTVShow(id);
+            tvShowEntity = detailViewModel.getFavoriteTVShow(id);
             if (tvShowEntity != null) {
                 isFavorite = true;
             }
@@ -267,52 +256,45 @@ public class DetailTVShowActivity extends AppCompatActivity {
             TVShowEntity tvShowEntity = new TVShowEntity(tvShow.getId(), mTxtTitletvdetail.getText().toString(), tvShow.getOriginalName(),
                     mTxtDesctvdetail.getText().toString(), tvShow.getPosterPath(), tvShow.getBackdropPath(),
                     mTxtRatetvmovie.getText().toString(), tvShow.getFirstAirDate(), mTxtGenretvdetail.getText().toString());
-            favoriteTVShowViewModel.insertMovie(tvShowEntity);
+            detailViewModel.insertFavoriteTVShow(tvShowEntity);
         } else {
             TVShowEntity tvShowEntity = new TVShowEntity(entity.getId(), mTxtTitletvdetail.getText().toString(), entity.getOriginalName(),
                     mTxtDesctvdetail.getText().toString(), entity.getPosterPath(), entity.getBackdropPath(),
                     mTxtRatetvmovie.getText().toString(), entity.getFirstAirDate(), mTxtGenretvdetail.getText().toString());
-            favoriteTVShowViewModel.insertMovie(tvShowEntity);
+            detailViewModel.insertFavoriteTVShow(tvShowEntity);
         }
 
-        Toast.makeText(this, getString(R.string.txt_add_movie), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.txt_movie_add), Toast.LENGTH_SHORT).show();
     }
 
     private void removeFavorite(int id) {
         final TVShowEntity tvShowEntity;
         try {
-            tvShowEntity = favoriteTVShowViewModel.getTVShow(id);
-            favoriteTVShowViewModel.deleteMovie(tvShowEntity);
-            Toast.makeText(this, getString(R.string.txt_remove_movie), Toast.LENGTH_SHORT).show();
+            tvShowEntity = detailViewModel.getFavoriteTVShow(id);
+            detailViewModel.deleteFavoriteTVShow(tvShowEntity);
+            Toast.makeText(this, getString(R.string.txt_movie_remove), Toast.LENGTH_SHORT).show();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    @OnClick({R.id.btn_back, R.id.btn_favorite})
+    @OnClick(R.id.btn_favorite)
     public void onClick(View v) {
-        switch (v.getId()) {
-            default:
-                break;
-            case R.id.btn_back:
-                onBackPressed();
-                break;
-            case R.id.btn_favorite:
-                if (isFavorite) {
-                    if (tvShow != null) {
-                        removeFavorite(tvShow.getId());
-                    } else {
-                        removeFavorite(entity.getId());
-                    }
+        if (v.getId() == R.id.btn_favorite) {
+            if (isFavorite) {
+                if (tvShow != null) {
+                    removeFavorite(tvShow.getId());
                 } else {
-                    addFavorite();
+                    removeFavorite(entity.getId());
                 }
+            } else {
+                addFavorite();
+            }
 
-                isFavorite = !isFavorite;
+            isFavorite = !isFavorite;
 
-                setFavorite();
-                mBtnFavorite.playAnimation();
-                break;
+            setFavorite();
+            mBtnFavorite.playAnimation();
         }
     }
 }

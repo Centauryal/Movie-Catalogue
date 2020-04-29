@@ -3,10 +3,9 @@ package com.centaury.mcatalogue.ui.splash;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.airbnb.lottie.LottieAnimationView;
 import com.centaury.mcatalogue.R;
+import com.centaury.mcatalogue.ui.base.BaseActivity;
 import com.centaury.mcatalogue.ui.main.MainActivity;
 
 import java.util.Timer;
@@ -15,7 +14,7 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends BaseActivity {
 
     @BindView(R.id.lottie_load)
     LottieAnimationView mLottieLoad;

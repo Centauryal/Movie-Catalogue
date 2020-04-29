@@ -8,5 +8,5 @@ import android.database.Cursor;
 public interface LoadTVShowCallback {
     void preExecuteTVShow();
 
-    void postExecuteTVShow(Cursor tvshows);
+    void postExecuteTVShow(Cursor tvShows);
 }

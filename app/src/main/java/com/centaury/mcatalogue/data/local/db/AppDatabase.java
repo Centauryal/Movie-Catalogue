@@ -15,7 +15,7 @@ import com.centaury.mcatalogue.utils.AppConstants;
 /**
  * Created by Centaury on 7/28/2019.
  */
-@Database(entities = {MovieEntity.class, TVShowEntity.class}, version = 2)
+@Database(entities = {MovieEntity.class, TVShowEntity.class}, version = 3)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;

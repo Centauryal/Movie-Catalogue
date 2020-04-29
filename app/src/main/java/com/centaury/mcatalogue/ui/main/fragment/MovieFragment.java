@@ -14,13 +14,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.centaury.mcatalogue.R;
+import com.centaury.mcatalogue.ViewModelFactory;
 import com.centaury.mcatalogue.data.remote.model.genre.GenresItem;
 import com.centaury.mcatalogue.data.remote.model.movie.MovieResultsItem;
+import com.centaury.mcatalogue.ui.base.BaseFragment;
 import com.centaury.mcatalogue.ui.main.adapter.MovieAdapter;
 import com.centaury.mcatalogue.ui.main.viewmodel.MovieViewModel;
 import com.centaury.mcatalogue.utils.Helper;
@@ -38,7 +39,7 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MovieFragment extends Fragment {
+public class MovieFragment extends BaseFragment {
 
     @BindView(R.id.rv_movie)
     RecyclerView mRvMovie;
@@ -55,7 +56,7 @@ public class MovieFragment extends Fragment {
         if (movieResultsItems != null) {
             mShimmerViewContainer.stopShimmer();
             mShimmerViewContainer.setVisibility(View.GONE);
-            toggleEmptyMovies(movieResultsItems.size());
+            toggleEmptyState(movieResultsItems.size(), mEmptyState, mRvMovie);
             movieAdapter.setMovieData(movieResultsItems);
         }
     };
@@ -83,10 +84,13 @@ public class MovieFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        movieViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(MovieViewModel.class);
-        movieViewModel.getMovies().observe(getViewLifecycleOwner(), getMovie);
-        movieViewModel.getGenres().observe(getViewLifecycleOwner(), getGenre);
         language = String.valueOf(Locale.getDefault().toLanguageTag());
+
+        ViewModelFactory factory = ViewModelFactory.getInstance(getActivity());
+        movieViewModel = new ViewModelProvider(this, factory).get(MovieViewModel.class);
+        movieViewModel.getMovies(language).observe(getViewLifecycleOwner(), getMovie);
+        movieViewModel.getGenres(language).observe(getViewLifecycleOwner(), getGenre);
+
 
         showRecyclerList();
         checkConnection(getContext());
@@ -121,8 +125,8 @@ public class MovieFragment extends Fragment {
     private void checkConnection(Context context) {
         if (Helper.isNetworkConnected(context)) {
             mShimmerViewContainer.startShimmer();
-            movieViewModel.setMovie(language);
-            movieViewModel.setGenre(language);
+            movieViewModel.getMovies(language).observe(getViewLifecycleOwner(), getMovie);
+            movieViewModel.getGenres(language).observe(getViewLifecycleOwner(), getGenre);
         } else {
             showNoInternet();
         }
@@ -141,13 +145,11 @@ public class MovieFragment extends Fragment {
     }
 
     private void showRecyclerList() {
-
         movieAdapter = new MovieAdapter(getContext());
         movieAdapter.notifyDataSetChanged();
 
         mRvMovie.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvMovie.setAdapter(movieAdapter);
-        mRvMovie.setItemAnimator(new DefaultItemAnimator());
         mRvMovie.addItemDecoration(new Helper.TopItemDecoration(55));
     }
 
@@ -172,8 +174,8 @@ public class MovieFragment extends Fragment {
     public void onClick(View v) {
         if (v.getId() == R.id.btn_try_again) {
             mShimmerViewContainer.startShimmer();
-            movieViewModel.setMovie(language);
-            movieViewModel.setGenre(language);
+            movieViewModel.getMovies(language).observe(getViewLifecycleOwner(), getMovie);
+            movieViewModel.getGenres(language).observe(getViewLifecycleOwner(), getGenre);
         }
     }
 }

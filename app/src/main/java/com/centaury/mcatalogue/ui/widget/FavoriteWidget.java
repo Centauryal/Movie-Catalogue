@@ -18,8 +18,8 @@ import com.centaury.mcatalogue.utils.AppConstants;
  */
 public class FavoriteWidget extends AppWidgetProvider {
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId) {
+    private static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+                                        int appWidgetId) {
         Intent intent = new Intent(context, StackWidgetService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
@@ -29,7 +29,7 @@ public class FavoriteWidget extends AppWidgetProvider {
         views.setEmptyView(R.id.stack_view, R.id.empty_view);
 
         Intent toastIntent = new Intent(context, FavoriteWidget.class);
-        toastIntent.setAction(AppConstants.TOAST_ACTION);
+        toastIntent.setAction(AppConstants.WIDGET_TOAST_ACTION);
         toastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         toastIntent.setData(Uri.parse(toastIntent.toUri(Intent.URI_INTENT_SCHEME)));
 
@@ -61,8 +61,8 @@ public class FavoriteWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
 
         if (intent.getAction() != null) {
-            if (intent.getAction().equals(AppConstants.TOAST_ACTION)) {
-                int viewIndex = intent.getIntExtra(AppConstants.EXTRA_ITEM, 0);
+            if (intent.getAction().equals(AppConstants.WIDGET_TOAST_ACTION)) {
+                int viewIndex = intent.getIntExtra(AppConstants.WIDGET_EXTRA_ITEM, 0);
 
                 Intent intentDetail = new Intent(context, DetailMovieActivity.class);
                 intentDetail.putExtra(AppConstants.EXTRA_FAV_MOVIE, viewIndex);
@@ -70,7 +70,7 @@ public class FavoriteWidget extends AppWidgetProvider {
                 context.startActivity(intentDetail);
             }
 
-            if (intent.getAction().equals(AppConstants.UPDATE_WIDGET)) {
+            if (intent.getAction().equals(AppConstants.WIDGET_UPDATE_WIDGET)) {
                 AppWidgetManager widgetManager = AppWidgetManager.getInstance(context);
                 ComponentName name = new ComponentName(context, FavoriteWidget.class);
                 int[] ints = widgetManager.getAppWidgetIds(name);

@@ -5,6 +5,12 @@ package com.centaury.favoritecatalogue.utils;
  */
 public final class AppConstants {
 
-    public static final String BASE_URL = "https://api.themoviedb.org/3/";
-    public static final String IMAGE_URL = "https://image.tmdb.org/t/p/w500";
+    public static final String DATABASE_AUTHORITY = "com.centaury.mcatalogue";
+    public static final String DATABASE_SCHEME = "content";
+
+    public static final String OBSERVER_MOVIE = "DataObserver";
+    public static final String OBSERVER_TVSHOW = "Observer";
+
+    public static final String EXTRA_STATE_MOVIE = "EXTRA_STATE";
+    public static final String EXTRA_STATE_TVSHOW = "EXTRA_STATE_TVSHOW";
 }

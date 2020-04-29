@@ -31,7 +31,7 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
     private final Context context;
     private List<MovieEntity> resultsItems = new ArrayList<>();
 
-    public StackRemoteViewsFactory(Context context) {
+    StackRemoteViewsFactory(Context context) {
         this.context = context;
     }
 
@@ -79,7 +79,7 @@ public class StackRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
             remoteViews.setImageViewBitmap(R.id.iv_widget, bitmap);
 
             Bundle bundle = new Bundle();
-            bundle.putInt(AppConstants.EXTRA_ITEM, resultsItems.get(position).getId());
+            bundle.putInt(AppConstants.WIDGET_EXTRA_ITEM, resultsItems.get(position).getId());
             Intent intent = new Intent();
             intent.putExtras(bundle);
 

@@ -3,7 +3,7 @@ package com.centaury.mcatalogue.ui.detail;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -21,17 +21,16 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.centaury.mcatalogue.BuildConfig;
 import com.centaury.mcatalogue.R;
+import com.centaury.mcatalogue.ViewModelFactory;
 import com.centaury.mcatalogue.data.local.db.entity.MovieEntity;
 import com.centaury.mcatalogue.data.remote.model.genre.GenresItem;
 import com.centaury.mcatalogue.data.remote.model.movie.MovieResultsItem;
+import com.centaury.mcatalogue.ui.base.BaseActivity;
 import com.centaury.mcatalogue.ui.detail.viewmodel.DetailViewModel;
-import com.centaury.mcatalogue.ui.favorite.viewmodel.FavoriteMovieViewModel;
 import com.centaury.mcatalogue.utils.AppConstants;
 import com.centaury.mcatalogue.utils.Helper;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,42 +41,40 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class DetailMovieActivity extends AppCompatActivity {
+public class DetailMovieActivity extends BaseActivity {
 
-    @BindView(R.id.iv_coverdetail)
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+    @BindView(R.id.iv_cover_detail)
     ImageView mIvCoverdetail;
-    @BindView(R.id.iv_imgdetail)
+    @BindView(R.id.iv_img_detail)
     ImageView mIvImgdetail;
-    @BindView(R.id.txt_titledetail)
+    @BindView(R.id.txt_title_detail)
     TextView mTxtTitledetail;
-    @BindView(R.id.txt_genredetail)
+    @BindView(R.id.txt_genre_detail)
     TextView mTxtGenredetail;
-    @BindView(R.id.rb_ratingdetail)
+    @BindView(R.id.rb_rating_detail)
     RatingBar mRbRatingdetail;
-    @BindView(R.id.txt_ratemovie)
+    @BindView(R.id.txt_rate_movie)
     TextView mTxtRatemovie;
-    @BindView(R.id.txt_datedetail)
+    @BindView(R.id.txt_date_detail)
     TextView mTxtDatedetail;
-    @BindView(R.id.txt_descdetail)
+    @BindView(R.id.txt_desc_detail)
     TextView mTxtDescdetail;
     @BindView(R.id.btn_favorite)
     LottieAnimationView mBtnFavorite;
-
-    private DateFormat inputDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-    private DateFormat outputDate = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
 
     private List<Integer> genreData = new ArrayList<>();
     private MovieResultsItem movie;
     private MovieEntity entity;
     private DetailViewModel detailViewModel;
-    private FavoriteMovieViewModel favoriteMovieViewModel;
-    private AlertDialog alertDialog;
     private String language;
     private Boolean isFavorite = false;
     private Observer<List<GenresItem>> getGenre = genresItems -> {
         if (genresItems != null) {
             showDialogLoading();
-            getGenresString(genresItems);
+            Helper.getGenresString(genresItems, genreData, mTxtGenredetail);
+            dismissDialogLoading();
         }
     };
 
@@ -86,7 +83,6 @@ public class DetailMovieActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_movie);
         ButterKnife.bind(this);
-
         Window window = getWindow();
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
@@ -94,14 +90,22 @@ public class DetailMovieActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             view.setSystemUiVisibility(view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         }
+        setUpToolbar(mToolbar);
 
         language = String.valueOf(Locale.getDefault().toLanguageTag());
-        detailViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(DetailViewModel.class);
-        favoriteMovieViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(FavoriteMovieViewModel.class);
-        detailViewModel.getGenresDetail().observe(this, getGenre);
+
+        ViewModelFactory factory = ViewModelFactory.getInstance(this);
+        detailViewModel = new ViewModelProvider(this, factory).get(DetailViewModel.class);
+        detailViewModel.getGenresMovie(language).observe(this, getGenre);
 
         checkConnection(this);
+        setUp();
+        setFavorite();
+        mBtnFavorite.setScale(2.481f);
 
+    }
+
+    private void setUp() {
         movie = getIntent().getParcelableExtra(AppConstants.EXTRA_MOVIE);
         if (movie != null) {
             itemMovie(movie);
@@ -109,17 +113,13 @@ public class DetailMovieActivity extends AppCompatActivity {
         } else {
             int entityId = getIntent().getIntExtra(AppConstants.EXTRA_FAV_MOVIE, 0);
             try {
-                entity = favoriteMovieViewModel.getMovie(entityId);
+                entity = detailViewModel.getFavoriteMovie(entityId);
                 itemMovieDB(entity);
                 stateFavoriteDB(entity.getId());
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
-        setFavorite();
-        mBtnFavorite.setScale(2.481f);
-
     }
 
     private void itemMovie(MovieResultsItem movie) {
@@ -133,22 +133,31 @@ public class DetailMovieActivity extends AppCompatActivity {
         mTxtRatemovie.setText(String.valueOf(movie.getVoteAverage()));
         float movieRating = (float) (movie.getVoteAverage() / 2);
         mRbRatingdetail.setRating(movieRating);
-        Glide.with(this).load(BuildConfig.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvImgdetail);
+        Glide.with(this)
+                .load(BuildConfig.IMAGE_URL + movie.getPosterPath())
+                .placeholder(R.drawable.noimage)
+                .into(mIvImgdetail);
         if (movie.getBackdropPath() != null) {
-            Glide.with(this).load(BuildConfig.IMAGE_URL + movie.getBackdropPath()).placeholder(R.drawable.noimage).into(mIvCoverdetail);
+            Glide.with(this)
+                    .load(BuildConfig.IMAGE_URL + movie.getBackdropPath())
+                    .placeholder(R.drawable.noimage)
+                    .into(mIvCoverdetail);
         } else {
-            Glide.with(this).load(BuildConfig.IMAGE_URL + movie.getPosterPath()).placeholder(R.drawable.noimage).into(mIvCoverdetail);
+            Glide.with(this)
+                    .load(BuildConfig.IMAGE_URL + movie.getPosterPath())
+                    .placeholder(R.drawable.noimage)
+                    .into(mIvCoverdetail);
         }
 
         if (movie.getOverview() == null || movie.getOverview().equals("")) {
-            mTxtDescdetail.setText(getResources().getString(R.string.txt_nodesc));
+            mTxtDescdetail.setText(getResources().getString(R.string.txt_no_desc));
         } else {
             mTxtDescdetail.setText(movie.getOverview());
         }
 
         try {
-            Date date = inputDate.parse(movie.getReleaseDate());
-            String releaseDate = outputDate.format(date);
+            Date date = Helper.inputDate().parse(movie.getReleaseDate());
+            String releaseDate = Helper.outputDate().format(date);
             mTxtDatedetail.setText(releaseDate);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -166,22 +175,31 @@ public class DetailMovieActivity extends AppCompatActivity {
         int rate = (int) Double.parseDouble(entity.getVoteAverage());
         float movieRating = (float) (rate / 2);
         mRbRatingdetail.setRating(movieRating);
-        Glide.with(this).load(BuildConfig.IMAGE_URL + entity.getPosterPath()).placeholder(R.drawable.noimage).into(mIvImgdetail);
+        Glide.with(this)
+                .load(BuildConfig.IMAGE_URL + entity.getPosterPath())
+                .placeholder(R.drawable.noimage)
+                .into(mIvImgdetail);
         if (entity.getBackdropPath() != null) {
-            Glide.with(this).load(BuildConfig.IMAGE_URL + entity.getBackdropPath()).placeholder(R.drawable.noimage).into(mIvCoverdetail);
+            Glide.with(this)
+                    .load(BuildConfig.IMAGE_URL + entity.getBackdropPath())
+                    .placeholder(R.drawable.noimage)
+                    .into(mIvCoverdetail);
         } else {
-            Glide.with(this).load(BuildConfig.IMAGE_URL + entity.getPosterPath()).placeholder(R.drawable.noimage).into(mIvCoverdetail);
+            Glide.with(this)
+                    .load(BuildConfig.IMAGE_URL + entity.getPosterPath())
+                    .placeholder(R.drawable.noimage)
+                    .into(mIvCoverdetail);
         }
 
         if (entity.getOverview() == null || entity.getOverview().equals("")) {
-            mTxtDescdetail.setText(getResources().getString(R.string.txt_nodesc));
+            mTxtDescdetail.setText(getResources().getString(R.string.txt_no_desc));
         } else {
             mTxtDescdetail.setText(entity.getOverview());
         }
 
         try {
-            Date date = inputDate.parse(entity.getReleaseDate());
-            String releaseDate = outputDate.format(date);
+            Date date = Helper.inputDate().parse(entity.getReleaseDate());
+            String releaseDate = Helper.outputDate().format(date);
             mTxtDatedetail.setText(releaseDate);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -194,50 +212,20 @@ public class DetailMovieActivity extends AppCompatActivity {
         Helper.updateWidget(this);
     }
 
-    public void checkConnection(Context context) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void checkConnection(Context context) {
         if (Helper.isNetworkConnected(context)) {
-            detailViewModel.setGenreMovieDetail(language);
-            detailViewModel.setGenreTVShowDetail(language);
+            detailViewModel.getGenresMovie(language).observe(this, getGenre);
         } else {
             showNoInternet();
         }
-    }
-
-    private void getGenresString(List<GenresItem> itemList) {
-        List<String> genreMovies = new ArrayList<>();
-        try {
-            if (genreData.size() == 1) {
-                for (Integer genreId : genreData) {
-                    for (GenresItem genresItem : itemList) {
-                        if (genresItem.getId() == genreId) {
-                            genreMovies.add(genresItem.getName());
-                        }
-                    }
-                    mTxtGenredetail.setText(TextUtils.join(", ", genreMovies));
-                }
-            } else {
-                List<Integer> integers = genreData.subList(0, 2);
-                for (Integer genreId : integers) {
-                    for (GenresItem genresItem : itemList) {
-                        if (genresItem.getId() == genreId) {
-                            genreMovies.add(genresItem.getName());
-                        }
-                    }
-                    mTxtGenredetail.setText(TextUtils.join(", ", genreMovies));
-                }
-            }
-        } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
-            System.out.println("Exception thrown : " + e);
-        }
-        alertDialog.dismiss();
-    }
-
-    private void showDialogLoading() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(true);
-        builder.setView(R.layout.item_loading_dialog);
-        alertDialog = builder.create();
-        alertDialog.show();
     }
 
     private void showNoInternet() {
@@ -254,7 +242,7 @@ public class DetailMovieActivity extends AppCompatActivity {
     private void stateFavoriteDB(int id) {
         final MovieEntity movieEntity;
         try {
-            movieEntity = favoriteMovieViewModel.getMovie(id);
+            movieEntity = detailViewModel.getFavoriteMovie(id);
             if (movieEntity != null) {
                 isFavorite = true;
             }
@@ -279,56 +267,49 @@ public class DetailMovieActivity extends AppCompatActivity {
             MovieEntity movieEntity = new MovieEntity(movie.getId(), mTxtTitledetail.getText().toString(), movie.getOriginalTitle(),
                     mTxtDescdetail.getText().toString(), movie.getPosterPath(), movie.getBackdropPath(),
                     mTxtRatemovie.getText().toString(), movie.getReleaseDate(), mTxtGenredetail.getText().toString());
-            favoriteMovieViewModel.insertMovie(movieEntity);
+            detailViewModel.insertFavoriteMovie(movieEntity);
         } else {
             MovieEntity movieEntity = new MovieEntity(entity.getId(), mTxtTitledetail.getText().toString(), entity.getOriginalTitle(),
                     mTxtDescdetail.getText().toString(), entity.getPosterPath(), entity.getBackdropPath(),
                     mTxtRatemovie.getText().toString(), entity.getReleaseDate(), mTxtGenredetail.getText().toString());
-            favoriteMovieViewModel.insertMovie(movieEntity);
+            detailViewModel.insertFavoriteMovie(movieEntity);
         }
 
         Helper.updateWidget(this);
 
-        Toast.makeText(this, getString(R.string.txt_add_movie), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.txt_movie_add), Toast.LENGTH_SHORT).show();
     }
 
     private void removeFavorite(int id) {
         final MovieEntity movieEntity;
         try {
-            movieEntity = favoriteMovieViewModel.getMovie(id);
-            favoriteMovieViewModel.deleteMovie(movieEntity);
+            movieEntity = detailViewModel.getFavoriteMovie(id);
+            detailViewModel.deleteFavoriteMovie(movieEntity);
 
             Helper.updateWidget(this);
-            Toast.makeText(this, getString(R.string.txt_remove_movie), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.txt_movie_remove), Toast.LENGTH_SHORT).show();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
-    @OnClick({R.id.btn_back, R.id.btn_favorite})
+    @OnClick(R.id.btn_favorite)
     public void onClick(View v) {
-        switch (v.getId()) {
-            default:
-                break;
-            case R.id.btn_back:
-                onBackPressed();
-                break;
-            case R.id.btn_favorite:
-                if (isFavorite) {
-                    if (movie != null) {
-                        removeFavorite(movie.getId());
-                    } else {
-                        removeFavorite(entity.getId());
-                    }
+        if (v.getId() == R.id.btn_favorite) {
+            if (isFavorite) {
+                if (movie != null) {
+                    removeFavorite(movie.getId());
                 } else {
-                    addFavorite();
+                    removeFavorite(entity.getId());
                 }
+            } else {
+                addFavorite();
+            }
 
-                isFavorite = !isFavorite;
+            isFavorite = !isFavorite;
 
-                setFavorite();
-                mBtnFavorite.playAnimation();
-                break;
+            setFavorite();
+            mBtnFavorite.playAnimation();
         }
     }
 }

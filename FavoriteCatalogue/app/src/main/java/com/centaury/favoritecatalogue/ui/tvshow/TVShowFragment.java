@@ -9,13 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,15 +16,24 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.centaury.favoritecatalogue.R;
 import com.centaury.favoritecatalogue.data.entity.TVShowEntity;
 import com.centaury.favoritecatalogue.ui.tvshow.adapter.TVShowAdapter;
+import com.centaury.favoritecatalogue.utils.AppConstants;
 import com.centaury.favoritecatalogue.utils.Helper;
 import com.centaury.favoritecatalogue.utils.Mapping;
 import com.facebook.shimmer.ShimmerFrameLayout;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,8 +45,6 @@ import static com.centaury.favoritecatalogue.data.DatabaseContract.TVShowColumns
  * A simple {@link Fragment} subclass.
  */
 public class TVShowFragment extends Fragment implements LoadTVShowCallback {
-
-    private static final String EXTRA_STATE_TVSHOW = "EXTRA_STATE_TVSHOW";
 
     @BindView(R.id.rv_favtvshow)
     RecyclerView mRvFavtvshow;
@@ -75,11 +75,11 @@ public class TVShowFragment extends Fragment implements LoadTVShowCallback {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        HandlerThread handlerThread = new HandlerThread("Observer");
+        HandlerThread handlerThread = new HandlerThread(AppConstants.OBSERVER_TVSHOW);
         handlerThread.start();
         Handler handler = new Handler(handlerThread.getLooper());
         DataObserverTVShow dataObserverTVShow = new DataObserverTVShow(handler, getContext());
-        getActivity().getContentResolver().registerContentObserver(CONTENT_URI, true, dataObserverTVShow);
+        Objects.requireNonNull(getActivity()).getContentResolver().registerContentObserver(CONTENT_URI, true, dataObserverTVShow);
         new getDataTVShow(getContext(), this).execute();
 
         showRecyclerList();
@@ -87,7 +87,7 @@ public class TVShowFragment extends Fragment implements LoadTVShowCallback {
         if (savedInstanceState == null) {
             new getDataTVShow(getContext(), this).execute();
         } else {
-            ArrayList<TVShowEntity> list = savedInstanceState.getParcelableArrayList(EXTRA_STATE_TVSHOW);
+            ArrayList<TVShowEntity> list = savedInstanceState.getParcelableArrayList(AppConstants.EXTRA_STATE_TVSHOW);
             if (list != null) {
                 mShimmerViewContainer.stopShimmer();
                 tvShowAdapter.setTVShows(list);
@@ -99,7 +99,7 @@ public class TVShowFragment extends Fragment implements LoadTVShowCallback {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(EXTRA_STATE_TVSHOW, tvShowAdapter.getListTVShows());
+        outState.putParcelableArrayList(AppConstants.EXTRA_STATE_TVSHOW, tvShowAdapter.getListTVShows());
     }
 
     @Override
@@ -120,7 +120,6 @@ public class TVShowFragment extends Fragment implements LoadTVShowCallback {
 
         mRvFavtvshow.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvFavtvshow.setAdapter(tvShowAdapter);
-        mRvFavtvshow.setItemAnimator(new DefaultItemAnimator());
         mRvFavtvshow.addItemDecoration(new Helper.TopItemDecoration(55));
 
         tvShowAdapter.setOnDeleteItemClickCallback(this::showDialogDeleteFavorite);
@@ -130,23 +129,21 @@ public class TVShowFragment extends Fragment implements LoadTVShowCallback {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         View view = inflater.inflate(R.layout.item_alert_dialog, null);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
         builder.setView(view);
 
         TextView title = view.findViewById(R.id.alerttitle);
-        title.setText(getString(R.string.txt_title_delete_dialog));
+        title.setText(getString(R.string.txt_dialog_title_delete));
 
         builder.setCancelable(false)
                 .setPositiveButton(getString(R.string.btn_delete), (dialog, which) -> {
-                    getActivity().getContentResolver().delete(uri, null, null);
+                    Objects.requireNonNull(getActivity()).getContentResolver().delete(uri, null, null);
                     getActivity().getContentResolver().notifyChange(CONTENT_URI, new DataObserverTVShow(new Handler(), getContext()));
                     new getDataTVShow(getContext(), this).execute();
                     dialog.dismiss();
-                    Toast.makeText(getContext(), getString(R.string.txt_remove_movie), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getString(R.string.txt_movie_remove), Toast.LENGTH_SHORT).show();
                 })
-                .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> {
-                    dialog.dismiss();
-                });
+                .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> dialog.dismiss());
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
@@ -159,7 +156,7 @@ public class TVShowFragment extends Fragment implements LoadTVShowCallback {
 
     @Override
     public void preExecuteTVShow() {
-        getActivity().runOnUiThread(() -> mShimmerViewContainer.startShimmer());
+        Objects.requireNonNull(getActivity()).runOnUiThread(() -> mShimmerViewContainer.startShimmer());
     }
 
     @Override
@@ -178,7 +175,7 @@ public class TVShowFragment extends Fragment implements LoadTVShowCallback {
         }
     }
 
-    public static class getDataTVShow extends AsyncTask<Void, Void, Cursor> {
+    static class getDataTVShow extends AsyncTask<Void, Void, Cursor> {
         private final WeakReference<Context> weakContext;
         private final WeakReference<LoadTVShowCallback> weakCallback;
 

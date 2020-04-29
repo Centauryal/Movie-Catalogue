@@ -17,45 +17,45 @@ public class ReminderPreference {
     }
 
     public boolean getDailyReminder() {
-        return sharedPreferences.getBoolean(AppConstants.DAILY_PREFS, false);
+        return sharedPreferences.getBoolean(AppConstants.PREFS_DAILY, false);
     }
 
     public void setDailyReminder(Boolean reminder) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(AppConstants.DAILY_PREFS, reminder);
+        editor.putBoolean(AppConstants.PREFS_DAILY, reminder);
 
         editor.apply();
     }
 
     public boolean getReleaseReminder() {
-        return sharedPreferences.getBoolean(AppConstants.RELEASE_PREFS, false);
+        return sharedPreferences.getBoolean(AppConstants.PREFS_RELEASE, false);
     }
 
     public void setReleaseReminder(Boolean reminder) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(AppConstants.RELEASE_PREFS, reminder);
+        editor.putBoolean(AppConstants.PREFS_RELEASE, reminder);
 
         editor.apply();
     }
 
     public String getTimeDaily() {
-        return sharedPreferences.getString(AppConstants.TIME_DAILY, "");
+        return sharedPreferences.getString(AppConstants.PREFS_TIME_DAILY, "");
     }
 
     public void setTimeDaily(String time) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(AppConstants.TIME_DAILY, time);
+        editor.putString(AppConstants.PREFS_TIME_DAILY, time);
 
         editor.apply();
     }
 
     public String getTimeRelease() {
-        return sharedPreferences.getString(AppConstants.TIME_RELEASE, "");
+        return sharedPreferences.getString(AppConstants.PREFS_TIME_RELEASE, "");
     }
 
     public void setTimeRelease(String time) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(AppConstants.TIME_RELEASE, time);
+        editor.putString(AppConstants.PREFS_TIME_RELEASE, time);
 
         editor.apply();
     }

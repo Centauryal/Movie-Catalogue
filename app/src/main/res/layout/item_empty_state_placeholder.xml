@@ -11,7 +11,7 @@
         android:layout_width="@dimen/_150sdp"
         android:layout_height="@dimen/_150sdp"
         android:layout_marginBottom="@dimen/_16sdp"
-        android:contentDescription="@string/contentdesc_empty_state"
+        android:contentDescription="@string/content_desc_empty_state"
         android:src="@drawable/emptystate" />
 
     <TextView

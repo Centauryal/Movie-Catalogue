@@ -20,14 +20,15 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.centaury.mcatalogue.R;
+import com.centaury.mcatalogue.ViewModelFactory;
 import com.centaury.mcatalogue.data.local.db.entity.TVShowEntity;
+import com.centaury.mcatalogue.ui.base.BaseFragment;
 import com.centaury.mcatalogue.ui.favorite.adapter.FavoriteTVShowAdapter;
-import com.centaury.mcatalogue.ui.favorite.viewmodel.FavoriteTVShowViewModel;
+import com.centaury.mcatalogue.ui.main.viewmodel.TVShowViewModel;
 import com.centaury.mcatalogue.utils.AppConstants;
 import com.centaury.mcatalogue.utils.Helper;
 import com.centaury.mcatalogue.utils.Mapping;
@@ -47,7 +48,7 @@ import static com.centaury.mcatalogue.data.local.db.DatabaseContract.TVShowColum
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallback {
+public class FavoriteTVShowFragment extends BaseFragment implements LoadTVShowCallback {
 
     @BindView(R.id.rv_favtvshow)
     RecyclerView mRvFavtvshow;
@@ -55,10 +56,12 @@ public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallba
     ShimmerFrameLayout mShimmerViewContainer;
     @BindView(R.id.empty_state)
     LinearLayout mEmptyState;
+    @BindView(R.id.btn_try_again)
+    TextView mBtnTryAgain;
     private Unbinder unbinder;
 
     private FavoriteTVShowAdapter favoriteTVShowAdapter;
-    private FavoriteTVShowViewModel favoriteTVShowViewModel;
+    private TVShowViewModel tvShowViewModel;
 
     public FavoriteTVShowFragment() {
         // Required empty public constructor
@@ -79,13 +82,14 @@ public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallba
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        favoriteTVShowViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(FavoriteTVShowViewModel.class);
+        ViewModelFactory factory = ViewModelFactory.getInstance(getActivity());
+        tvShowViewModel = new ViewModelProvider(this, factory).get(TVShowViewModel.class);
 
-        HandlerThread handlerThread = new HandlerThread("Observer");
+        HandlerThread handlerThread = new HandlerThread(AppConstants.OBSERVER_TVSHOW);
         handlerThread.start();
         Handler handler = new Handler(handlerThread.getLooper());
         DataObserver dataObserver = new DataObserver(handler, getContext());
-        getContext().getContentResolver().registerContentObserver(CONTENT_URI, true, dataObserver);
+        Objects.requireNonNull(getContext()).getContentResolver().registerContentObserver(CONTENT_URI, true, dataObserver);
 
         showRecyclerList();
 
@@ -98,6 +102,8 @@ public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallba
                 favoriteTVShowAdapter.setTVShows(list);
             }
         }
+
+        mBtnTryAgain.setVisibility(View.GONE);
     }
 
     @Override
@@ -124,7 +130,6 @@ public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallba
 
         mRvFavtvshow.setLayoutManager(new LinearLayoutManager(getContext()));
         mRvFavtvshow.setAdapter(favoriteTVShowAdapter);
-        mRvFavtvshow.setItemAnimator(new DefaultItemAnimator());
         mRvFavtvshow.addItemDecoration(new Helper.TopItemDecoration(55));
 
         favoriteTVShowAdapter.setOnDeleteItemClickCallback(this::showDialogDeleteFavorite);
@@ -133,7 +138,7 @@ public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallba
     private void showDialogDeleteFavorite(int tvshowId) {
         TVShowEntity tvShowEntity;
         try {
-            tvShowEntity = favoriteTVShowViewModel.getTVShow(tvshowId);
+            tvShowEntity = tvShowViewModel.getFavoriteTVShow(tvshowId);
 
             LayoutInflater inflater = LayoutInflater.from(getContext());
             View view = inflater.inflate(R.layout.item_alert_dialog, null);
@@ -142,14 +147,14 @@ public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallba
             builder.setView(view);
 
             TextView title = view.findViewById(R.id.alerttitle);
-            title.setText(getString(R.string.txt_title_delete_dialog));
+            title.setText(getString(R.string.txt_dialog_title_delete));
 
             builder.setCancelable(false)
                     .setPositiveButton(getString(R.string.btn_delete), (dialog, which) -> {
-                        favoriteTVShowViewModel.deleteMovie(tvShowEntity);
+                        tvShowViewModel.deleteFavoriteTVShow(tvShowEntity);
                         dialog.dismiss();
                         new LoadTVShowAsync(getContext(), this).execute();
-                        Toast.makeText(getContext(), getString(R.string.txt_remove_movie), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.txt_movie_remove), Toast.LENGTH_SHORT).show();
                     })
                     .setNegativeButton(getString(R.string.btn_cancel), (dialog, which) -> dialog.dismiss());
             AlertDialog alertDialog = builder.create();
@@ -168,7 +173,7 @@ public class FavoriteTVShowFragment extends Fragment implements LoadTVShowCallba
 
     @Override
     public void preExecuteTVShow() {
-        getActivity().runOnUiThread(() -> mShimmerViewContainer.startShimmer());
+        Objects.requireNonNull(getActivity()).runOnUiThread(() -> mShimmerViewContainer.startShimmer());
     }
 
     @Override
