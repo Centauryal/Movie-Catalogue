@@ -2,15 +2,15 @@
 
 This repository contains detailed application examples of MADE course projects in the [Dicoding Academy](https://dicoding.com). This application uses the API from [TheMovieDB](https://api.themoviedb.org).
 <p align="center">
-  <img src="https://centauryal.github.io/img/movie_catalogue_pic/Screenshot_Splash_Screen.png" width="250">
-  <img src="https://centauryal.github.io/img/movie_catalogue_pic/Screenshot_Main.png" width="250">
-  <img src="https://centauryal.github.io/img/movie_catalogue_pic/Screenshot_Detail.png" width="250">
+  <img src="./screenshots/screenshots_splash.png" width="250">
+  <img src="./screenshots/screenshots_main.png" width="250">
+  <img src="./screenshots/screenshots_detail.png" width="250">
 </p>
 <br>
 <p align="center">
-  <img src="https://centauryal.github.io/img/movie_catalogue_pic/Screenshot_Favorite.png" width="250">
-  <img src="https://centauryal.github.io/img/movie_catalogue_pic/Screenshot_Search.png" width="250">
-  <img src="https://centauryal.github.io/img/movie_catalogue_pic/Screenshot_Settings.png" width="250">
+  <img src="./screenshots/screenshots_favorite.png" width="250">
+  <img src="./screenshots/screenshots_search.png" width="250">
+  <img src="./screenshots/screenshots_settings.png" width="250">
 </p>
 <br>
 <br>
